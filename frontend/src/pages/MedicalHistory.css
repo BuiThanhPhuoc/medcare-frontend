@@ -1,0 +1,72 @@
+.history-container {
+    padding: 30px;
+    background-color: #f4f7f6;
+    min-height: 100vh;
+}
+
+.history-container h2 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.records-list {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.record-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.record-header {
+    background-color: #3498db;
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.record-header h3 { margin: 0; font-size: 18px; }
+
+.doctor-badge {
+    background: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.record-body { padding: 20px; }
+
+.info-row { margin-bottom: 15px; }
+
+.info-row strong { color: #34495e; display: block; margin-bottom: 5px; }
+
+.highlight-text {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 0;
+}
+
+.prescription-box {
+    background-color: #fdf2e9;
+    padding: 15px;
+    border-left: 4px solid #e67e22;
+    border-radius: 4px;
+    color: #d35400;
+}
+
+.no-data {
+    text-align: center;
+    font-size: 18px;
+    color: #7f8c8d;
+    margin-top: 50px;
+}
