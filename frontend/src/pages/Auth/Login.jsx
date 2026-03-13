@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
-import './Login.css';
+import './CSS/Login.css';
 
 const Login = () => {
     const [identifier, setIdentifier] = useState('');
@@ -15,7 +15,7 @@ const Login = () => {
         setErrorMessage('');
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/login', {
+            const response = await api.post('/api/auth/login', {
                 identifier: identifier,
                 password: password
             });

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Admin.css';
+import api from '../../lib/api';
+import './CSS/Admin.css';
 
 const Admin = () => {
     const [medicines, setMedicines] = useState([]);
@@ -15,10 +15,7 @@ const Admin = () => {
     // Hàm lấy danh sách thuốc từ kho
     const fetchMedicines = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/medicines', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/api/medicines');
             setMedicines(res.data.medicines);
         } catch (error) {
             console.error('Lỗi lấy danh sách thuốc:', error);
@@ -34,15 +31,12 @@ const Admin = () => {
     const handleAddMedicine = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
-            await axios.post('http://localhost:5000/api/medicines', {
+            await api.post('/api/medicines', {
                 name,
                 quantity: Number(quantity),
                 import_price: Number(importPrice),
                 price: Number(price),
                 expiry_date: expiryDate
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             alert('✅ Thêm thuốc vào kho thành công!');

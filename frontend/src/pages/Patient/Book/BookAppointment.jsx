@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../lib/api';
 import { useNavigate } from 'react-router-dom';
-import './BookAppointment.css';
+import '../CSS/BookAppointment.css';
 
 const BookAppointment = () => {
     const [doctors, setDoctors] = useState([]);
@@ -16,10 +16,7 @@ const BookAppointment = () => {
     useEffect(() => {
         const fetchDoctors = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/appointments/doctors', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await api.get('/api/appointments/doctors');
                 setDoctors(res.data.doctors);
                 
                 // Mặc định chọn bác sĩ đầu tiên trong danh sách
@@ -36,15 +33,12 @@ const BookAppointment = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
             // Gọi API Đặt lịch mà lúc trước fen đã test bằng Thunder Client
-            await axios.post('http://localhost:5000/api/appointments', {
+            await api.post('/api/appointments', {
                 doctor_id: doctorId,
                 appointment_date: date,
                 appointment_time: time,
                 reason: reason
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             alert('🎉 Đặt lịch khám thành công!');

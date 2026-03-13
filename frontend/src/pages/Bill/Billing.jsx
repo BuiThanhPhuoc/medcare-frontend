@@ -1,16 +1,13 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Billing.css';
+import api from '../../lib/api';
+import './CSS/Billing.css';
 
 const Billing = () => {
     const [unpaidList, setUnpaidList] = useState([]);
 
     const fetchUnpaidList = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/appointments/unpaid', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/api/appointments/unpaid');
             setUnpaidList(res.data.appointments);
         } catch (error) {
             console.error('Lỗi lấy danh sách chờ thanh toán:', error);
@@ -25,10 +22,7 @@ const Billing = () => {
         if (!window.confirm(`Xác nhận thu tiền của bệnh nhân ${patientName}?`)) return;
 
         try {
-            const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:5000/api/appointments/${id}/pay`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.put(`/api/appointments/${id}/pay`, {});
 
             alert('💰 Đã thu tiền thành công!');
             fetchUnpaidList(); // Tải lại danh sách để làm mất bệnh nhân đã đóng tiền

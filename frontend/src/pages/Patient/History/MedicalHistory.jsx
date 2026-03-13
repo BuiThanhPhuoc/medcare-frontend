@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../../lib/api';
 import './MedicalHistory.css';
 
 const MedicalHistory = () => {
@@ -8,10 +8,7 @@ const MedicalHistory = () => {
     useEffect(() => {
         const fetchRecords = async () => {
             try {
-                const token = localStorage.getItem('token');
-                const res = await axios.get('http://localhost:5000/api/medical-records/my-records', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const res = await api.get('/api/medical-records/my-records');
                 setRecords(res.data.records);
             } catch (error) {
                 console.error('Lỗi lấy bệnh án:', error);

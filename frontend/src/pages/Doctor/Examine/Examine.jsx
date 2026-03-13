@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Examine.css';
+import api from '../../../lib/api';
+import '../CSS/Examine.css';
 
 const Examine = () => {
     const [appointments, setAppointments] = useState([]);
@@ -14,10 +14,7 @@ const Examine = () => {
     // Hàm gọi API lấy danh sách bệnh nhân hôm nay của bác sĩ
     const fetchSchedule = async () => {
         try {
-            const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:5000/api/appointments/doctor-schedule', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const res = await api.get('/api/appointments/doctor-schedule');
             setAppointments(res.data.appointments);
         } catch (error) {
             console.error('Lỗi lấy lịch khám:', error);
@@ -33,15 +30,12 @@ const Examine = () => {
     const handleExamine = async (e) => {
         e.preventDefault();
         try {
-            const token = localStorage.getItem('token');
             // Gọi API Lưu hồ sơ bệnh án (API này fen đã test OK bằng Thunder Client hồi trước)
-            await axios.post('http://localhost:5000/api/medical-records', {
+            await api.post('/api/medical-records', {
                 appointment_id: selectedAppt.id,
                 diagnosis,
                 prescription,
                 note
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
             });
 
             alert('✅ Đã lưu hồ sơ bệnh án thành công!');
