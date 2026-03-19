@@ -24,7 +24,7 @@ const AdminLayout = ({ children, pageTitle = "Quản trị Phòng khám" }) => {
 
                     <ul className="list-unstyled">
                         <li className="mb-2">
-                            <Link to="/admin-home" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin-home' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                            <Link to="/admin-dashboard" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin-dashboard' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
                                 <i className="fas fa-chart-line me-2"></i> Dashboard
                             </Link>
                         </li>
@@ -38,7 +38,7 @@ const AdminLayout = ({ children, pageTitle = "Quản trị Phòng khám" }) => {
 
                         <li className="mb-2 text-muted small fw-bold text-uppercase">Quản lý kho</li>
                         <li className="mb-2">
-                            <Link to="/admin" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                            <Link to="/admin/medicines" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin/medicines' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
                                 <i className="fas fa-pills me-2 text-success"></i> Thuốc
                             </Link>
                         </li>
@@ -49,6 +49,18 @@ const AdminLayout = ({ children, pageTitle = "Quản trị Phòng khám" }) => {
                         <li className="mb-2">
                             <Link to="/admin/doctors" className={`d-block p-2 rounded text-decoration-none ${location.pathname.includes('/admin/doctors') ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
                                 <i className="fas fa-user-md me-2 text-info"></i> Bác sĩ
+                            </Link>
+                        </li>
+                        <li className="mb-2">
+                            <Link to="/admin/specialties" className={`d-block p-2 rounded text-decoration-none ${location.pathname.includes('/admin/specialties') ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                                <i className="fas fa-stethoscope me-2 text-success"></i> Chuyên Khoa
+                            </Link>
+                        </li>
+
+                        <li className="mb-2 text-muted small fw-bold text-uppercase">Quản lý lịch làm việc</li>
+                        <li className="mb-2">
+                            <Link to="/admin/schedules" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin/schedules' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                                <i className="fas fa-calendar-check me-2 text-danger"></i> Phê duyệt lịch
                             </Link>
                         </li>
 

@@ -7,8 +7,9 @@ const PostEdit = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
     
-    const categories = [{ id: 1, name: 'Tin tức Y Tế' }, { id: 2, name: 'Sức khỏe' }];
-    const tagsList = [{ id: 1, name: 'Covid-19' }, { id: 2, name: 'Dinh dưỡng' }];
+    // State lưu data thật từ DB
+    const [categories, setCategories] = useState([]);
+    const [tagsList, setTagsList] = useState([]);
     
     const [formData, setFormData] = useState({
         title: '', danh_muc_id: '', status: 'draft', excerpt: '', 
@@ -16,12 +17,20 @@ const PostEdit = () => {
     });
 
     useEffect(() => {
-        const fetchPost = async () => {
+        const fetchPostData = async () => {
             try {
-                const res = await api.get(`/api/admin/posts/${id}`);
-                const post = res.data.post;
+                // Tải đồng thời cả 3 API cùng lúc cho nhanh
+                const [postRes, catRes, tagRes] = await Promise.all([
+                    api.get(`/api/admin/posts/${id}`),
+                    api.get('/api/admin/categories'),
+                    api.get('/api/admin/tags')
+                ]);
+
+                setCategories(catRes.data.categories || []);
+                setTagsList(tagRes.data.tags || []);
+
+                const post = postRes.data.post;
                 
-                // Format datetime cho thẻ input type="datetime-local"
                 let pubDate = '';
                 if(post.published_at) {
                     const d = new Date(post.published_at);
@@ -29,23 +38,30 @@ const PostEdit = () => {
                 }
 
                 setFormData({
-                    title: post.title || '', danh_muc_id: post.danh_muc_id || '', status: post.status || 'draft',
-                    excerpt: post.excerpt || '', content: post.content || '', published_at: pubDate,
-                    thumbnail: post.thumbnail || '', meta_title: post.meta_title || '', 
-                    meta_description: post.meta_description || '', tags: post.tags || []
+                    title: post.title || '', 
+                    danh_muc_id: post.danh_muc_id || '', 
+                    status: post.status || 'draft',
+                    excerpt: post.excerpt || '', 
+                    content: post.content || '', 
+                    published_at: pubDate,
+                    thumbnail: post.thumbnail || '', 
+                    meta_title: post.meta_title || '', 
+                    meta_description: post.meta_description || '', 
+                    tags: post.tags || [] // Dữ liệu thẻ mà bài viết này đang sở hữu
                 });
                 setLoading(false);
-            } catch {
-                alert("Không tìm thấy bài viết!");
+            } catch (error) {
+                alert("Không tìm thấy dữ liệu hoặc có lỗi!");
                 navigate('/admin/posts');
             }
         };
-        fetchPost();
+        fetchPostData();
     }, [id, navigate]);
 
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
+    
     const handleTagsChange = (e) => {
-        const values = Array.from(e.target.selectedOptions, option => option.value);
+        const values = Array.from(e.target.selectedOptions, option => parseInt(option.value));
         setFormData({ ...formData, tags: values });
     };
 
@@ -64,17 +80,16 @@ const PostEdit = () => {
         <div className="container-fluid py-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h1 className="fw-bold fs-3">
-                    <i className="fas fa-edit me-2"></i> Sửa Bài viết
+                    <i className="fas fa-edit me-2 text-warning"></i> Sửa Bài viết
                 </h1>
                 <Link to="/admin/posts" className="btn btn-secondary">
-                    <i className="fas fa-arrow-left"></i> Quay lại
+                    <i className="fas fa-arrow-left me-1"></i> Quay lại
                 </Link>
             </div>
 
             <div className="card shadow-lg border-0" style={{borderRadius: '12px'}}>
                 <div className="card-body p-4">
                     <form onSubmit={handleSubmit}>
-                        {/* NỘI DUNG FORM Y HỆT TRANG CREATE */}
                         <div className="row g-4">
                             <div className="col-md-12">
                                 <label className="form-label fw-bold fs-6">Tiêu đề <span className="text-danger">*</span></label>
@@ -127,17 +142,25 @@ const PostEdit = () => {
                                 <textarea name="meta_description" rows="3" className="form-control form-control-lg rounded-3" value={formData.meta_description} onChange={handleChange} style={{resize: 'none'}}></textarea>
                             </div>
 
+                            {/* CHỌN NHIỀU THẺ BẰNG CTRL */}
                             <div className="col-md-12">
-                                <label className="form-label fw-bold fs-6">Thẻ (Ctrl để chọn nhiều)</label>
-                                <select name="tags" multiple size="4" className="form-select form-select-lg rounded-3" value={formData.tags} onChange={handleTagsChange}>
-                                    {tagsList.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                <label className="form-label fw-bold fs-6">Thẻ (Giữ nút <b>Ctrl</b> hoặc <b>Cmd</b> để chọn nhiều thẻ)</label>
+                                <select 
+                                    name="tags" 
+                                    multiple 
+                                    size="5" 
+                                    className="form-select form-select-lg rounded-3" 
+                                    value={formData.tags} 
+                                    onChange={handleTagsChange}
+                                >
+                                    {tagsList.map(t => <option key={t.id} value={t.id} className="p-2 border-bottom">{t.name}</option>)}
                                 </select>
                             </div>
                         </div>
 
-                        <div className="d-flex justify-content-end mt-4">
-                            <Link to="/admin/posts" className="btn btn-light me-2"><i className="fas fa-times"></i> Hủy</Link>
-                            <button type="submit" className="btn btn-primary px-4"><i className="fas fa-save"></i> Cập Nhật</button>
+                        <div className="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <Link to="/admin/posts" className="btn btn-light me-2 px-4"><i className="fas fa-times me-1"></i> Hủy</Link>
+                            <button type="submit" className="btn btn-primary px-4"><i className="fas fa-save me-1"></i> Cập Nhật</button>
                         </div>
                     </form>
                 </div>

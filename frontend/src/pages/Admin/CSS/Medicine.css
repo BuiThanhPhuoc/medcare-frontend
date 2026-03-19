@@ -1,0 +1,233 @@
+/* =========================================
+   MEDICINE MANAGER STYLES
+========================================= */
+
+.admin-container {
+    padding: 20px 30px;
+    background-color: #f8f9fa; /* Sáng và dịu mắt hơn một chút */
+    min-height: 100vh;
+}
+
+.admin-container h2 {
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* Bố cục 2 cột cho màn hình máy tính */
+.admin-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+/* =========================================
+   CỘT TRÁI: FORM THÊM THUỐC
+========================================= */
+.add-medicine-section {
+    flex: 1;
+    background: white;
+    padding: 25px;
+    border-radius: 12px; /* Bo góc tròn hơn cho hiện đại */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05); /* Đổ bóng mềm mại hơn */
+    position: sticky;
+    top: 20px;
+}
+
+.add-medicine-section h3, 
+.medicine-list-section h3 {
+    margin-bottom: 20px;
+    color: #34495e;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 12px;
+    font-weight: 600;
+}
+
+.medicine-form .form-group { 
+    margin-bottom: 18px; 
+}
+
+.medicine-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+}
+
+.medicine-form input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 15px;
+    transition: border-color 0.2s; /* Hiệu ứng mượt khi focus */
+}
+
+.medicine-form input:focus {
+    border-color: #8e44ad;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-add, .btn-cancel {
+    flex: 1;
+    padding: 12px;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.btn-add {
+    background-color: #8e44ad;
+}
+
+.btn-add:hover { 
+    background-color: #732d91; 
+    transform: translateY(-1px); /* Nổi lên một chút khi di chuột */
+    box-shadow: 0 4px 8px rgba(115, 45, 145, 0.2);
+}
+
+.btn-cancel {
+    background-color: #95a5a6;
+}
+
+.btn-cancel:hover {
+    background-color: #7f8c8d;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(127, 140, 141, 0.2);
+}
+
+/* =========================================
+   CỘT PHẢI: BẢNG DANH SÁCH THUỐC
+========================================= */
+.medicine-list-section {
+    flex: 2; /* Chiếm diện tích gấp đôi cột Form */
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.medicine-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.medicine-table th, 
+.medicine-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #edf2f9;
+    vertical-align: middle;
+}
+
+.medicine-table th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 700;
+    border-bottom: 2px solid #dee2e6;
+    white-space: nowrap;
+}
+
+.medicine-table tr:hover td { 
+    background-color: #f8f9fa; 
+}
+
+.text-center { 
+    text-align: center; 
+}
+
+/* =========================================
+   BADGE SỐ LƯỢNG (KHO)
+========================================= */
+.qty-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    color: white;
+    display: inline-block;
+}
+
+.in-stock { 
+    background-color: #10b981; /* Xanh lá nhạt chuẩn UI mới */
+}
+
+.low-stock { 
+    background-color: #ef4444; /* Đỏ nhạt chuẩn UI mới */
+    animation: pulse-red 2s infinite; /* Hiệu ứng nhấp nháy cho thuốc sắp hết */
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* =========================================
+   NÚT HÀNH ĐỘNG (EDIT/DELETE)
+========================================= */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-edit, .btn-delete {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+    background-color: #ecf0f1;
+}
+
+.btn-edit {
+    color: #f39c12;
+}
+
+.btn-edit:hover {
+    background-color: #f39c12;
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-delete {
+    color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background-color: #e74c3c;
+    color: white;
+    transform: scale(1.1);
+}
+
+/* =========================================
+   RESPONSIVE CHO ĐIỆN THOẠI / IPAD
+========================================= */
+@media (max-width: 992px) {
+    .admin-layout {
+        flex-direction: column; /* Gập thành 1 cột dọc */
+    }
+
+    .add-medicine-section, 
+    .medicine-list-section {
+        width: 100%;
+        position: static; /* Bỏ dính (sticky) trên mobile */
+    }
+}

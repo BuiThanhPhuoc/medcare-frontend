@@ -66,20 +66,23 @@ const SpecialtyList = () => {
                                         </tr>
                                     ) : specialties.map((item) => (
                                         <tr key={item.id} style={{ transition: 'background 0.2s' }}>
-                                            <td className="fw-semibold p-3">{item.ten}</td>
+                                            {/* Đổi item.ten thành item.name */}
+                                            <td className="fw-semibold p-3">{item.name}</td>
                                             <td className="p-3">
                                                 <span className="badge bg-secondary px-2 py-1" style={{ fontSize: '12px' }}>{item.slug || '---'}</span>
                                             </td>
                                             <td className="p-3">
+                                                {/* Đổi item.bac_sis_count thành item.doctors_count */}
                                                 <span className="badge bg-info text-dark px-3 py-2" style={{ fontSize: '13px' }}>
-                                                    {item.bac_sis_count || 0}
+                                                    {item.doctors_count || 0}
                                                 </span>
                                             </td>
                                             <td className="text-center text-nowrap p-3">
                                                 <Link to={`/admin/specialties/${item.id}/edit`} className="btn btn-sm btn-outline-primary me-2" title="Sửa">
                                                     <i className="fas fa-pencil-alt"></i>
                                                 </Link>
-                                                <button onClick={() => handleDelete(item.id, item.ten)} className="btn btn-sm btn-outline-danger" title="Xóa">
+                                                {/* Đổi item.ten thành item.name */}
+                                                <button onClick={() => handleDelete(item.id, item.name)} className="btn btn-sm btn-outline-danger" title="Xóa">
                                                     <i className="fas fa-trash"></i>
                                                 </button>
                                             </td>

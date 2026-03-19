@@ -1,62 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './CSS/Home.css';
 
 const Home = () => {
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
-        }
-    }, []);
-
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        setUser(null);
-        navigate('/');
-    };
-
+    // Không cần check user ở đây nữa vì đã có PublicRoute bảo vệ ở ngoài App.jsx rồi
     return (
         <div className="landing-page">
-            {/* NAVBAR */}
-            <nav className="navbar">
-                <div className="nav-container">
-                    <Link to="/" className="brand-logo">
-                        <i className="fas fa-heartbeat"></i>
-                        <span>MedCare</span>
-                    </Link>
-
-                    <div className="nav-links">
-                        <a href="#services">Dịch vụ</a>
-                        <a href="#features">Chuyên khoa</a>
-                        
-                        {/* Khu vực Auth */}
-                        {user ? (
-                            <div className="user-menu">
-                                <span className="welcome-text">
-                                    <i className="fas fa-user-circle me-1"></i> Xin chào, <strong>{user.username}</strong>
-                                </span>
-                                <button onClick={handleLogout} className="btn-logout">
-                                    <i className="fas fa-sign-out-alt"></i> Đăng xuất
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="auth-buttons">
-                                <Link to="/register" className="btn-register">Đăng Ký</Link>
-                                <Link to="/login" className="btn-login">
-                                    <i className="fas fa-sign-in-alt"></i> Đăng Nhập
-                                </Link>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            </nav>
-
-            {/* HERO SECTION */}
+            {/* HERO SECTION (Đã xóa Navbar đi vì GuestLayout đã lo việc đó) */}
             <section className="hero-section">
                 <div className="hero-container">
                     <div className="hero-content">
@@ -66,27 +15,10 @@ const Home = () => {
                         </p>
                         
                         <div className="hero-actions">
-                            {/* NẾU CHƯA ĐĂNG NHẬP */}
-                            {!user ? (
-                                <>
-                                    <Link to="/login" className="btn-primary-lg">
-                                        <i className="fas fa-calendar-check"></i> Đặt Lịch Ngay
-                                    </Link>
-                                    <a href="#services" className="btn-outline-lg">Tìm Hiểu Thêm</a>
-                                </>
-                            ) : (
-                                /* NẾU ĐÃ ĐĂNG NHẬP -> Hiện nút điều hướng về Nhà Riêng theo Role */
-                                <Link 
-                                    to={
-                                        user.role === 'doctor' ? '/doctor-home' : 
-                                        user.role === 'receptionist' ? '/reception-home' : 
-                                        user.role === 'admin' ? '/admin-home' : '/patient-home'
-                                    } 
-                                    className="btn-primary-lg"
-                                >
-                                    <i className="fas fa-desktop"></i> Vào Bảng Điều Khiển Của Bạn
-                                </Link>
-                            )}
+                            <Link to="/login" className="btn-primary-lg">
+                                <i className="fas fa-calendar-check"></i> Đặt Lịch Ngay
+                            </Link>
+                            <a href="#services" className="btn-outline-lg">Tìm Hiểu Thêm</a>
                         </div>
 
                         <div className="hero-stats">
@@ -141,25 +73,8 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-
-            {/* FOOTER */}
-            <footer className="footer">
-                <div className="footer-content">
-                    <div className="footer-brand">
-                        <h2><i className="fas fa-heartbeat"></i> MedCare</h2>
-                        <p>Dịch vụ chăm sóc sức khỏe toàn diện với hệ thống điều trị hiện đại, an toàn và tận tâm.</p>
-                    </div>
-                    <div className="footer-contact">
-                        <h3>Liên Hệ</h3>
-                        <p><i className="fas fa-map-marker-alt"></i> Khu Công Nghệ Cao, TP.Thủ Đức</p>
-                        <p><i className="fas fa-phone"></i> Hotline: 1900 1234</p>
-                        <p><i className="fas fa-envelope"></i> Email: support@medcare.vn</p>
-                    </div>
-                </div>
-                <div className="footer-bottom">
-                    <p>&copy; 2026 MedCare Clinic. All rights reserved.</p>
-                </div>
-            </footer>
+            
+            {/* Đã xóa Footer đi vì GuestLayout đã lo việc đó */}
         </div>
     );
 };

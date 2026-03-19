@@ -19,8 +19,10 @@ const DoctorLayout = ({ children, pageTitle = "Bác Sĩ" }) => {
                     <small>Bác Sĩ</small>
                 </div>
                 <nav className="sidebar-menu">
-                    <Link to="/doctor-home" className={location.pathname === '/doctor-home' ? 'active' : ''}><i className="fas fa-chart-line"></i> Tổng quan</Link>
+                    <Link to="/doctor-dashboard" className={location.pathname === '/doctor-dashboard' ? 'active' : ''}><i className="fas fa-chart-line"></i> Tổng quan</Link>
                     <Link to="/examine" className={location.pathname === '/examine' ? 'active' : ''}><i className="fas fa-users"></i> Hàng đợi khám</Link>
+                    <Link to="/doctor/schedules/register" className={location.pathname === '/doctor/schedules/register' ? 'active' : ''}><i className="fas fa-calendar-plus"></i> Đăng ký lịch</Link>
+                    <Link to="/doctor/schedule" className={location.pathname === '/doctor/schedule' ? 'active' : ''}><i className="fas fa-calendar-alt"></i> Lịch của tôi</Link>
                     <hr />
                     <button onClick={handleLogout} className="btn-logout-sidebar"><i className="fas fa-sign-out-alt"></i> Đăng xuất</button>
                 </nav>

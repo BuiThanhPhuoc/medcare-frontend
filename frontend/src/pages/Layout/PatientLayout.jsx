@@ -29,7 +29,7 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
                 </div>
 
                 <nav className="sidebar-menu">
-                    <Link to="/patient-home" className={location.pathname === '/patient-home' ? 'active' : ''}><i className="fas fa-th-large"></i> Tổng quan</Link>
+                    <Link to="/patient-dashboard" className={location.pathname === '/patient-dashboard' ? 'active' : ''}><i className="fas fa-th-large"></i> Tổng quan</Link>
                     <Link to="/book-appointment" className={location.pathname === '/book-appointment' ? 'active' : ''}><i className="fas fa-calendar-check"></i> Lịch hẹn khám</Link>
                     <Link to="/medical-history" className={location.pathname === '/medical-history' ? 'active' : ''}><i className="fas fa-file-medical"></i> Hồ sơ bệnh án</Link>
                     <hr />

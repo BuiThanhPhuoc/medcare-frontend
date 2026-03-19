@@ -25,7 +25,7 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
 
                 <nav className="sidebar-menu p-3">
                     <div className="menu-label text-muted fw-bold small text-uppercase mb-2"><i className="fas fa-th-large me-1"></i> Dashboard</div>
-                    <Link to="/reception-home" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception-home' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
+                    <Link to="/reception-dashboard" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception-dashboard' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
                         <i className="fas fa-tachometer-alt me-2" style={{width: '20px'}}></i> Tổng quan
                     </Link>
 

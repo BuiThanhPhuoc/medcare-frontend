@@ -44,7 +44,6 @@ const DoctorShow = () => {
             </div>
 
             <div className="row g-4">
-                {/* CỘT TRÁI: Avatar & Hành động */}
                 <div className="col-lg-4">
                     <div className="card shadow-sm border-0 mb-4 rounded-4">
                         <div className="card-body text-center p-4">
@@ -55,10 +54,10 @@ const DoctorShow = () => {
                                     <i className="fas fa-user-circle text-muted" style={{fontSize: '5rem'}}></i>
                                 </div>
                             )}
-                            <h4 className="fw-bold mb-1">{doctor.ho_ten}</h4>
-                            <p className="text-muted mb-3">{doctor.chuyen_khoa}</p>
-                            <span className={`badge ${doctor.trang_thai === 'Đang hoạt động' ? 'bg-success' : 'bg-danger'} fs-6 px-3 py-2 rounded-pill`}>
-                                {doctor.trang_thai || 'Đang hoạt động'}
+                            <h4 className="fw-bold mb-1">{doctor.full_name}</h4>
+                            <p className="text-muted mb-3">{doctor.specialty}</p>
+                            <span className={`badge ${doctor.status === 'Active' ? 'bg-success' : 'bg-danger'} fs-6 px-3 py-2 rounded-pill`}>
+                                {doctor.status === 'Active' ? 'Đang hoạt động' : 'Ngừng hoạt động'}
                             </span>
                         </div>
                     </div>
@@ -78,7 +77,6 @@ const DoctorShow = () => {
                     </div>
                 </div>
 
-                {/* CỘT PHẢI: Chi tiết & Đánh giá */}
                 <div className="col-lg-8">
                     <div className="card shadow-sm border-0 mb-4 rounded-4">
                         <div className="card-header bg-white py-3 border-0">
@@ -92,19 +90,19 @@ const DoctorShow = () => {
                                 </div>
                                 <div className="col-md-6">
                                     <strong className="text-muted d-block mb-1">Số điện thoại:</strong>
-                                    <p className="mb-0 fs-6">{doctor.so_dien_thoai || 'Chưa cập nhật'}</p>
+                                    <p className="mb-0 fs-6">{doctor.phone || 'Chưa cập nhật'}</p>
                                 </div>
                                 <div className="col-md-6">
                                     <strong className="text-muted d-block mb-1">Chuyên khoa:</strong>
-                                    <p className="mb-0 fs-6">{doctor.chuyen_khoa || 'Chưa cập nhật'}</p>
+                                    <p className="mb-0 fs-6">{doctor.specialty || 'Chưa cập nhật'}</p>
                                 </div>
                                 <div className="col-md-6">
                                     <strong className="text-muted d-block mb-1">Kinh nghiệm:</strong>
-                                    <p className="mb-0 fs-6">{doctor.kinh_nghiem ? `${doctor.kinh_nghiem} năm` : '0 năm'}</p>
+                                    <p className="mb-0 fs-6">{doctor.experience ? `${doctor.experience} năm` : '0 năm'}</p>
                                 </div>
                                 <div className="col-12">
                                     <strong className="text-muted d-block mb-1">Địa chỉ:</strong>
-                                    <p className="mb-0 fs-6">{doctor.dia_chi || 'Chưa cập nhật'}</p>
+                                    <p className="mb-0 fs-6">{doctor.address || 'Chưa cập nhật'}</p>
                                 </div>
                             </div>
                         </div>
@@ -115,23 +113,7 @@ const DoctorShow = () => {
                             <h5 className="mb-0 fw-bold">Mô tả / Giới thiệu</h5>
                         </div>
                         <div className="card-body">
-                            <p className="mb-0" style={{lineHeight: '1.6'}}>{doctor.mo_ta || 'Bác sĩ chưa cập nhật thông tin giới thiệu.'}</p>
-                        </div>
-                    </div>
-
-                    {/* Khối Thống kê Đánh giá (Mockup giao diện giống Laravel) */}
-                    <div className="card shadow-sm border-0 rounded-4">
-                        <div className="card-header bg-white py-3 border-0">
-                            <h5 className="mb-0 fw-bold"><i className="fas fa-star text-warning me-2"></i> Đánh giá</h5>
-                        </div>
-                        <div className="card-body d-flex align-items-center">
-                            <div className="display-4 fw-bold text-warning me-4">4.8</div>
-                            <div>
-                                <div className="mb-1 text-warning fs-5">
-                                    <i className="fas fa-star"></i> <i className="fas fa-star"></i> <i className="fas fa-star"></i> <i className="fas fa-star"></i> <i className="fas fa-star-half-alt"></i>
-                                </div>
-                                <small className="text-muted">Dựa trên 125 đánh giá từ bệnh nhân</small>
-                            </div>
+                            <p className="mb-0" style={{lineHeight: '1.6'}}>{doctor.description || 'Bác sĩ chưa cập nhật thông tin giới thiệu.'}</p>
                         </div>
                     </div>
                 </div>

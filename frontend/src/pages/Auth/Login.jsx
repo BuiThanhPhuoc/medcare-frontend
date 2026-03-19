@@ -20,19 +20,32 @@ const Login = () => {
                 password: password
             });
 
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('user', JSON.stringify(response.data.user));
+            const { token, user } = response.data;
 
-            // CHIA ĐƯỜNG DỰA VÀO ROLE CỦA USER
-            const userRole = response.data.user.role;
-            if (userRole === 'doctor') {
-                navigate('/doctor-home');
-            } else if (userRole === 'receptionist') {
-                navigate('/reception-home');
-            } else if (userRole === 'admin') {
-                navigate('/admin-home');
+            // Lưu token và thông tin user vào LocalStorage
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
+
+            // ========================================================
+            // 🔥 KIỂM TRA: NẾU LÀ ĐĂNG NHẬP LẦN ĐẦU -> BẮT ĐỔI MẬT KHẨU
+            // ========================================================
+            // is_first_login có thể là boolean (true) hoặc số (1) tùy CSDL
+            if (user.is_first_login === true || user.is_first_login === 1) {
+                navigate('/force-change-password');
+                return; // Dừng hàm tại đây, không chạy xuống dưới nữa
+            }
+
+            // ========================================================
+            // CHIA ĐƯỜNG DỰA VÀO ROLE NẾU ĐÃ ĐỔI MẬT KHẨU XONG
+            // ========================================================
+            if (user.role === 'doctor') {
+                navigate('/doctor-dashboard');
+            } else if (user.role === 'receptionist') {
+                navigate('/reception-dashboard');
+            } else if (user.role === 'admin') {
+                navigate('/admin-dashboard');
             } else {
-                navigate('/patient-home'); // <--- SỬA DÒNG NÀY: Bệnh nhân vào nhà của bệnh nhân
+                navigate('/patient-dashboard');
             }
 
         } catch (error) {

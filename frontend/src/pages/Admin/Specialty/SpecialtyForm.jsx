@@ -3,22 +3,22 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import api from '../../../lib/api';
 
 const SpecialtyForm = () => {
-    const { id } = useParams(); // Nếu có id -> Edit Mode
+    const { id } = useParams();
     const navigate = useNavigate();
     const isEditMode = Boolean(id);
 
     const [loading, setLoading] = useState(isEditMode);
-    const [doctorsList, setDoctorsList] = useState([]); // List bác sĩ để chọn
+    const [doctorsList, setDoctorsList] = useState([]);
 
+    // Đổi biến sang Tiếng Anh
     const [formData, setFormData] = useState({
-        ten: '',
+        name: '',
         slug: '',
-        mo_ta: '',
-        bac_si_ids: [] // Mảng ID bác sĩ được gán
+        description: '',
+        doctor_ids: [] 
     });
 
     useEffect(() => {
-        // Fetch danh sách toàn bộ Bác sĩ để đổ vào Select
         const fetchDoctors = async () => {
             try {
                 const res = await api.get('/api/admin/doctors');
@@ -26,16 +26,16 @@ const SpecialtyForm = () => {
             } catch (error) { console.error("Lỗi tải DS bác sĩ", error); }
         };
 
-        // Fetch chi tiết Chuyên khoa nếu đang ở chế độ Edit
         const fetchSpecialty = async () => {
             try {
                 const res = await api.get(`/api/admin/specialties/${id}`);
                 const data = res.data.specialty;
                 setFormData({
-                    ten: data.ten || '',
+                    name: data.name || '',
                     slug: data.slug || '',
-                    mo_ta: data.mo_ta || '',
-                    bac_si_ids: data.bac_sis ? data.bac_sis.map(bs => bs.id) : [] // Lấy mảng ID bác sĩ cũ
+                    description: data.description || '',
+                    // Backend trả về mảng doctor_ids
+                    doctor_ids: res.data.doctor_ids || [] 
                 });
                 setLoading(false);
             } catch {
@@ -52,22 +52,20 @@ const SpecialtyForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // Hàm xử lý khi chọn nhiều Bác sĩ (Multiple Select)
+    // Đổi bac_si_ids thành doctor_ids
     const handleDoctorSelectChange = (e) => {
         const selectedValues = Array.from(e.target.selectedOptions, option => parseInt(option.value));
-        setFormData({ ...formData, bac_si_ids: selectedValues });
+        setFormData({ ...formData, doctor_ids: selectedValues });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const config = {};
-            
             if (isEditMode) {
-                await api.put(`/api/admin/specialties/${id}`, formData, config);
+                await api.put(`/api/admin/specialties/${id}`, formData);
                 alert('Cập nhật chuyên khoa thành công!');
             } else {
-                await api.post('/api/admin/specialties', formData, config);
+                await api.post('/api/admin/specialties', formData);
                 alert('Thêm chuyên khoa thành công!');
             }
             navigate('/admin/specialties');
@@ -94,14 +92,13 @@ const SpecialtyForm = () => {
                 <div className="card-body p-4">
                     <form onSubmit={handleSubmit}>
                         <div className="row g-4">
-                            {/* Tên chuyên khoa */}
                             <div className="col-md-6">
                                 <label className="form-label fw-bold fs-6">Tên chuyên khoa <span className="text-danger">*</span></label>
-                                <input type="text" name="ten" className="form-control form-control-lg rounded-3" 
-                                    value={formData.ten} onChange={handleChange} required />
+                                {/* Đổi name="ten" thành name="name" */}
+                                <input type="text" name="name" className="form-control form-control-lg rounded-3" 
+                                    value={formData.name} onChange={handleChange} required />
                             </div>
 
-                            {/* Slug */}
                             <div className="col-md-6">
                                 <label className="form-label fw-bold fs-6">Slug (URL)</label>
                                 <input type="text" name="slug" className="form-control form-control-lg rounded-3" 
@@ -109,27 +106,28 @@ const SpecialtyForm = () => {
                                 <small className="text-muted mt-1 d-block">Để trống hệ thống sẽ tự tạo từ tên chuyên khoa</small>
                             </div>
 
-                            {/* Mô tả */}
                             <div className="col-12">
                                 <label className="form-label fw-bold fs-6">Mô tả chi tiết</label>
-                                <textarea name="mo_ta" rows="3" className="form-control form-control-lg rounded-3" 
-                                    style={{resize: 'none'}} value={formData.mo_ta} onChange={handleChange}></textarea>
+                                {/* Đổi name="mo_ta" thành name="description" */}
+                                <textarea name="description" rows="3" className="form-control form-control-lg rounded-3" 
+                                    style={{resize: 'none'}} value={formData.description} onChange={handleChange}></textarea>
                             </div>
 
-                            {/* Gán Bác Sĩ (Mô phỏng Select2 Multiple) */}
                             <div className="col-12">
                                 <label className="form-label fw-bold fs-6">Gán bác sĩ vào chuyên khoa</label>
+                                {/* Đổi name="bac_si_ids" thành name="doctor_ids" */}
                                 <select 
-                                    name="bac_si_ids" 
+                                    name="doctor_ids" 
                                     multiple 
                                     size="6" 
                                     className="form-select form-select-lg rounded-3" 
-                                    value={formData.bac_si_ids} 
+                                    value={formData.doctor_ids} 
                                     onChange={handleDoctorSelectChange}
                                 >
                                     {doctorsList.map((doc) => (
                                         <option key={doc.id} value={doc.id} className="p-2 border-bottom">
-                                            BS. {doc.ho_ten} {doc.email ? `(${doc.email})` : ''}
+                                            {/* Đổi doc.ho_ten thành doc.full_name */}
+                                            BS. {doc.full_name} {doc.email ? `(${doc.email})` : ''}
                                         </option>
                                     ))}
                                 </select>

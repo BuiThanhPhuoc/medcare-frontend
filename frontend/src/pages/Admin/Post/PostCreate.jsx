@@ -1,23 +1,43 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../../lib/api';
 
 const PostCreate = () => {
     const navigate = useNavigate();
-    // Giả lập Categories và Tags (Sẽ fetch từ API thực tế)
-    const categories = [{ id: 1, name: 'Tin tức Y Tế' }, { id: 2, name: 'Sức khỏe' }];
-    const tagsList = [{ id: 1, name: 'Covid-19' }, { id: 2, name: 'Dinh dưỡng' }];
+    
+    // Đổi sang state rỗng để hứng dữ liệu thật từ DB
+    const [categories, setCategories] = useState([]);
+    const [tagsList, setTagsList] = useState([]);
     
     const [formData, setFormData] = useState({
         title: '', danh_muc_id: '', status: 'draft', excerpt: '', 
         content: '', published_at: '', thumbnail: '', meta_title: '', meta_description: '', tags: []
     });
 
+    // Gọi API lấy Danh mục và Thẻ khi vừa vào trang
+    useEffect(() => {
+        const fetchCategoriesAndTags = async () => {
+            try {
+                // Giả định bạn có 2 API này ở Backend (nếu chưa có thì tí nữa ta tạo nhé)
+                const [catRes, tagRes] = await Promise.all([
+                    api.get('/api/admin/categories'),
+                    api.get('/api/admin/tags')
+                ]);
+                setCategories(catRes.data.categories || []);
+                setTagsList(tagRes.data.tags || []);
+            } catch (error) {
+                console.error("Lỗi tải danh mục hoặc thẻ:", error);
+            }
+        };
+        fetchCategoriesAndTags();
+    }, []);
+
     const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    // Handle chọn nhiều Tag
+    // Handle chọn nhiều Tag bằng Ctrl / Cmd
     const handleTagsChange = (e) => {
-        const values = Array.from(e.target.selectedOptions, option => option.value);
+        // Lấy tất cả các value của những option đang được bôi xanh
+        const values = Array.from(e.target.selectedOptions, option => parseInt(option.value));
         setFormData({ ...formData, tags: values });
     };
 
@@ -28,7 +48,7 @@ const PostCreate = () => {
             alert('Thêm bài viết thành công!');
             navigate('/admin/posts');
         } catch {
-            alert('Có lỗi xảy ra!');
+            alert('Có lỗi xảy ra khi lưu bài viết!');
         }
     };
 
@@ -36,10 +56,10 @@ const PostCreate = () => {
         <div className="container-fluid py-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h1 className="fw-bold fs-3">
-                    <i className="fas fa-pen-to-square me-2"></i> Thêm Bài viết
+                    <i className="fas fa-pen-to-square me-2 text-primary"></i> Thêm Bài viết
                 </h1>
                 <Link to="/admin/posts" className="btn btn-secondary">
-                    <i className="fas fa-arrow-left"></i> Quay lại
+                    <i className="fas fa-arrow-left me-1"></i> Quay lại
                 </Link>
             </div>
 
@@ -75,7 +95,6 @@ const PostCreate = () => {
 
                             <div className="col-md-12">
                                 <label className="form-label fw-bold fs-6">Nội dung <span className="text-danger">*</span></label>
-                                {/* Dùng textarea mặc định, nếu cần CKEditor có thể cài thư viện @ckeditor/ckeditor5-react sau */}
                                 <textarea name="content" className="form-control form-control-lg rounded-3" rows="10" value={formData.content} onChange={handleChange} required style={{resize: 'vertical'}}></textarea>
                             </div>
 
@@ -99,17 +118,25 @@ const PostCreate = () => {
                                 <textarea name="meta_description" rows="3" className="form-control form-control-lg rounded-3" value={formData.meta_description} onChange={handleChange} style={{resize: 'none'}}></textarea>
                             </div>
 
+                            {/* CHỌN NHIỀU THẺ BẰNG CTRL */}
                             <div className="col-md-12">
-                                <label className="form-label fw-bold fs-6">Thẻ (giữ Ctrl để chọn nhiều)</label>
-                                <select name="tags" multiple size="4" className="form-select form-select-lg rounded-3" value={formData.tags} onChange={handleTagsChange}>
-                                    {tagsList.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                <label className="form-label fw-bold fs-6">Thẻ (Giữ nút <b>Ctrl</b> hoặc <b>Cmd</b> để chọn nhiều thẻ)</label>
+                                <select 
+                                    name="tags" 
+                                    multiple 
+                                    size="5" 
+                                    className="form-select form-select-lg rounded-3" 
+                                    value={formData.tags} 
+                                    onChange={handleTagsChange}
+                                >
+                                    {tagsList.map(t => <option key={t.id} value={t.id} className="p-2 border-bottom">{t.name}</option>)}
                                 </select>
                             </div>
                         </div>
 
-                        <div className="d-flex justify-content-end mt-4">
-                            <Link to="/admin/posts" className="btn btn-light me-2"><i className="fas fa-times"></i> Hủy</Link>
-                            <button type="submit" className="btn btn-primary px-4"><i className="fas fa-save"></i> Lưu Bài Viết</button>
+                        <div className="d-flex justify-content-end mt-4 pt-3 border-top">
+                            <Link to="/admin/posts" className="btn btn-light me-2 px-4"><i className="fas fa-times me-1"></i> Hủy</Link>
+                            <button type="submit" className="btn btn-primary px-4"><i className="fas fa-save me-1"></i> Lưu Bài Viết</button>
                         </div>
                     </form>
                 </div>
