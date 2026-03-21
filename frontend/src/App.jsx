@@ -130,49 +130,49 @@ function App() {
           {/* ========================================== */}
           {/* PRIVATE ROUTES BỆNH NHÂN */}
           {/* ========================================== */}
-          <Route path="/patient-dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Tổng quan bệnh nhân"><PatientDashboard /></PatientLayout></ProtectedRoute>} />
-          <Route path="/book-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Đặt lịch khám"><BookAppointment /></PatientLayout></ProtectedRoute>} />
-          <Route path="/medical-history" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ bệnh án"><MedicalHistory /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient-dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="patient.title"><PatientDashboard /></PatientLayout></ProtectedRoute>} />
+          <Route path="/book-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="patient.bookAppointment"><BookAppointment /></PatientLayout></ProtectedRoute>} />
+          <Route path="/medical-history" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="patient.history"><MedicalHistory /></PatientLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES BÁC SĨ */}
           {/* ========================================== */}
-          <Route path="/doctor-dashboard" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Tổng quan bác sĩ"><DoctorDashboard /></DoctorLayout></ProtectedRoute>} />
-          <Route path="/examine" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Khám bệnh"><Examine /></DoctorLayout></ProtectedRoute>} />
-          <Route path="/doctor/schedules/register" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Đăng ký lịch làm việc"><ScheduleRegister /></DoctorLayout></ProtectedRoute>} />
-          <Route path="/doctor/schedule" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Lịch làm việc của tôi"><MySchedule /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor-dashboard" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="doctor.title"><DoctorDashboard /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/examine" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="doctor.examine"><Examine /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/schedules/register" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="doctor.register_schedule"><ScheduleRegister /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/schedule" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="doctor.my_schedule"><MySchedule /></DoctorLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES LỄ TÂN */}
           {/* ========================================== */}
-          <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Tổng quan lễ tân"><ReceptionDashboard /></ReceptionLayout></ProtectedRoute>} />
-          <Route path="/reception" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý tiếp tân"><Reception /></ReceptionLayout></ProtectedRoute>} />
-          <Route path="/billing" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý hóa đơn"><Billing /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="reception.dashboard"><ReceptionDashboard /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/reception" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="reception.manage_reception"><Reception /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/billing" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="reception.billing"><Billing /></ReceptionLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES ADMIN */}
           {/* ========================================== */}
-          <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Tổng quan admin"><AdminDashboard /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/schedules" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Phê Duyệt Lịch Làm Việc"><DoctorSchedule /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.title"><AdminDashboard /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/schedules" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.approveSchedules"><DoctorSchedule /></AdminLayout></ProtectedRoute>} />
 
           {/* CRUD BÁC SĨ */}
-          <Route path="/admin/doctors" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Bác Sĩ"><DoctorList /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/doctors/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm Bác Sĩ"><DoctorCreate /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/doctors/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Bác Sĩ"><DoctorEdit /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/doctors/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Chi Tiết Bác Sĩ"><DoctorShow /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/doctors" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.manageDoctors"><DoctorList /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/doctors/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.addDoctor"><DoctorCreate /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/doctors/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.editDoctor"><DoctorEdit /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/doctors/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.doctorDetails"><DoctorShow /></AdminLayout></ProtectedRoute>} />
 
           {/* CRUD BÀI VIẾT */}
-          <Route path="/admin/posts" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Bài Viết"><PostList /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/posts/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm Bài Viết"><PostCreate /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/posts/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Bài Viết"><PostEdit /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/posts/trashed" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Bài Viết Đã Xóa"><PostTrashed /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/posts" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.managePosts"><PostList /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/posts/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.addPost"><PostCreate /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/posts/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.editPost"><PostEdit /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/posts/trashed" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.trashedPosts"><PostTrashed /></AdminLayout></ProtectedRoute>} />
 
           {/* CRUD CHUYÊN KHOA */}
-          <Route path="/admin/specialties" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Chuyên Khoa"><SpecialtyList /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/specialties/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm Chuyên Khoa"><SpecialtyForm /></AdminLayout></ProtectedRoute>} />
-          <Route path="/admin/specialties/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Chuyên Khoa"><SpecialtyForm /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/specialties" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.specialties"><SpecialtyList /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/specialties/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.addSpecialty"><SpecialtyForm /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/specialties/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.editSpecialty"><SpecialtyForm /></AdminLayout></ProtectedRoute>} />
 
-          <Route path="/admin/medicines" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Kho Thuốc"><MedicineManager /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/medicines" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="admin.manageMedicines"><MedicineManager /></AdminLayout></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../lib/LanguageSwitcher';
 import './CSS/GuestLayout.css';
 
 const GuestLayout = ({ children }) => {
+    const { t } = useTranslation();
     return (
         <div className="guest-layout">
             {/* NAVBAR DÙNG CHUNG CHO KHÁCH */}
@@ -12,11 +15,12 @@ const GuestLayout = ({ children }) => {
                         <span>MedCare</span>
                     </Link>
                     <div className="nav-links">
-                        <Link to="/">Trang chủ</Link>
-                        <a href="#services">Dịch vụ</a>
+                        <Link to="/">{t('common.home')}</Link>
+                        <a href="#services">{t('common.services')}</a>
+                        <LanguageSwitcher />
                         <div className="auth-buttons">
-                            <Link to="/login" className="btn-login-outline">Đăng nhập</Link>
-                            <Link to="/register" className="btn-register-solid">Đăng ký</Link>
+                            <Link to="/login" className="btn-login-outline">{t('auth.loginButton')}</Link>
+                            <Link to="/register" className="btn-register-solid">{t('auth.registerButton')}</Link>
                         </div>
                     </div>
                 </div>
