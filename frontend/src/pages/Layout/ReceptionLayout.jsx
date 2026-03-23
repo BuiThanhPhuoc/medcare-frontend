@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import LanguageSwitcher from '../../lib/LanguageSwitcher';
 import './CSS/Layout.css'; // Dùng chung file CSS layout
 
 const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
@@ -59,7 +58,6 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
                     </div>
 
                     <div className="d-flex align-items-center gap-3">
-                        <LanguageSwitcher />
                         <div className="text-end d-none d-md-block">
                             <div className="fw-semibold text-dark">{user.username}</div>
                             <small className="text-muted">Nhân viên Lễ tân</small>
