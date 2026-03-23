@@ -96,32 +96,38 @@ const BookAppointment = () => {
     };
 
     return (
-        <div className="book-container">
-            {/* LOADING STATE */}
-            {doctorLoading && (
-                <div className="alert alert-info">
-                    <p>⏳ Đang tải danh sách bác sĩ...</p>
-                </div>
-            )}
+        <div className="book-appointment-container">
+            <div className="book-form-wrapper">
+                {/* LOADING STATE */}
+                {doctorLoading && (
+                    <div className="alert-modern alert-loading">
+                        <div className="spinner-dot"></div>
+                        <p>⏳ Đang tải danh sách bác sĩ...</p>
+                    </div>
+                )}
 
-            {/* ERROR STATE */}
-            {doctorError && (
-                <div className="alert alert-danger">
-                    <p>❌ {doctorError}</p>
-                    <button 
-                        type="button" 
-                        className="btn btn-sm btn-warning mt-2"
-                        onClick={() => window.location.reload()}
-                    >
-                        🔄 Tải lại
-                    </button>
-                </div>
-            )}
+                {/* ERROR STATE */}
+                {doctorError && (
+                    <div className="alert-modern alert-error">
+                        <i className="fas fa-exclamation-circle"></i>
+                        <p>{doctorError}</p>
+                        <button 
+                            type="button" 
+                            className="btn-reload"
+                            onClick={() => window.location.reload()}
+                        >
+                            🔄 Tải lại
+                        </button>
+                    </div>
+                )}
 
-            {/* FORM - chỉ show khi không lỗi */}
-            {!doctorError && (
-            <form className="book-form" onSubmit={handleSubmit}>
-                <h2>🗓️ Đặt Lịch Khám Bệnh</h2>
+                {/* FORM - chỉ show khi không lỗi */}
+                {!doctorError && (
+                <form className="book-form" onSubmit={handleSubmit}>
+                    <div className="form-header">
+                        <h2>🗓️ Đặt Lịch Khám Bệnh</h2>
+                        <p>Vui lòng điền đầy đủ thông tin để đặt lịch khám</p>
+                    </div>
                 
                 <div className="form-group">
                     <label>Chọn Bác Sĩ: {doctorLoading && <span className="spinner-border spinner-border-sm ms-2"></span>}</label>
@@ -133,7 +139,7 @@ const BookAppointment = () => {
                     >
                         <option value="">-- Chọn bác sĩ --</option>
                         {doctors.map(doc => (
-                            <option key={doc.id} value={doc.id}>Bác sĩ {doc.username}</option>
+                            <option key={doc.id} value={doc.id}>{doc.full_name}</option>
                         ))}
                     </select>
                     {doctors.length === 0 && !doctorLoading && <small className="text-danger">Không có bác sĩ nào đang hoạt động</small>}
@@ -146,32 +152,41 @@ const BookAppointment = () => {
                         value={date} 
                         onChange={(e) => setDate(e.target.value)} 
                         required 
+                        disabled={!doctorId}
                     />
+                    {!doctorId && <small className="text-muted">Vui lòng chọn bác sĩ trước</small>}
                 </div>
 
-                {/* TIME SLOTS PICKER */}
-                <div className="form-group">
-                    <label>Giờ khám: {loading && '⏳ Đang tải...'}</label>
-                    <div className="time-slots-grid">
-                        {timeSlots.map((slot) => {
-                            const isBooked = isSlotBooked(slot);
-                            return (
-                                <button
-                                    key={slot}
-                                    type="button"
-                                    className={`time-slot ${isBooked ? 'booked disabled' : ''} ${time === slot ? 'selected' : ''}`}
-                                    onClick={() => !isBooked && setTime(slot)}
-                                    disabled={isBooked}
-                                    title={isBooked ? 'Slot này đã được đặt' : 'Click để chọn'}
-                                >
-                                    {slot}
-                                    {isBooked && <span className="badge">Đã đặt</span>}
-                                </button>
-                            );
-                        })}
+                {/* TIME SLOTS PICKER - Chỉ hiển thị khi chọn xong bác sĩ và ngày */}
+                {doctorId && date ? (
+                    <div className="form-group">
+                        <label>Giờ khám: {loading && '⏳ Đang tải...'}</label>
+                        <div className="time-slots-grid">
+                            {timeSlots.map((slot) => {
+                                const isBooked = isSlotBooked(slot);
+                                return (
+                                    <button
+                                        key={slot}
+                                        type="button"
+                                        className={`time-slot ${isBooked ? 'booked disabled' : ''} ${time === slot ? 'selected' : ''}`}
+                                        onClick={() => !isBooked && setTime(slot)}
+                                        disabled={isBooked}
+                                        title={isBooked ? 'Slot này đã được đặt' : 'Click để chọn'}
+                                    >
+                                        {slot}
+                                        {isBooked && <span className="badge">Đã đặt</span>}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                        {!time && <p className="error-msg">⚠️ Vui lòng chọn giờ khám</p>}
                     </div>
-                    {!time && <p className="error-msg">⚠️ Vui lòng chọn giờ khám</p>}
-                </div>
+                ) : (
+                    <div className="alert-modern alert-loading">
+                        <i className="fas fa-info-circle"></i>
+                        <p>ℹ️ Vui lòng chọn bác sĩ và ngày khám trước để xem giờ khám có sẵn</p>
+                    </div>
+                )}
 
                 <div className="form-group">
                     <label>Lý do / Triệu chứng:</label>
@@ -189,6 +204,7 @@ const BookAppointment = () => {
                 </div>
             </form>
             )}
+            </div>
         </div>
     );
 };

@@ -11,12 +11,14 @@ import ForceChangePassword from './pages/Auth/ForceChangePassword';
 import PatientDashboard from './pages/Patient/PatientDashboard';
 import BookAppointment from './pages/Patient/Book/BookAppointment';
 import MedicalHistory from './pages/Patient/History/MedicalHistory';
+import PatientProfile from './pages/Patient/Profile/PatientProfile';
 
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import Examine from './pages/Doctor/Examine/Examine';
 
 import ReceptionDashboard from './pages/Reception/ReceptionDashboard';
 import Reception from './pages/Reception/Reception';
+import ReceptionMySchedule from './pages/Reception/MySchedule';
 import Billing from './pages/Bill/Billing';
 
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -52,7 +54,14 @@ import SpecialtyForm from './pages/Admin/Specialty/SpecialtyForm';
 // ==========================================
 import ScheduleRegister from './pages/Doctor/Schedule/ScheduleRegister';
 import MySchedule from './pages/Doctor/Schedule/MySchedule';
-import DoctorSchedule from './pages/Admin/Schedule/DoctorSchedule';
+import DoctorSchedule from './pages/Admin/Schedule/Doctor/DoctorSchedule';
+import ReceptionistList from './pages/Admin/Receptionist/ReceptionistList';
+import ReceptionistCreate from './pages/Admin/Receptionist/ReceptionistCreate';
+import ReceptionistEdit from './pages/Admin/Receptionist/ReceptionistEdit';
+import ReceptionistShow from './pages/Admin/Receptionist/ReceptionistShow';
+import ReceptionistScheduleList from './pages/Admin/Schedule/Receptionist/ReceptionistList';
+import ReceptionistSchedule from './pages/Admin/Schedule/Receptionist/ReceptionistSchedule';
+import UserList from './pages/Admin/User/UserList';
 
 
 // ==========================================
@@ -133,6 +142,7 @@ function App() {
           <Route path="/patient-dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Tổng quan bệnh nhân"><PatientDashboard /></PatientLayout></ProtectedRoute>} />
           <Route path="/book-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Đặt lịch khám"><BookAppointment /></PatientLayout></ProtectedRoute>} />
           <Route path="/medical-history" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ bệnh án"><MedicalHistory /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient-profile" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ cá nhân"><PatientProfile /></PatientLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES BÁC SĨ */}
@@ -147,13 +157,21 @@ function App() {
           {/* ========================================== */}
           <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Tổng quan lễ tân"><ReceptionDashboard /></ReceptionLayout></ProtectedRoute>} />
           <Route path="/reception" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý tiếp tân"><Reception /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/reception/my-schedule" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Lịch của tôi"><ReceptionMySchedule /></ReceptionLayout></ProtectedRoute>} />
           <Route path="/billing" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý hóa đơn"><Billing /></ReceptionLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES ADMIN */}
           {/* ========================================== */}
           <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Tổng quan admin"><AdminDashboard /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Người Dùng"><UserList /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/schedules" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Phê Duyệt Lịch Làm Việc"><DoctorSchedule /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/schedules/receptionists" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Lịch Lễ Tân"><ReceptionistScheduleList /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/receptionists" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Lễ Tân"><ReceptionistList /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin/receptionists/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm Lễ Tân"><ReceptionistCreate /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin/receptionists/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Lễ Tân"><ReceptionistEdit /></AdminLayout></ProtectedRoute>} />
+            <Route path="/admin/receptionists/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Chi Tiết Lễ Tân"><ReceptionistShow /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/receptionists/:receptionistId/schedule" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Gán Lịch Lễ Tân"><ReceptionistSchedule /></AdminLayout></ProtectedRoute>} />
 
           {/* CRUD BÁC SĨ */}
           <Route path="/admin/doctors" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Bác Sĩ"><DoctorList /></AdminLayout></ProtectedRoute>} />

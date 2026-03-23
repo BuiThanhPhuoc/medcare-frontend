@@ -24,29 +24,28 @@ const MedicalHistory = () => {
 
     return (
         <div className="history-container">
-            <h2>🏥 Lịch Sử Khám Bệnh & Đơn Thuốc Của Bạn</h2>
+            <h2>📋 Lịch Sử Khám Bệnh & Đơn Thuốc Của Bạn</h2>
             
             <div className="records-list">
                 {records.length === 0 ? (
-                    <p className="no-data">Bạn chưa có hồ sơ bệnh án nào.</p>
+                    <p className="no-data">Bạn chưa có hồ sơ bệnh án nào</p>
                 ) : (
                     records.map((record, index) => (
                         <div key={record.id} className="record-card">
                             <div className="record-header">
-                                <h3>Lần khám {records.length - index}: {formatDate(record.appointment_date)}</h3>
-                                <span className="doctor-badge">👨‍⚕️ Bác sĩ: {record.doctor_name}</span>
+                                <h3>Lần khám #{records.length - index} · {formatDate(record.appointment_date)}</h3>
+                                <span className="doctor-badge">👨‍⚕️ {record.doctor_name}</span>
                             </div>
                             
                             <div className="record-body">
                                 <div className="info-row">
-                                    <strong>🩺 Chẩn đoán:</strong> 
+                                    <strong>🩺 Chẩn đoán</strong>
                                     <p className="highlight-text">{record.diagnosis}</p>
                                 </div>
                                 
                                 <div className="info-row">
-                                    <strong>💊 Đơn thuốc:</strong> 
+                                    <strong>💊 Đơn thuốc</strong>
                                     <div className="prescription-box">
-                                        {/* Dùng pre-wrap để giữ nguyên định dạng xuống dòng của bác sĩ */}
                                         <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0 }}>
                                             {record.prescription}
                                         </pre>
@@ -55,7 +54,7 @@ const MedicalHistory = () => {
 
                                 {record.note && (
                                     <div className="info-row">
-                                        <strong>📌 Lời dặn:</strong> 
+                                        <strong>📌 Lời dặn</strong>
                                         <p>{record.note}</p>
                                     </div>
                                 )}

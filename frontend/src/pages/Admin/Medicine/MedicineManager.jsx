@@ -13,6 +13,14 @@ const MedicineManager = () => {
     const [price, setPrice] = useState('');
     const [expiryDate, setExpiryDate] = useState('');
 
+    // ===========================
+    // Excel import state
+    // ===========================
+    const [excelFile, setExcelFile] = useState(null);
+    const [importMode, setImportMode] = useState('merge'); // merge | replace | skip
+    const [importing, setImporting] = useState(false);
+    const [importFeedback, setImportFeedback] = useState(null); // { summary, errors }
+
     const fetchMedicines = async () => {
         try {
             const res = await api.get('/api/medicines');
@@ -106,6 +114,61 @@ const MedicineManager = () => {
         return date.toLocaleDateString('vi-VN');
     };
 
+    const handleDownloadTemplate = async () => {
+        try {
+            const res = await api.get('/api/medicines/template', { responseType: 'blob' });
+            const blob = new Blob([res.data], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'medicine_template.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            alert('❌ Không thể tải template Excel!');
+        }
+    };
+
+    const handleImportExcel = async (e) => {
+        e.preventDefault();
+        if (!excelFile) {
+            alert('⚠️ Vui lòng chọn file Excel (.xlsx/.xls) trước khi import!');
+            return;
+        }
+
+        try {
+            setImporting(true);
+            setImportFeedback(null);
+
+            const formData = new FormData();
+            formData.append('file', excelFile);
+            formData.append('mode', importMode);
+
+            const res = await api.post('/api/medicines/import', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            const { summary, errors } = res.data ?? {};
+            setImportFeedback({ summary, errors });
+            alert('✅ Import thành công!');
+            setExcelFile(null);
+            // refresh list
+            fetchMedicines();
+        } catch (error) {
+            const msg = error?.response?.data?.message || 'Không thể import Excel.';
+            alert('❌ ' + msg);
+            const summary = error?.response?.data?.summary;
+            const errorsList = error?.response?.data?.errors;
+            if (summary || errorsList) setImportFeedback({ summary, errors: errorsList });
+        } finally {
+            setImporting(false);
+        }
+    };
+
     return (
         <div className="admin-container">
             <h2>⚙️ Quản Trị Hệ Thống - Kho Thuốc</h2>
@@ -178,6 +241,81 @@ const MedicineManager = () => {
                             )}
                         </div>
                     </form>
+
+                    <div className="excel-import-section">
+                        <hr className="divider-soft" />
+                        <h4 className="excel-import-title">
+                            <i className="fas fa-file-excel me-2 text-success" />
+                            Nhập từ Excel
+                        </h4>
+
+                        <form onSubmit={handleImportExcel} className="excel-import-form">
+                            <div className="form-group">
+                                <label>Chọn file Excel:</label>
+                                <input
+                                    type="file"
+                                    accept=".xlsx,.xls"
+                                    onChange={(e) => {
+                                        const f = e.target.files?.[0];
+                                        setExcelFile(f || null);
+                                    }}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Chế độ xử lý trùng:</label>
+                                <select
+                                    className="form-select excel-import-select"
+                                    value={importMode}
+                                    onChange={(e) => setImportMode(e.target.value)}
+                                >
+                                    <option value="merge">merge (cộng số lượng)</option>
+                                    <option value="replace">replace (ghi đè)</option>
+                                    <option value="skip">skip (bỏ qua)</option>
+                                </select>
+                            </div>
+
+                            <div className="excel-import-actions">
+                                <button type="button" className="btn-template" onClick={handleDownloadTemplate} disabled={importing}>
+                                    <i className="fas fa-download me-1" /> Tải template
+                                </button>
+                                <button type="submit" className="btn-import" disabled={importing}>
+                                    {importing ? 'Đang import...' : 'Import'}
+                                </button>
+                            </div>
+                        </form>
+
+                        <div className="excel-import-note">
+                            Yêu cầu cột: <b>name</b>, <b>quantity</b>, <b>import_price</b>, <b>price</b>, <b>expiry_date</b>.
+                            <br />
+                            Khuyến nghị dùng đúng file template của hệ thống.
+                        </div>
+
+                        {importFeedback?.summary && (
+                            <div className="excel-import-result">
+                                <div className="fw-bold mb-2">Kết quả import</div>
+                                <div className="text-muted">
+                                    Inserted: <b>{importFeedback.summary.inserted ?? 0}</b> |
+                                    Updated: <b>{importFeedback.summary.updated ?? 0}</b> |
+                                    Skipped: <b>{importFeedback.summary.skipped ?? 0}</b> |
+                                    Errors: <b>{importFeedback.summary.errors ?? 0}</b>
+                                </div>
+                                {importFeedback.errors?.length > 0 && (
+                                    <div className="mt-2">
+                                        <div className="fw-bold text-danger mb-1">Một vài lỗi (tối đa 30 dòng):</div>
+                                        <div className="excel-error-list">
+                                            {importFeedback.errors.map((er, idx) => (
+                                                <div key={idx} className="excel-error-item">
+                                                    Dòng {er.row}: {er.message}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 {/* CỘT PHẢI: Bảng danh sách thuốc */}

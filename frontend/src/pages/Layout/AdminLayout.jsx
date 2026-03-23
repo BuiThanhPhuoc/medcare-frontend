@@ -47,8 +47,18 @@ const AdminLayout = ({ children, pageTitle = "Quản trị Phòng khám" }) => {
 
                         <li className="mb-2 text-muted small fw-bold text-uppercase">Quản lý nhân sự</li>
                         <li className="mb-2">
+                            <Link to="/admin/users" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin/users' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                                <i className="fas fa-users me-2 text-secondary"></i> Người Dùng
+                            </Link>
+                        </li>
+                        <li className="mb-2">
                             <Link to="/admin/doctors" className={`d-block p-2 rounded text-decoration-none ${location.pathname.includes('/admin/doctors') ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
                                 <i className="fas fa-user-md me-2 text-info"></i> Bác sĩ
+                            </Link>
+                        </li>
+                        <li className="mb-2">
+                            <Link to="/admin/receptionists" className={`d-block p-2 rounded text-decoration-none ${location.pathname.includes('/admin/receptionists') ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                                <i className="fas fa-headset me-2 text-primary"></i> Lễ Tân
                             </Link>
                         </li>
                         <li className="mb-2">
@@ -61,6 +71,11 @@ const AdminLayout = ({ children, pageTitle = "Quản trị Phòng khám" }) => {
                         <li className="mb-2">
                             <Link to="/admin/schedules" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin/schedules' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
                                 <i className="fas fa-calendar-check me-2 text-danger"></i> Phê duyệt lịch
+                            </Link>
+                        </li>
+                        <li className="mb-2">
+                            <Link to="/admin/schedules/receptionists" className={`d-block p-2 rounded text-decoration-none ${location.pathname === '/admin/schedules/receptionists' ? 'bg-primary text-white' : 'text-dark hover-bg-light'}`}>
+                                <i className="fas fa-calendar-alt me-2 text-warning"></i> Lịch Lễ Tân
                             </Link>
                         </li>
 

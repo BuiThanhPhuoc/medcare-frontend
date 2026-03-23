@@ -1,152 +1,329 @@
-.book-container {
+/* ================================================
+   MODERN APPOINTMENT BOOKING STYLES
+   ================================================ */
+
+.book-appointment-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background-color: #f4f7f6;
-    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.book-form-wrapper {
+    width: 100%;
+    max-width: 600px;
 }
 
 .book-form {
     background: white;
-    padding: 30px 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.5s ease-out;
 }
 
-.book-form h2 {
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-header {
+    margin-bottom: 30px;
     text-align: center;
-    color: #2c3e50;
+}
+
+.form-header h2 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin: 0 0 10px 0;
+}
+
+.form-header p {
+    color: #718096;
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Form Groups */
+.form-group {
     margin-bottom: 25px;
 }
 
-.book-form select,
-.book-form textarea {
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 0.95rem;
+}
+
+.form-group select,
+.form-group textarea,
+.form-group input[type="date"] {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+    color: #2d3748;
+}
+
+.form-group select:focus,
+.form-group textarea:focus,
+.form-group input[type="date"]:focus {
     outline: none;
-    font-size: 16px;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-.book-form textarea {
+.form-group select:disabled,
+.form-group input[type="date"]:disabled {
+    background: #f7fafc;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+.form-group textarea {
     resize: vertical;
-    min-height: 80px;
+    min-height: 100px;
 }
 
-.button-group {
-    display: flex;
-    gap: 15px;
-    margin-top: 20px;
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    color: #a0aec0;
+    font-size: 0.85rem;
 }
 
-.submit-btn {
-    flex: 2;
-    padding: 12px;
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
+.form-group small.text-muted {
+    color: #cbd5e0;
 }
-
-.submit-btn:hover { background-color: #2ecc71; }
-
-.cancel-btn {
-    flex: 1;
-    padding: 12px;
-    background-color: #95a5a6;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.cancel-btn:hover { background-color: #7f8c8d; }
 
 /* ============================================
    TIME SLOTS GRID
    ============================================ */
 .time-slots-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
-    margin-top: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 10px;
 }
 
 .time-slot {
     padding: 12px 8px;
-    border: 2px solid #3498db;
-    background-color: white;
-    color: #3498db;
-    border-radius: 6px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    color: #667eea;
+    border-radius: 10px;
     cursor: pointer;
     font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
 }
 
 .time-slot:hover:not(.disabled) {
-    background-color: #3498db;
-    color: white;
-    transform: scale(1.05);
+    border-color: #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
 }
 
 .time-slot.selected {
-    background-color: #27ae60;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    border-color: #27ae60;
+    border-color: transparent;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .time-slot.booked {
-    background-color: #e74c3c;
-    border-color: #e74c3c;
-    color: white;
-    opacity: 0.6;
+    background: #fed7d7;
+    border-color: #fc8181;
+    color: #c53030;
     cursor: not-allowed;
     position: relative;
 }
 
-.time-slot.booked .badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background-color: #c0392b;
-    color: white;
-    font-size: 10px;
-    padding: 2px 4px;
-    border-radius: 3px;
+.time-slot.booked:hover {
+    transform: none;
+    background: #fed7d7;
 }
 
 .time-slot:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
 .error-msg {
-    color: #e74c3c;
-    font-size: 13px;
-    margin-top: 8px;
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-/* Alert Styles */
-.alert {
-    padding: 15px 20px;
-    border-radius: 4px;
+/* ============================================
+   ALERTS
+   ============================================ */
+.alert-modern {
+    padding: 20px;
+    border-radius: 15px;
     margin-bottom: 20px;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
     animation: slideDown 0.3s ease-out;
 }
 
-.alert p {
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-modern p {
     margin: 0;
+    flex: 1;
+    font-weight: 500;
+}
+
+.alert-loading {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.alert-loading .spinner-dot {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #0369a1;
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.alert-error i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.btn-reload {
+    padding: 8px 16px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
+}
+
+.btn-reload:hover {
+    background: #b91c1c;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.button-group {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.submit-btn {
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+    padding: 14px 20px;
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn:hover {
+    background: #cbd5e0;
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 600px) {
+    .book-appointment-container {
+        padding: 20px 15px;
+    }
+    .book-form {
+        padding: 25px;
+    }
+    .form-header h2 {
+        font-size: 1.5rem;
+    }
+    .time-slots-grid {
+        grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+    }
+    .button-group {
+        grid-template-columns: 1fr;
+    }
 }
 
 .alert-info {

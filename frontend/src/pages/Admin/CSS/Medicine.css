@@ -231,3 +231,98 @@
         position: static; /* Bỏ dính (sticky) trên mobile */
     }
 }
+
+/* =========================================
+   EXCEL IMPORT SECTION
+========================================= */
+.excel-import-section {
+    margin-top: 18px;
+    padding-top: 14px;
+}
+
+.divider-soft {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 14px 0;
+}
+
+.excel-import-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 12px;
+}
+
+.excel-import-form .form-group {
+    margin-bottom: 14px;
+}
+
+.excel-import-select {
+    border-radius: 8px;
+}
+
+.excel-import-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-template, .btn-import {
+    flex: 1;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.btn-template {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.btn-template:hover {
+    background: #e0e7ff;
+    transform: translateY(-1px);
+}
+
+.btn-import {
+    background: #10b981;
+    color: #ffffff;
+}
+
+.btn-import:hover {
+    background: #059669;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.22);
+}
+
+.excel-import-note {
+    margin-top: 12px;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.excel-import-result {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid rgba(2, 132, 199, 0.15);
+}
+
+.excel-error-list {
+    max-height: 140px;
+    overflow: auto;
+    padding-right: 6px;
+}
+
+.excel-error-item {
+    color: #dc2626;
+    font-size: 13px;
+    margin-top: 6px;
+}

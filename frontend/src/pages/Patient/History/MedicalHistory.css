@@ -1,72 +1,164 @@
+/* ================================================
+   MODERN MEDICAL HISTORY STYLES
+   ================================================ */
+
 .history-container {
-    padding: 30px;
-    background-color: #f4f7f6;
     min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 40px 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .history-container h2 {
-    color: #2c3e50;
-    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin-bottom: 40px;
     text-align: center;
 }
 
 .records-list {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
 }
 
+/* ================================================
+   RECORD CARDS
+   ================================================ */
 .record-card {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border-radius: 15px;
     overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-left: 5px solid #667eea;
+}
+
+.record-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .record-header {
-    background-color: #3498db;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 15px 20px;
+    padding: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-.record-header h3 { margin: 0; font-size: 18px; }
+.record-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
 
 .doctor-badge {
-    background: rgba(255,255,255,0.2);
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: bold;
+    background: rgba(255, 255, 255, 0.25);
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    backdrop-filter: blur(10px);
 }
 
-.record-body { padding: 20px; }
+.record-body {
+    padding: 30px;
+}
 
-.info-row { margin-bottom: 15px; }
+.info-row {
+    margin-bottom: 25px;
+}
 
-.info-row strong { color: #34495e; display: block; margin-bottom: 5px; }
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-row strong {
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
 
 .highlight-text {
-    color: #e74c3c;
-    font-weight: bold;
-    font-size: 16px;
+    color: #dc2626;
+    font-weight: 700;
+    font-size: 1rem;
     margin: 0;
+    padding: 12px 15px;
+    background: #fee2e2;
+    border-radius: 8px;
+    border-left: 4px solid #dc2626;
 }
 
 .prescription-box {
-    background-color: #fdf2e9;
-    padding: 15px;
-    border-left: 4px solid #e67e22;
-    border-radius: 4px;
-    color: #d35400;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    padding: 18px;
+    border-left: 4px solid #f59e0b;
+    border-radius: 10px;
+    color: #b45309;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-family: 'Courier New', monospace;
+    overflow-x: auto;
+}
+
+.prescription-box pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ================================================
+   EMPTY STATE
+   ================================================ */
+.no-data {
+    text-align: center;
+    padding: 80px 20px;
+    color: #718096;
+}
+
+.no-data::before {
+    content: '📋';
+    display: block;
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
 }
 
 .no-data {
-    text-align: center;
-    font-size: 18px;
-    color: #7f8c8d;
-    margin-top: 50px;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+/* ================================================
+   RESPONSIVE
+   ================================================ */
+@media (max-width: 768px) {
+    .history-container {
+        padding: 20px 15px;
+    }
+    .history-container h2 {
+        font-size: 1.5rem;
+        margin-bottom: 30px;
+    }
+    .record-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .record-body {
+        padding: 20px;
+    }
+    .info-row {
+        margin-bottom: 20px;
+    }
 }

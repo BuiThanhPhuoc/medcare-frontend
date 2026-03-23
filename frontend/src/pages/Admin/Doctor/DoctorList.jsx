@@ -32,6 +32,8 @@ const DoctorList = () => {
             setLoading(false);
         } catch (error) {
             console.error("Lỗi tải dữ liệu", error);
+            console.error("Error response:", error.response?.data);
+            alert(`❌ Lỗi tải dữ liệu: ${error.response?.data?.message || error.message}`);
             setLoading(false);
         }
     };

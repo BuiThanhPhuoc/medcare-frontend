@@ -33,6 +33,8 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
                     <Link to="/book-appointment" className={location.pathname === '/book-appointment' ? 'active' : ''}><i className="fas fa-calendar-check"></i> Lịch hẹn khám</Link>
                     <Link to="/medical-history" className={location.pathname === '/medical-history' ? 'active' : ''}><i className="fas fa-file-medical"></i> Hồ sơ bệnh án</Link>
                     <hr />
+                    <Link to="/patient-profile" className={location.pathname === '/patient-profile' ? 'active' : ''}><i className="fas fa-user-edit"></i> Hồ sơ cá nhân</Link>
+                    <hr />
                     <button onClick={handleLogout} className="btn-logout-sidebar"><i className="fas fa-sign-out-alt"></i> Đăng xuất</button>
                 </nav>
             </aside>

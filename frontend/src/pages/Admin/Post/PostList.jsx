@@ -29,6 +29,8 @@ const PostList = () => {
             setLoading(false);
         } catch (error) {
             console.error("Lỗi tải dữ liệu:", error);
+            console.error("Error response:", error.response?.data);
+            alert(`❌ Lỗi tải bài viết: ${error.response?.data?.message || error.message}`);
             setLoading(false);
         }
     };
@@ -147,7 +149,7 @@ const PostList = () => {
                                 <thead className="table-light" style={{textTransform: 'uppercase', fontSize: '13px', fontWeight: 600}}>
                                     <tr>
                                         <th className="p-3 text-center" width="5%">ID</th>
-                                        <th className="p-3 text-center" width="8%">Ảnh</th> {/* CỘT ẢNH MỚI */}
+                                        <th className="p-3 text-center" width="8%">Ảnh</th>
                                         <th className="p-3" width="28%">Tiêu đề</th>
                                         <th className="p-3 text-center" width="15%">Danh mục</th>
                                         <th className="p-3 text-center" width="12%">Trạng thái</th>
@@ -158,7 +160,7 @@ const PostList = () => {
                                 <tbody>
                                     {filteredPosts.length === 0 ? (
                                         <tr>
-                                            <td colSpan="7" className="text-center py-5 text-muted"> {/* Đổi colSpan thành 7 */}
+                                            <td colSpan="7" className="text-center py-5 text-muted">
                                                 <i className="fas fa-search fs-2 mb-3 d-block opacity-50"></i>
                                                 Không tìm thấy bài viết nào phù hợp.
                                             </td>

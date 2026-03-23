@@ -36,6 +36,9 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
                     <Link to="/billing" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/billing' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
                         <i className="fas fa-cash-register me-2" style={{width: '20px'}}></i> Quầy Thu Ngân
                     </Link>
+                    <Link to="/reception/my-schedule" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception/my-schedule' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
+                        <i className="fas fa-calendar-alt me-2" style={{width: '20px'}}></i> Lịch của tôi
+                    </Link>
                     
                     <hr className="my-4" />
                     <button onClick={handleLogout} className="btn btn-light text-danger w-100 text-start fw-bold">
