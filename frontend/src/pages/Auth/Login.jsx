@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import api from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import './CSS/Login.css';
 
 const Login = () => {
+    const { t, i18n } = useTranslation();
+    console.log('Login component language:', i18n.language);
+
+    useEffect(() => {
+        console.log('Login: language changed to', i18n.language);
+    }, [i18n.language]);
     const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -60,30 +67,30 @@ const Login = () => {
     return (
         <div className="login-container">
             <form className="login-form" onSubmit={handleLogin}>
-                <h2>Đăng Nhập MedCare</h2>
+                <h2>{t('auth.loginButton')} MedCare</h2>
 
                 {errorMessage && <div className="error-message">{errorMessage}</div>}
 
                 <div className="form-group">
-                    <label>Tài khoản / Email / SĐT</label>
+                    <label>{t('auth.identifier')}</label>
                     <input
                         type="text" value={identifier} onChange={(e) => setIdentifier(e.target.value)}
-                        required placeholder="Nhập tài khoản..."
+                        required placeholder={t('auth.username')}
                     />
                 </div>
 
                 <div className="form-group">
-                    <label>Mật khẩu</label>
+                    <label>{t('auth.password')}</label>
                     <input
                         type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                        required placeholder="Nhập mật khẩu..."
+                        required placeholder={t('auth.password')}
                     />
                 </div>
 
-                <button type="submit" className="login-btn">Đăng Nhập</button>
+                <button type="submit" className="login-btn">{t('auth.loginButton')}</button>
 
                 <div style={{ textAlign: 'center', marginTop: '15px' }}>
-                    <p>Chưa có tài khoản? <Link to="/register" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>Đăng ký ngay</Link></p>
+                    <p>{t('auth.noAccount')} <Link to="/register" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>{t('auth.registerButton')}</Link></p>
                 </div>
             </form>
         </div>
