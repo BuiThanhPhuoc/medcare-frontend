@@ -10,17 +10,24 @@ const DoctorLayout = ({ children, pageTitle = "Bác Sĩ" }) => {
 
     const handleLogout = () => { localStorage.clear(); navigate('/login'); };
 
+    const isExamineSection =
+        location.pathname === '/examine' || location.pathname.startsWith('/doctor/examine/');
+
     return (
         <div className="app-wrapper doctor-theme">
             <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
-                <div className="sidebar-brand">
+                <Link
+                    to="/doctor-dashboard"
+                    className="sidebar-brand text-decoration-none"
+                    onClick={() => setIsMobileOpen(false)}
+                >
                     <i className="fas fa-heartbeat fs-3 mb-2"></i>
                     <h4>MedCare</h4>
                     <small>Bác Sĩ</small>
-                </div>
+                </Link>
                 <nav className="sidebar-menu">
                     <Link to="/doctor-dashboard" className={location.pathname === '/doctor-dashboard' ? 'active' : ''}><i className="fas fa-chart-line"></i> Tổng quan</Link>
-                    <Link to="/examine" className={location.pathname === '/examine' ? 'active' : ''}><i className="fas fa-users"></i> Hàng đợi khám</Link>
+                    <Link to="/examine" className={isExamineSection ? 'active' : ''}><i className="fas fa-users"></i> Hàng đợi khám</Link>
                     <Link to="/doctor/schedules/register" className={location.pathname === '/doctor/schedules/register' ? 'active' : ''}><i className="fas fa-calendar-plus"></i> Đăng ký lịch</Link>
                     <Link to="/doctor/schedule" className={location.pathname === '/doctor/schedule' ? 'active' : ''}><i className="fas fa-calendar-alt"></i> Lịch của tôi</Link>
                     <hr />

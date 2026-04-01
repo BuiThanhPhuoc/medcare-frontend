@@ -38,7 +38,7 @@ const DoctorEdit = () => {
                 
                 if (doc.avatar_url) setAvatarPreview(doc.avatar_url);
                 setLoading(false);
-            } catch (error) {
+            } catch {
                 alert("Không tìm thấy thông tin hoặc có lỗi xảy ra!");
                 navigate('/admin/doctors');
             }

@@ -91,13 +91,13 @@ const ReceptionistSchedule = () => {
     // Handle select all shifts for the week
     const handleSelectAllShifts = () => {
         const allSelected = Object.entries(newSchedules).every(
-            ([, shifts]) => shifts.morning && shifts.afternoon
+            ([, day]) => day.morning && day.afternoon
         );
 
         if (allSelected) {
             // Deselect all
             setNewSchedules(prev => 
-                Object.entries(prev).reduce((acc, [date, shifts]) => ({
+                Object.entries(prev).reduce((acc, [date]) => ({
                     ...acc,
                     [date]: { morning: false, afternoon: false }
                 }), {})
@@ -105,7 +105,7 @@ const ReceptionistSchedule = () => {
         } else {
             // Select all
             setNewSchedules(prev =>
-                Object.entries(prev).reduce((acc, [date, shifts]) => ({
+                Object.entries(prev).reduce((acc, [date]) => ({
                     ...acc,
                     [date]: { morning: true, afternoon: true }
                 }), {})

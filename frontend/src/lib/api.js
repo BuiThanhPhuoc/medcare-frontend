@@ -6,7 +6,6 @@ const api = axios.create({ baseURL });
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
-  console.log('🔍 [API Request] Token:', token ? '✅ Present' : '❌ Missing', 'URL:', config.url);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -16,10 +15,18 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+const isPublicAuthRequest = (url = '') =>
+  /\/api\/auth\/(login|register)\b/i.test(url);
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const reqUrl = error.config?.url || '';
+
     if (error.response?.status === 401) {
+      if (isPublicAuthRequest(reqUrl)) {
+        return Promise.reject(error);
+      }
       console.error('🔐 [401 Unauthorized] Token expired or invalid');
       localStorage.removeItem('token');
       localStorage.removeItem('user');

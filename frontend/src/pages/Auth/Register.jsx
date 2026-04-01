@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
-import './CSS/Login.css'; 
+import './Login.css'; 
 
 const Register = () => {
     const [username, setUsername] = useState('');
@@ -43,11 +43,13 @@ const Register = () => {
     };
 
     return (
-        <div className="login-container">
-            <form className="login-form" onSubmit={handleRegister}>
-                <h2>Đăng Ký Tài Khoản</h2>
-                
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
+        <div className="auth-page-wrap">
+            <div className="login-container">
+            <form className="login-form" onSubmit={handleRegister} noValidate>
+                <h2>Đăng ký</h2>
+                <p className="auth-subtitle">Tạo tài khoản bệnh nhân MedCare</p>
+
+                {errorMessage && <div className="error-message" role="alert">{errorMessage}</div>}
 
                 <div className="form-group">
                     <label>Họ và Tên (Username)</label>
@@ -90,12 +92,13 @@ const Register = () => {
                     />
                 </div>
 
-                <button type="submit" className="login-btn">Đăng Ký Ngay</button>
-                
-                <div style={{ textAlign: 'center', marginTop: '15px' }}>
-                    <p>Đã có tài khoản? <Link to="/login" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>Đăng nhập tại đây</Link></p>
-                </div>
+                <button type="submit" className="login-btn">Đăng ký</button>
+
+                <p className="auth-footer-link">
+                    Đã có tài khoản? <Link to="/login">Đăng nhập</Link>
+                </p>
             </form>
+            </div>
         </div>
     );
 };

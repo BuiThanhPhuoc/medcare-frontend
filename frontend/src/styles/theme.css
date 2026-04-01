@@ -1,0 +1,25 @@
+/* MedCare design tokens — dùng chung toàn app */
+:root {
+    --mc-font: 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mc-primary: #0d9488;
+    --mc-primary-hover: #0f766e;
+    --mc-primary-soft: rgba(13, 148, 136, 0.12);
+    --mc-accent: #6366f1;
+    --mc-accent-soft: rgba(99, 102, 241, 0.12);
+    --mc-danger: #dc2626;
+    --mc-warning: #d97706;
+    --mc-success: #059669;
+    --mc-bg: #f1f5f9;
+    --mc-surface: #ffffff;
+    --mc-elevated: #ffffff;
+    --mc-text: #0f172a;
+    --mc-text-muted: #64748b;
+    --mc-border: rgba(15, 23, 42, 0.08);
+    --mc-radius: 12px;
+    --mc-radius-sm: 8px;
+    --mc-radius-lg: 16px;
+    --mc-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.06);
+    --mc-shadow-lg: 0 20px 50px rgba(15, 23, 42, 0.12);
+    --mc-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --mc-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.35);
+}

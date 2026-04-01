@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // ==========================================
 // 1. IMPORT PAGES
@@ -12,17 +14,36 @@ import PatientDashboard from './pages/Patient/PatientDashboard';
 import BookAppointment from './pages/Patient/Book/BookAppointment';
 import MedicalHistory from './pages/Patient/History/MedicalHistory';
 import PatientProfile from './pages/Patient/Profile/PatientProfile';
+import MyAppointments from './pages/Patient/Appointments/MyAppointments';
+import MedicineOrdering from './pages/Patient/Medicines/MedicineOrdering';
+import DrugOrderDetail from './pages/Patient/Medicines/DrugOrderDetail';
+import DrugOrderHistory from './pages/Patient/Medicines/DrugOrderHistory';
 
 import DoctorDashboard from './pages/Doctor/DoctorDashboard';
 import Examine from './pages/Doctor/Examine/Examine';
+import DoctorMedicalRecord from './pages/Doctor/Examine/DoctorMedicalRecord';
+import DoctorVitalSignsPage from './pages/Doctor/Examine/DoctorVitalSignsPage';
+import DoctorLabIndicationPage from './pages/Doctor/Examine/DoctorLabIndicationPage';
+import LabTechnicianLayout from './pages/Layout/LabTechnicianLayout';
+import LabDashboard from './pages/Lab/LabDashboard';
+import LabOrderDetail from './pages/Lab/LabOrderDetail';
+import ReceptionLabFees from './pages/Reception/LabFees/ReceptionLabFees';
 
 import ReceptionDashboard from './pages/Reception/ReceptionDashboard';
-import Reception from './pages/Reception/Reception';
-import ReceptionMySchedule from './pages/Reception/MySchedule';
+import ReceptionCheckIn from './pages/Reception/Checkin/ReceptionCheckIn';
+import ReceptionMySchedule from './pages/Reception/Schedule/MySchedule';
 import Billing from './pages/Bill/Billing';
+import BillingInvoiceDetail from './pages/Bill/BillingInvoiceDetail';
+import PaymentSuccess from './pages/Bill/PaymentSuccess';
+import PaymentFailed from './pages/Bill/PaymentFailed';
 
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import MedicineManager from './pages/Admin/Medicine/MedicineManager';
+import MedicineInventoryPage from './pages/Admin/Medicine/MedicineInventoryPage';
+import MedicineCatalogPage from './pages/Admin/Medicine/MedicineCatalogPage';
+import MedicineBatchPage from './pages/Admin/Medicine/MedicineBatchPage';
+import LabTestsManager from './pages/Admin/LabTests/LabTestsManager';
+import LabTestCategoriesManager from './pages/Admin/LabTests/LabTestCategoriesManager';
 
 // ==========================================
 // 2. IMPORT LAYOUTS
@@ -45,6 +66,10 @@ import DoctorList from './pages/Admin/Doctor/DoctorList';
 import DoctorCreate from './pages/Admin/Doctor/DoctorCreate';
 import DoctorEdit from './pages/Admin/Doctor/DoctorEdit';
 import DoctorShow from './pages/Admin/Doctor/DoctorShow';
+import LabTechnicianList from './pages/Admin/LabTechnician/LabTechnicianList';
+import LabTechnicianCreate from './pages/Admin/LabTechnician/LabTechnicianCreate';
+import LabTechnicianEdit from './pages/Admin/LabTechnician/LabTechnicianEdit';
+import LabTechnicianShow from './pages/Admin/LabTechnician/LabTechnicianShow';
 
 import SpecialtyList from './pages/Admin/Specialty/SpecialtyList';
 import SpecialtyForm from './pages/Admin/Specialty/SpecialtyForm';
@@ -62,6 +87,7 @@ import ReceptionistShow from './pages/Admin/Receptionist/ReceptionistShow';
 import ReceptionistScheduleList from './pages/Admin/Schedule/Receptionist/ReceptionistList';
 import ReceptionistSchedule from './pages/Admin/Schedule/Receptionist/ReceptionistSchedule';
 import UserList from './pages/Admin/User/UserList';
+import AdminAppointmentCalendar from './pages/Admin/Appointment/AdminAppointmentCalendar';
 
 
 // ==========================================
@@ -74,15 +100,22 @@ const PublicRoute = ({ children }) => {
   try {
     const userStr = localStorage.getItem('user');
     if (userStr) user = JSON.parse(userStr);
-  } catch (error) {
+  } catch {
     localStorage.removeItem('user');
   }
 
   // Nếu đã đăng nhập rồi mà cố tình ra ngoài -> Đá về lại đúng nhà của mình
+  // NHƯNG: Nếu là lần đầu đăng nhập (is_first_login = true), cho xem trang đổi mật khẩu
   if (token && user) {
+    if (user.is_first_login === true || user.is_first_login === 1) {
+      // Cho phép xem trang force-change-password
+      return children;
+    }
+    
     if (user.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
     if (user.role === 'doctor') return <Navigate to="/doctor-dashboard" replace />;
     if (user.role === 'receptionist') return <Navigate to="/reception-dashboard" replace />;
+    if (user.role === 'lab_technician') return <Navigate to="/lab-dashboard" replace />;
     return <Navigate to="/patient-dashboard" replace />;
   }
 
@@ -101,7 +134,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   try {
     const userStr = localStorage.getItem('user');
     if (userStr) user = JSON.parse(userStr);
-  } catch (error) {
+  } catch {
     localStorage.removeItem('user');
   }
 
@@ -115,6 +148,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     if (user.role === 'doctor') return <Navigate to="/doctor-dashboard" replace />;
     if (user.role === 'receptionist') return <Navigate to="/reception-dashboard" replace />;
     if (user.role === 'admin') return <Navigate to="/admin-dashboard" replace />;
+    if (user.role === 'lab_technician') return <Navigate to="/lab-dashboard" replace />;
     return <Navigate to="/patient-dashboard" replace />;
   }
 
@@ -140,15 +174,25 @@ function App() {
           {/* PRIVATE ROUTES BỆNH NHÂN */}
           {/* ========================================== */}
           <Route path="/patient-dashboard" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Tổng quan bệnh nhân"><PatientDashboard /></PatientLayout></ProtectedRoute>} />
+          <Route path="/my-appointments" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Lịch khám của tôi"><MyAppointments /></PatientLayout></ProtectedRoute>} />
           <Route path="/book-appointment" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Đặt lịch khám"><BookAppointment /></PatientLayout></ProtectedRoute>} />
           <Route path="/medical-history" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ bệnh án"><MedicalHistory /></PatientLayout></ProtectedRoute>} />
           <Route path="/patient-profile" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ cá nhân"><PatientProfile /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient/medicines" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Mua Thuốc Online"><MedicineOrdering /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient/orders" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Lịch sử đơn hàng"><DrugOrderHistory /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient/orders/:orderId" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Chi tiết đơn hàng"><DrugOrderDetail /></PatientLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES BÁC SĨ */}
           {/* ========================================== */}
           <Route path="/doctor-dashboard" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Tổng quan bác sĩ"><DoctorDashboard /></DoctorLayout></ProtectedRoute>} />
-          <Route path="/examine" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Khám bệnh"><Examine /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/examine" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Hàng đợi khám"><Examine /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/examine/:appointmentId/write" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Viết bệnh án"><DoctorMedicalRecord /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/examine/:appointmentId/vitals" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Khám sức khỏe"><DoctorVitalSignsPage /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/examine/:appointmentId/lab" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Chỉ định xét nghiệm"><DoctorLabIndicationPage /></DoctorLayout></ProtectedRoute>} />
+
+          <Route path="/lab-dashboard" element={<ProtectedRoute allowedRoles={['lab_technician', 'admin']}><LabTechnicianLayout pageTitle="Hàng chờ xét nghiệm"><LabDashboard /></LabTechnicianLayout></ProtectedRoute>} />
+          <Route path="/lab/order/:orderId" element={<ProtectedRoute allowedRoles={['lab_technician', 'admin']}><LabTechnicianLayout pageTitle="Nhập kết quả"><LabOrderDetail /></LabTechnicianLayout></ProtectedRoute>} />
           <Route path="/doctor/schedules/register" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Đăng ký lịch làm việc"><ScheduleRegister /></DoctorLayout></ProtectedRoute>} />
           <Route path="/doctor/schedule" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Lịch làm việc của tôi"><MySchedule /></DoctorLayout></ProtectedRoute>} />
 
@@ -156,14 +200,21 @@ function App() {
           {/* PRIVATE ROUTES LỄ TÂN */}
           {/* ========================================== */}
           <Route path="/reception-dashboard" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Tổng quan lễ tân"><ReceptionDashboard /></ReceptionLayout></ProtectedRoute>} />
-          <Route path="/reception" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý tiếp tân"><Reception /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/reception/checkin" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Check-in Bệnh nhân"><ReceptionCheckIn /></ReceptionLayout></ProtectedRoute>} />
           <Route path="/reception/my-schedule" element={<ProtectedRoute allowedRoles={['receptionist']}><ReceptionLayout pageTitle="Lịch của tôi"><ReceptionMySchedule /></ReceptionLayout></ProtectedRoute>} />
           <Route path="/billing" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Quản lý hóa đơn"><Billing /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/billing/:appointmentId" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Chi tiết hóa đơn"><BillingInvoiceDetail /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/reception/lab-fees" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Thu phí xét nghiệm"><ReceptionLabFees /></ReceptionLayout></ProtectedRoute>} />
+
+          {/* VNPay return pages */}
+          <Route path="/payment-success" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Thanh toán"><PaymentSuccess /></ReceptionLayout></ProtectedRoute>} />
+          <Route path="/payment-failed" element={<ProtectedRoute allowedRoles={['receptionist', 'admin']}><ReceptionLayout pageTitle="Thanh toán"><PaymentFailed /></ReceptionLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES ADMIN */}
           {/* ========================================== */}
           <Route path="/admin-dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Tổng quan admin"><AdminDashboard /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/appointments" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Phê duyệt Lịch khám"><AdminAppointmentCalendar /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Người Dùng"><UserList /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/schedules" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Phê Duyệt Lịch Làm Việc"><DoctorSchedule /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/schedules/receptionists" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Lịch Lễ Tân"><ReceptionistScheduleList /></AdminLayout></ProtectedRoute>} />
@@ -179,6 +230,11 @@ function App() {
           <Route path="/admin/doctors/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Bác Sĩ"><DoctorEdit /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/doctors/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Chi Tiết Bác Sĩ"><DoctorShow /></AdminLayout></ProtectedRoute>} />
 
+          <Route path="/admin/lab-technicians" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Kỹ thuật viên xét nghiệm"><LabTechnicianList /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/lab-technicians/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm KTV xét nghiệm"><LabTechnicianCreate /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/lab-technicians/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa KTV xét nghiệm"><LabTechnicianEdit /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/lab-technicians/:id" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Chi tiết KTV"><LabTechnicianShow /></AdminLayout></ProtectedRoute>} />
+
           {/* CRUD BÀI VIẾT */}
           <Route path="/admin/posts" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Bài Viết"><PostList /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/posts/create" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Thêm Bài Viết"><PostCreate /></AdminLayout></ProtectedRoute>} />
@@ -191,7 +247,26 @@ function App() {
           <Route path="/admin/specialties/:id/edit" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Sửa Chuyên Khoa"><SpecialtyForm /></AdminLayout></ProtectedRoute>} />
 
           <Route path="/admin/medicines" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Kho Thuốc"><MedicineManager /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/medicines/inventory" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý kho thuốc"><MedicineInventoryPage /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/medicines/catalog" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Danh mục thuốc"><MedicineCatalogPage /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/medicines/batches" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý lô thuốc"><MedicineBatchPage /></AdminLayout></ProtectedRoute>} />
+
+          {/* CRUD XÉT NGHIỆM */}
+          <Route path="/admin/lab-tests" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý xét nghiệm"><LabTestsManager /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/lab-test-categories" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Danh mục xét nghiệm"><LabTestCategoriesManager /></AdminLayout></ProtectedRoute>} />
         </Routes>
+        <ToastContainer 
+          position="top-right" 
+          autoClose={3000} 
+          hideProgressBar={false} 
+          newestOnTop={true} 
+          closeOnClick 
+          rtl={false} 
+          pauseOnFocusLoss 
+          draggable 
+          pauseOnHover 
+          theme="light"
+        />
       </div>
     </Router>
   );

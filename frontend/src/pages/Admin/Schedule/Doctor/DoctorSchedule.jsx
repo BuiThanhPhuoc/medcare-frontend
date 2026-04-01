@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../../../lib/api';
-// Nhúng Component Chi tiết vừa tạo vào
-import DoctorScheduleDetail from './DoctorScheduleDetail'; 
+import DoctorScheduleDetail from './DoctorScheduleDetail';
+import './DoctorSchedule.css'; 
 
 const DoctorSchedule = () => {
     const [pendingSchedules, setPendingSchedules] = useState([]);
@@ -42,7 +42,9 @@ const DoctorSchedule = () => {
             await api.put('/api/admin/schedules/bulk-update', { ids: selectedScheduleIds, status });
             alert(`Đã ${actionName} thành công!`);
             fetchPendingSchedules();
-        } catch (error) { alert("Có lỗi xảy ra!"); }
+        } catch {
+            alert("Có lỗi xảy ra!");
+        }
     };
 
     // ==========================================
@@ -78,17 +80,18 @@ const DoctorSchedule = () => {
     };
 
     return (
-        <div className="container-fluid py-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="fw-bold mb-0">
-                    <i className="fas fa-clipboard-list text-primary me-2"></i> Danh sách chờ duyệt
+        <div className="container-fluid py-3 doctor-schedule-page">
+            <div className="schedule-page-head">
+                <h2>
+                    <i className="fas fa-clipboard-list text-primary me-2" aria-hidden />
+                    Danh sách chờ duyệt
                 </h2>
-                <span className="badge bg-danger fs-6 px-3 py-2">Tổng: {pendingSchedules.length} ca</span>
+                <span className="badge bg-warning text-dark px-3 py-2">Tổng: {pendingSchedules.length} ca</span>
             </div>
 
-            <div className="card shadow-sm border-0" style={{ borderRadius: '12px', overflow: 'hidden' }}>
-                <div className="card-header bg-white py-3 d-flex justify-content-between align-items-center">
-                    <h5 className="mb-0 text-secondary fw-bold">Danh sách Bác sĩ</h5>
+            <div className="card shadow-sm border-0 schedule-card">
+                <div className="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <h5 className="mb-0 text-secondary fw-bold small text-uppercase schedule-card-subtitle">Danh sách bác sĩ</h5>
                     {selectedScheduleIds.length > 0 && (
                         <div>
                             <span className="text-muted me-3">Đã chọn: <b>{selectedScheduleIds.length}</b> ca</span>
@@ -110,21 +113,28 @@ const DoctorSchedule = () => {
                         </div>
                     ) : (
                         <div className="table-responsive">
-                            <table className="table table-hover align-middle mb-0">
-                                <thead className="table-light">
+                            <table className="table table-sm table-hover align-middle mb-0 schedule-table">
+                                <thead>
                                     <tr>
-                                        <th width="5%" className="text-center py-3">
-                                            <input 
-                                                type="checkbox" className="form-check-input" 
-                                                checked={pendingSchedules.length > 0 && pendingSchedules.every(s => selectedScheduleIds.includes(s.id))}
-                                                onChange={(e) => setSelectedScheduleIds(e.target.checked ? pendingSchedules.map(s => s.id) : [])}
+                                        <th style={{ width: '42px' }} className="text-center">
+                                            <input
+                                                type="checkbox"
+                                                className="form-check-input"
+                                                checked={pendingSchedules.length > 0 && pendingSchedules.every((s) => selectedScheduleIds.includes(s.id))}
+                                                onChange={(e) => setSelectedScheduleIds(e.target.checked ? pendingSchedules.map((s) => s.id) : [])}
+                                                aria-label="Chọn tất cả"
                                             />
                                         </th>
-                                        <th width="5%" className="text-center py-3">STT</th>
-                                        <th width="40%" className="py-3">Họ tên Bác sĩ</th>
-                                        <th width="20%" className="text-center py-3">Số lượng ca</th>
-                                        <th width="15%" className="text-center py-3">Chi tiết</th>
-                                        <th width="15%" className="text-center py-3"></th>
+                                        <th style={{ width: '48px' }} className="text-center">
+                                            STT
+                                        </th>
+                                        <th>Họ tên bác sĩ</th>
+                                        <th style={{ width: '120px' }} className="text-center">
+                                            Số ca
+                                        </th>
+                                        <th style={{ width: '160px' }} className="text-center">
+                                            Chi tiết
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -132,23 +142,33 @@ const DoctorSchedule = () => {
                                         const count = groupedSchedules[docName].length;
                                         const isChecked = isDoctorFullySelected(docName);
                                         return (
-                                            <tr key={index} className={isChecked ? "bg-primary bg-opacity-10" : ""}>
+                                            <tr key={docName} className={isChecked ? 'table-primary' : ''}>
                                                 <td className="text-center">
-                                                    <input 
-                                                        type="checkbox" className="form-check-input" 
+                                                    <input
+                                                        type="checkbox"
+                                                        className="form-check-input"
                                                         checked={isChecked}
                                                         onChange={(e) => handleSelectDoctor(docName, e.target.checked)}
+                                                        aria-label={`Chọn ${docName}`}
                                                     />
                                                 </td>
-                                                <td className="text-center fw-bold text-muted">{index + 1}</td>
-                                                <td><strong className="text-dark fs-6">BS. {docName}</strong></td>
-                                                <td className="text-center"><span className="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2 rounded-pill">{count} ca chờ duyệt</span></td>
+                                                <td className="text-center fw-semibold text-muted">{index + 1}</td>
+                                                <td>
+                                                    <strong className="text-dark">BS. {docName}</strong>
+                                                </td>
                                                 <td className="text-center">
-                                                    <button className="btn btn-sm btn-outline-info rounded-pill px-3" onClick={() => setSelectedDoctorName(docName)}>
-                                                        Xem chi tiết <i className="fas fa-arrow-right ms-1"></i>
+                                                    <span className="shift-count-badge">{count}</span>
+                                                    <span className="text-muted small ms-1 d-none d-md-inline">ca chờ</span>
+                                                </td>
+                                                <td className="text-center">
+                                                    <button
+                                                        type="button"
+                                                        className="btn btn-sm btn-outline-primary"
+                                                        onClick={() => setSelectedDoctorName(docName)}
+                                                    >
+                                                        Chi tiết <i className="fas fa-arrow-right ms-1" aria-hidden />
                                                     </button>
                                                 </td>
-                                                <td></td>
                                             </tr>
                                         );
                                     })}

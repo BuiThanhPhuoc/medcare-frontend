@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import '../CSS/Reception.css';
+import '../ReceptionDashboard.css';
 
 /**
  * ReceptionHeader Component

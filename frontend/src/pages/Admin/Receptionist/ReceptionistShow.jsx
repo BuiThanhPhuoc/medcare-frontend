@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import api from '../../../lib/api';
 
 const ReceptionistShow = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const [receptionist, setReceptionist] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -124,12 +123,14 @@ const ReceptionistShow = () => {
                             >
                                 <i className="fas fa-edit me-2"></i>Chỉnh Sửa
                             </Link>
+                            {receptionist.receptionist_id != null && (
                             <Link
-                                to={`/admin/receptionists/${receptionist.id}/schedule`}
+                                to={`/admin/receptionists/${receptionist.receptionist_id}/schedule`}
                                 className="btn btn-info w-100"
                             >
                                 <i className="fas fa-calendar me-2"></i>Gán Lịch Làm Việc
                             </Link>
+                            )}
                         </div>
                     </div>
                 </div>

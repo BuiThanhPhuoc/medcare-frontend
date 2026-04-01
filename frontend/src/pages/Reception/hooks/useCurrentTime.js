@@ -1,24 +1,19 @@
 import { useState, useEffect } from 'react';
 
 /**
- * Custom hook để quản lý thời gian hiện tại
- * Tự động cập nhật mỗi 60 giây
+ * Hook to manage current time updates
  */
 export const useCurrentTime = () => {
-    const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(new Date());
 
-    useEffect(() => {
-        // Set lần đầu ngay lập tức
-        setCurrentTime(new Date());
+  useEffect(() => {
+    // Update time every second
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
 
-        // Setup interval update mỗi 60s
-        const timer = setInterval(() => {
-            setCurrentTime(new Date());
-        }, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
-        // Cleanup
-        return () => clearInterval(timer);
-    }, []);
-
-    return currentTime;
+  return currentTime;
 };

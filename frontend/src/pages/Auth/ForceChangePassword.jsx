@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../lib/api';
+import './Login.css';
 
 const ForceChangePassword = () => {
     const navigate = useNavigate();
@@ -14,59 +15,74 @@ const ForceChangePassword = () => {
         setError('');
 
         try {
-            const token = localStorage.getItem('token');
-            const user = JSON.parse(localStorage.getItem('user'));
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-            await axios.post('http://localhost:5000/api/auth/force-change-password', passwords, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/api/auth/force-change-password', passwords);
 
-            alert('Đổi mật khẩu thành công! Chào mừng bạn đến với hệ thống.');
-            
-            // Cập nhật lại localStorage để tắt cờ
+            alert('Đổi mật khẩu thành công. Chào mừng bạn đến với hệ thống.');
+
             user.is_first_login = false;
             localStorage.setItem('user', JSON.stringify(user));
 
-            // Chuyển hướng vào Dashboard tương ứng
             if (user.role === 'doctor') navigate('/doctor-dashboard');
             else if (user.role === 'receptionist') navigate('/reception-dashboard');
             else if (user.role === 'admin') navigate('/admin-dashboard');
+            else if (user.role === 'lab_technician') navigate('/lab-dashboard');
             else navigate('/patient-dashboard');
-
-        } catch (error) {
-            setError(error.response?.data?.message || "Có lỗi xảy ra, vui lòng thử lại!");
+        } catch (err) {
+            setError(err.response?.data?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
         }
     };
 
     return (
-        <div className="container mt-5" style={{maxWidth: '500px'}}>
-            <div className="card shadow border-0" style={{borderRadius: '15px'}}>
-                <div className="card-body p-5">
-                    <div className="text-center mb-4">
-                        <i className="fas fa-shield-alt fs-1 text-warning mb-3"></i>
-                        <h4 className="fw-bold">Bảo Mật Tài Khoản</h4>
-                        <p className="text-muted small">Đây là lần đăng nhập đầu tiên của bạn. Vui lòng đổi mật khẩu để bảo vệ tài khoản.</p>
+        <div className="auth-page-wrap">
+            <div className="login-container">
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <div className="text-center mb-3">
+                        <i className="fas fa-shield-alt fs-1 text-warning mb-2 d-block" aria-hidden />
+                        <h2 className="mb-0">Bảo mật tài khoản</h2>
+                        <p className="auth-subtitle mb-0">
+                            Lần đăng nhập đầu tiên — vui lòng đặt mật khẩu mới để tiếp tục.
+                        </p>
                     </div>
 
-                    {error && <div className="alert alert-danger">{error}</div>}
+                    {error && (
+                        <div className="error-message" role="alert">
+                            {error}
+                        </div>
+                    )}
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label fw-bold">Mật khẩu mới</label>
-                            <input type="password" name="newPassword" value={passwords.newPassword} onChange={handleChange} className="form-control form-control-lg" required />
-                            <small className="text-muted" style={{fontSize: '12px'}}>
-                                Yêu cầu: Bắt buộc 8 ký tự, chứa ít nhất 1 CHỮ HOA và 1 ký tự đặc biệt (!@#$...).
-                            </small>
-                        </div>
-                        <div className="mb-4">
-                            <label className="form-label fw-bold">Nhập lại mật khẩu</label>
-                            <input type="password" name="confirmPassword" value={passwords.confirmPassword} onChange={handleChange} className="form-control form-control-lg" required />
-                        </div>
-                        <button type="submit" className="btn btn-warning w-100 fw-bold py-2 fs-5 text-dark">
-                            Cập nhật & Truy cập hệ thống
-                        </button>
-                    </form>
-                </div>
+                    <div className="form-group">
+                        <label htmlFor="newPassword">Mật khẩu mới</label>
+                        <input
+                            id="newPassword"
+                            type="password"
+                            name="newPassword"
+                            value={passwords.newPassword}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                        />
+                        <small className="text-muted d-block mt-1" style={{ fontSize: '0.8rem' }}>
+                            Ít nhất 8 ký tự, gồm 1 chữ hoa và 1 ký tự đặc biệt.
+                        </small>
+                    </div>
+                    <div className="form-group">
+                        <label htmlFor="confirmPassword">Nhập lại mật khẩu</label>
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            name="confirmPassword"
+                            value={passwords.confirmPassword}
+                            onChange={handleChange}
+                            required
+                            autoComplete="new-password"
+                        />
+                    </div>
+                    <button type="submit" className="login-btn">
+                        Cập nhật và vào hệ thống
+                    </button>
+                </form>
             </div>
         </div>
     );

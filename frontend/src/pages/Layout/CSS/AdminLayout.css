@@ -1,0 +1,260 @@
+/* Admin shell — scoped to .admin-theme in AdminLayout */
+
+.admin-theme .sidebar.admin-sidebar {
+    width: 260px;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border-right: 1px solid rgba(17, 24, 39, 0.08);
+    box-shadow: 4px 0 24px rgba(17, 24, 39, 0.04);
+}
+
+.admin-theme .admin-sidebar-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding: 1.25rem 1rem 1rem;
+}
+
+.admin-theme .admin-sidebar-brand {
+    flex-shrink: 0;
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.admin-theme .admin-sidebar-brand a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.admin-theme .admin-sidebar-brand-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.02em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-theme .admin-sidebar-brand-title i {
+    color: var(--primary-color, #8b5cf6);
+    font-size: 1.15rem;
+}
+
+.admin-theme .admin-sidebar-brand-sub {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.25rem;
+    padding-left: 1.85rem;
+}
+
+.admin-theme .admin-sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 0.25rem;
+    margin-right: -0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(139, 92, 246, 0.35) transparent;
+}
+
+.admin-theme .admin-sidebar-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.admin-theme .admin-sidebar-scroll::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.35);
+    border-radius: 999px;
+}
+
+.admin-theme li.admin-nav-section-label {
+    list-style: none;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9ca3af;
+    margin: 1rem 0 0.5rem 0.5rem;
+    padding: 0;
+}
+
+.admin-theme li.admin-nav-section-label:first-child {
+    margin-top: 0;
+}
+
+.admin-theme .admin-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.15s ease, color 0.15s ease;
+    border: none;
+    background: transparent;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.admin-theme .admin-nav-link:hover {
+    background: rgba(139, 92, 246, 0.08);
+    color: #111827;
+}
+
+.admin-theme .admin-nav-link--active {
+    background: rgba(139, 92, 246, 0.14);
+    color: var(--primary-color, #8b5cf6);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--primary-color, #8b5cf6);
+    padding-left: calc(0.75rem - 3px);
+}
+
+.admin-theme .admin-nav-link--active i {
+    color: var(--primary-color, #8b5cf6);
+}
+
+.admin-theme .admin-nav-submenu {
+    list-style: none;
+    padding: 0.25rem 0 0.5rem 0.5rem;
+    margin: 0;
+    border-left: 2px solid rgba(139, 92, 246, 0.2);
+    margin-left: 0.85rem;
+}
+
+.admin-theme .admin-nav-submenu .admin-nav-link {
+    font-size: 0.85rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 8px;
+}
+
+.admin-theme .admin-nav-toggle {
+    justify-content: space-between;
+}
+
+.admin-theme .admin-nav-toggle .admin-nav-chevron {
+    font-size: 0.65rem;
+    opacity: 0.7;
+    transition: transform 0.2s ease;
+}
+
+.admin-theme .admin-nav-toggle[aria-expanded="true"] .admin-nav-chevron {
+    transform: rotate(90deg);
+}
+
+.admin-theme .admin-sidebar-footer {
+    flex-shrink: 0;
+    padding-top: 0.75rem;
+    margin-top: 0.5rem;
+    border-top: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.admin-theme .admin-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: #b91c1c;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+.admin-theme .admin-logout-btn:hover {
+    background: rgba(185, 28, 28, 0.08);
+}
+
+.admin-theme .main-content {
+    margin-left: 260px;
+}
+
+.admin-theme .topbar {
+    background: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+    box-shadow: 0 1px 0 rgba(17, 24, 39, 0.04);
+}
+
+.admin-theme .page-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #111827;
+}
+
+.admin-theme .content-wrapper {
+    background: linear-gradient(180deg, #f3f4f6 0%, #f9fafb 40%);
+}
+
+.admin-theme .avatar-small {
+    background: linear-gradient(135deg, var(--primary-color, #8b5cf6), #6366f1);
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.35);
+}
+
+/* Bootstrap primary aligned with admin purple inside admin shell */
+.admin-theme .btn-primary {
+    background-color: var(--primary-color, #8b5cf6);
+    border-color: var(--primary-color, #8b5cf6);
+}
+
+.admin-theme .btn-primary:hover,
+.admin-theme .btn-primary:focus {
+    background-color: #7c3aed;
+    border-color: #7c3aed;
+}
+
+.admin-theme .btn-outline-primary {
+    color: var(--primary-color, #8b5cf6);
+    border-color: rgba(139, 92, 246, 0.45);
+}
+
+.admin-theme .btn-outline-primary:hover {
+    background-color: var(--primary-color, #8b5cf6);
+    border-color: var(--primary-color, #8b5cf6);
+    color: #fff;
+}
+
+.admin-theme .text-primary {
+    color: var(--primary-color, #8b5cf6) !important;
+}
+
+.admin-theme .bg-primary {
+    background-color: var(--primary-color, #8b5cf6) !important;
+}
+
+.admin-theme .border-primary {
+    border-color: var(--primary-color, #8b5cf6) !important;
+}
+
+.admin-theme .sidebar-overlay {
+    z-index: 1040;
+}
+
+@media (max-width: 992px) {
+    .admin-theme .main-content {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-theme .admin-sidebar {
+        width: min(88vw, 280px);
+    }
+
+    .admin-theme .page-title {
+        font-size: 1.1rem;
+        line-height: 1.3;
+    }
+}

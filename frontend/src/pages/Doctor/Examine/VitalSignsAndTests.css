@@ -1,0 +1,539 @@
+.vital-signs-container {
+  padding: 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.vital-signs-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.patient-info {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-weight: 600;
+}
+
+.tabs-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 4px;
+}
+
+.tab-btn {
+  padding: 12px 16px;
+  border: none;
+  background: #f0f0f0;
+  border-radius: 8px 8px 0 0;
+  cursor: pointer;
+  font-weight: 600;
+  color: #555;
+}
+
+.tab-btn:hover {
+  background: #e8e8e8;
+  color: #333;
+}
+
+.tab-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.tests-empty-hint,
+.tests-loading-hint {
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.tests-empty-hint {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  color: #856404;
+}
+
+.tests-loading-hint {
+  background: #e7f3ff;
+  color: #0c5460;
+}
+
+.tabs-container {
+  display: flex;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 24px;
+  gap: 4px;
+}
+
+.tab {
+  flex: 1;
+  padding: 14px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab:hover {
+  color: #333;
+}
+
+.tab.active {
+  color: #667eea;
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Tab content: hiển thị do React (activeTab), không dùng display:none ở đây — tránh che mất tab Xét nghiệm (.tests-selection không override được) */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Vital Signs Form */
+.vital-signs-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-row-full {
+  grid-column: 1 / -1;
+}
+
+.assessment-box {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  margin-top: 12px;
+}
+
+.assessment-box h4 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.assessment-text {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Lab Tests Grid */
+.lab-tests-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.category-section {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  background: #fafafa;
+}
+
+.category-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ddd;
+}
+
+.tests-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 12px;
+}
+
+.test-item {
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.test-item:hover {
+  border-color: #667eea;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.test-item.selected {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  border-color: #667eea;
+}
+
+.test-checkbox {
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.test-info {
+  flex: 1;
+}
+
+.test-name {
+  font-weight: 700;
+  color: #333;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.test-code {
+  font-size: 12px;
+  color: #999;
+  font-family: monospace;
+  margin-bottom: 4px;
+}
+
+.test-details {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.test-price {
+  font-weight: 700;
+  color: #27ae60;
+  font-size: 14px;
+}
+
+/* Test Notes */
+.test-notes {
+  margin-top: 8px;
+}
+
+.test-notes textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  resize: vertical;
+  min-height: 60px;
+  font-family: inherit;
+}
+
+/* Summary Section */
+.summary-section {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f0ff 100%);
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0f0;
+}
+
+.summary-title {
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.selected-tests-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+
+.selected-test-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: white;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.selected-test-name {
+  font-weight: 600;
+  color: #333;
+}
+
+.selected-test-price {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.total-cost {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: white;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid #667eea;
+}
+
+.total-cost-label {
+  color: #333;
+}
+
+.total-cost-amount {
+  color: #27ae60;
+  font-size: 18px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.btn-save,
+.btn-cancel {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-save {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+.btn-cancel {
+  background-color: #ecf0f1;
+  color: #333;
+  border: 1px solid #bdc3c7;
+}
+
+.btn-cancel:hover {
+  background-color: #d5dbdb;
+}
+
+/* Alert Messages */
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+}
+
+.alert-info {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+  color: #0c5460;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.loading::after {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .vital-signs-container {
+    padding: 16px;
+  }
+
+  .vital-signs-form {
+    grid-template-columns: 1fr;
+  }
+
+  .tests-list {
+    grid-template-columns: 1fr;
+  }
+
+  .test-item {
+    flex-direction: column;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs-container {
+    flex-direction: column;
+  }
+
+  .tab {
+    padding: 12px 16px;
+    text-align: left;
+  }
+
+  .tab.active::after {
+    bottom: -2px;
+    left: 0;
+    width: 4px;
+    height: auto;
+    top: 0;
+    right: auto;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+}
+
+@media (max-width: 480px) {
+  .vital-signs-title {
+    font-size: 20px;
+  }
+
+  .patient-info {
+    font-size: 14px;
+  }
+
+  .form-group input,
+  .form-group textarea {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .test-item {
+    padding: 10px;
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    padding: 10px 16px;
+  }
+}

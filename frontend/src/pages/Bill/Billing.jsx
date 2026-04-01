@@ -1,66 +1,104 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
-import './CSS/Billing.css';
+import './Billing.css';
 
 const Billing = () => {
+    const navigate = useNavigate();
     const [unpaidList, setUnpaidList] = useState([]);
+    const [notice, setNotice] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const fetchUnpaidList = async () => {
         try {
+            setLoading(true);
             const res = await api.get('/api/appointments/unpaid');
-            setUnpaidList(res.data.appointments);
+            const appointments = res.data.appointments || [];
+            setUnpaidList(appointments);
         } catch (error) {
             console.error('Lỗi lấy danh sách chờ thanh toán:', error);
+            setNotice({ type: 'error', text: error.response?.data?.message || 'Không thể tải danh sách chờ thanh toán.' });
+        } finally {
+            setLoading(false);
         }
     };
 
-    useEffect(() => {
-        fetchUnpaidList();
-    }, []);
+    useEffect(() => { fetchUnpaidList(); }, []);
 
-    const handlePayment = async (id, patientName) => {
-        if (!window.confirm(`Xác nhận thu tiền của bệnh nhân ${patientName}?`)) return;
-
-        try {
-            await api.put(`/api/appointments/${id}/pay`, {});
-
-            alert('💰 Đã thu tiền thành công!');
-            fetchUnpaidList(); // Tải lại danh sách để làm mất bệnh nhân đã đóng tiền
-        } catch (error) {
-            alert('Lỗi: ' + (error.response?.data?.message || 'Không thể thanh toán'));
-        }
+    const openInvoice = (patient) => {
+        setNotice(null);
+        navigate(`/billing/${patient.id}`);
     };
+
+    if (loading) {
+        return (
+            <div className="billing-container">
+                <div className="text-center py-5">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="billing-container">
-            <h2>💳 Quầy Thu Ngân - Chờ Thanh Toán</h2>
+            <div className="billing-header">
+                <h2><i className="fas fa-cash-register"></i> Quầy Thu Ngân</h2>
+                <p className="text-muted">Quản lý thanh toán bệnh nhân</p>
+            </div>
+
+            {notice && (
+                <div className={`billing-notice ${notice.type === 'success' ? 'success' : 'error'}`}>
+                    <i className={`fas fa-${notice.type === 'success' ? 'check-circle' : 'exclamation-circle'}`}></i>
+                    {notice.text}
+                </div>
+            )}
             
-            <div className="billing-list">
-                {unpaidList.length === 0 ? (
-                    <p className="no-data">Hiện không có bệnh nhân nào chờ thanh toán.</p>
-                ) : (
-                    unpaidList.map(appt => (
-                        <div key={appt.id} className="billing-card">
-                            <div className="billing-info">
-                                <h3>{appt.patient_name}</h3>
-                                <p><strong>📞 SĐT:</strong> {appt.phone}</p>
-                                <p><strong>🩺 Chẩn đoán:</strong> {appt.diagnosis || 'Đang cập nhật'}</p>
-                                <p><strong>📅 Giờ khám:</strong> {appt.appointment_time} ({new Date(appt.appointment_date).toLocaleDateString('vi-VN')})</p>
-                            </div>
-                            
-                            <div className="billing-action">
-                                <div className="price-tag">
-                                    <span>Tổng tiền:</span>
-                                    {/* Giả lập giá tiền khám mặc định là 200k, fen có thể mở rộng tính tiền thuốc sau nếu thích */}
-                                    <strong>200.000 đ</strong> 
-                                </div>
-                                <button className="btn-pay" onClick={() => handlePayment(appt.id, appt.patient_name)}>
-                                    💵 Thu Tiền Ngay
-                                </button>
-                            </div>
+            <div className="billing-main">
+                {/* Cột trái: Danh sách bệnh nhân */}
+                <div className="billing-left">
+                    <div className="billing-left-header">
+                        <h3>Danh sách chờ thanh toán</h3>
+                        <span className="badge bg-danger">{unpaidList.length}</span>
+                    </div>
+
+                    {unpaidList.length === 0 ? (
+                        <div className="no-data-placeholder">
+                            <i className="fas fa-check-circle"></i>
+                            <p>Tất cả bệnh nhân đã thanh toán</p>
                         </div>
-                    ))
-                )}
+                    ) : (
+                        <div className="billing-list">
+                            {unpaidList.map(patient => (
+                                <div
+                                    key={patient.id}
+                                    className="billing-card"
+                                    onClick={() => openInvoice(patient)}
+                                >
+                                    <div className="billing-card-header">
+                                        <h4>{patient.patient_name}</h4>
+                                        <span className="priority-badge">Chờ TT</span>
+                                    </div>
+                                    <div className="billing-card-body">
+                                        <p><strong>Mã:</strong> #{patient.id}</p>
+                                        <p><strong>SĐT:</strong> {patient.patient_phone || patient.phone || 'N/A'}</p>
+                                        <p className="amount-text"><strong>💰 Chờ tính tổng</strong></p>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Cột phải: Chi tiết hóa đơn */}
+                <div className="billing-right">
+                    <div className="invoice-placeholder">
+                        <i className="fas fa-file-invoice-dollar"></i>
+                        <p>Bấm vào bệnh nhân để xem chi tiết hóa đơn</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import PaginationControls from '../../../components/PaginationControls';
 import api from '../../../lib/api';
-import '../CSS/Admin.css';
+import '../AdminDashboard.css';
 
 /**
  * UserList Component
@@ -15,6 +16,8 @@ const UserList = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         fetchUsers();
@@ -61,6 +64,7 @@ const UserList = () => {
         }
 
         setFilteredUsers(filtered);
+        setCurrentPage(1); // Reset to page 1 when filter changes
     };
 
     const handleToggleLock = async (id, currentStatus) => {
@@ -78,6 +82,7 @@ const UserList = () => {
             'admin': { label: 'Admin', color: 'danger' },
             'doctor': { label: 'Bác sĩ', color: 'info' },
             'receptionist': { label: 'Lễ tân', color: 'warning' },
+            'lab_technician': { label: 'KTV xét nghiệm', color: 'primary' },
             'patient': { label: 'Bệnh nhân', color: 'success' }
         };
         const roleInfo = roleMap[role] || { label: role, color: 'secondary' };
@@ -115,6 +120,7 @@ const UserList = () => {
                                 <option value="admin">Admin</option>
                                 <option value="doctor">Bác sĩ</option>
                                 <option value="receptionist">Lễ tân</option>
+                                <option value="lab_technician">KTV xét nghiệm</option>
                                 <option value="patient">Bệnh nhân</option>
                             </select>
                         </div>
@@ -135,6 +141,11 @@ const UserList = () => {
 
             {/* Table */}
             <div className="card shadow-sm border-0">
+                <div className="card-header bg-white pb-3">
+                    <span className="text-muted">
+                        Trang {currentPage}/{Math.ceil(filteredUsers.length / itemsPerPage) || 1} | Hiển thị {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} trên {filteredUsers.length}
+                    </span>
+                </div>
                 <div className="table-responsive">
                     <table className="table table-hover mb-0">
                         <thead className="table-light">
@@ -164,33 +175,47 @@ const UserList = () => {
                                     </td>
                                 </tr>
                             ) : (
-                                filteredUsers.map((user, index) => (
-                                    <tr key={user.id}>
-                                        <td>{index + 1}</td>
-                                        <td className="fw-500">{user.username}</td>
-                                        <td>{user.email}</td>
-                                        <td>{user.phone}</td>
-                                        <td>{getRoleBadge(user.role)}</td>
-                                        <td>
-                                            <span className={`badge ${user.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
-                                                {user.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <button
-                                                className={`btn btn-sm ${user.status === 'active' ? 'btn-warning' : 'btn-success'} me-2`}
-                                                onClick={() => handleToggleLock(user.id, user.status)}
-                                                title={user.status === 'active' ? 'Khóa' : 'Mở khóa'}
-                                            >
-                                                <i className={`fas ${user.status === 'active' ? 'fa-lock' : 'fa-unlock'}`}></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
+                                (() => {
+                                    const startIndex = (currentPage - 1) * itemsPerPage;
+                                    const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
+                                    
+                                    return paginatedUsers.map((user, index) => (
+                                        <tr key={user.id}>
+                                            <td>{startIndex + index + 1}</td>
+                                            <td className="fw-500">{user.username}</td>
+                                            <td>{user.email}</td>
+                                            <td>{user.phone}</td>
+                                            <td>{getRoleBadge(user.role)}</td>
+                                            <td>
+                                                <span className={`badge ${user.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
+                                                    {user.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <button
+                                                    className={`btn btn-sm ${user.status === 'active' ? 'btn-warning' : 'btn-success'} me-2`}
+                                                    onClick={() => handleToggleLock(user.id, user.status)}
+                                                    title={user.status === 'active' ? 'Khóa' : 'Mở khóa'}
+                                                >
+                                                    <i className={`fas ${user.status === 'active' ? 'fa-lock' : 'fa-unlock'}`}></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ));
+                                })()
                             )}
                         </tbody>
                     </table>
                 </div>
+                {filteredUsers.length > 0 && Math.ceil(filteredUsers.length / itemsPerPage) > 1 && (
+                    <div className="card-footer bg-white">
+                        <PaginationControls 
+                            currentPage={currentPage}
+                            totalPages={Math.ceil(filteredUsers.length / itemsPerPage)}
+                            onPageChange={setCurrentPage}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Stats */}

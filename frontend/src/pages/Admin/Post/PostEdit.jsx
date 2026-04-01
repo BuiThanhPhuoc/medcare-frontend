@@ -50,7 +50,7 @@ const PostEdit = () => {
                     tags: post.tags || [] // Dữ liệu thẻ mà bài viết này đang sở hữu
                 });
                 setLoading(false);
-            } catch (error) {
+            } catch {
                 alert("Không tìm thấy dữ liệu hoặc có lỗi!");
                 navigate('/admin/posts');
             }

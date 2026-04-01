@@ -1,16 +1,232 @@
-.guest-layout { background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
-.guest-navbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
-.nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-.brand-logo { font-size: 24px; font-weight: 700; color: #10b981; text-decoration: none; display: flex; align-items: center; gap: 10px; }
-.nav-links { display: flex; align-items: center; gap: 30px; }
-.nav-links a { text-decoration: none; color: #475569; font-weight: 500; transition: 0.3s; }
-.nav-links a:hover { color: #10b981; }
-.auth-buttons { display: flex; gap: 10px; }
-.btn-login-outline { padding: 8px 15px; border: 1px solid #10b981; color: #10b981 !important; border-radius: 6px; font-weight: 600; }
-.btn-register-solid { padding: 8px 15px; background: #10b981; color: white !important; border-radius: 6px; font-weight: 600; }
-.guest-main { flex: 1; }
-.guest-footer { background: #0f172a; color: white; padding: 40px 20px 20px; margin-top: auto; }
-.footer-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid #334155; padding-bottom: 20px; }
-.footer-brand { color: #10b981; margin-top: 0; }
-.footer-content p { color: #94a3b8; margin: 5px 0; }
-.footer-bottom { text-align: center; color: #64748b; padding-top: 20px; font-size: 14px; }
+.guest-layout {
+  background: linear-gradient(180deg, var(--mc-bg, #f1f5f9) 0%, #e2e8f0 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-navbar {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--mc-border, rgba(15, 23, 42, 0.08));
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0.85rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-logo {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--mc-primary, #0d9488);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: -0.02em;
+}
+
+.brand-logo i {
+  font-size: 1.25rem;
+  opacity: 0.95;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav-links > a:not(.auth-buttons a) {
+  text-decoration: none;
+  color: var(--mc-text-muted, #64748b);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--mc-radius-sm, 8px);
+  transition: color var(--mc-transition, 0.2s ease), background var(--mc-transition, 0.2s ease);
+}
+
+.nav-links > a:not(.auth-buttons a):hover {
+  color: var(--mc-primary, #0d9488);
+  background: var(--mc-primary-soft, rgba(13, 148, 136, 0.12));
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-login-outline {
+  padding: 0.5rem 1rem;
+  border: 1.5px solid var(--mc-primary, #0d9488);
+  color: var(--mc-primary, #0d9488) !important;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background var(--mc-transition, 0.2s ease), color 0.2s ease, transform 0.15s ease;
+}
+
+.btn-login-outline:hover {
+  background: var(--mc-primary-soft, rgba(13, 148, 136, 0.12));
+  transform: translateY(-1px);
+}
+
+.btn-register-solid {
+  padding: 0.5rem 1.1rem;
+  background: linear-gradient(135deg, var(--mc-primary, #0d9488) 0%, var(--mc-primary-hover, #0f766e) 100%);
+  color: #fff !important;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-register-solid:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(13, 148, 136, 0.4);
+}
+
+.guest-nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--mc-border);
+  border-radius: 10px;
+  background: var(--mc-surface, #fff);
+  color: var(--mc-text);
+  cursor: pointer;
+  transition: background var(--mc-transition), border-color 0.2s;
+}
+
+.guest-nav-toggle:hover {
+  background: var(--mc-primary-soft);
+  border-color: transparent;
+}
+
+.guest-main {
+  flex: 1;
+}
+
+.guest-footer {
+  background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+  color: #fff;
+  padding: 2.75rem 1.25rem 1.25rem;
+  margin-top: auto;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+  padding-bottom: 1.75rem;
+}
+
+.footer-brand {
+  color: #5eead4;
+  margin-top: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.footer-content p {
+  color: #94a3b8;
+  margin: 0.35rem 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+.footer-content h4 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+}
+
+.footer-bottom {
+  text-align: center;
+  color: #64748b;
+  padding-top: 1.25rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 768px) {
+  .guest-nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(300px, 88vw);
+    height: 100vh;
+    background: var(--mc-surface, #fff);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 4.5rem 1.25rem 1.5rem;
+    box-shadow: -8px 0 40px rgba(15, 23, 42, 0.15);
+    transform: translateX(100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1001;
+    gap: 0.5rem;
+  }
+
+  .guest-layout.nav-open .nav-links {
+    transform: translateX(0);
+  }
+
+  .nav-links > a:not(.auth-buttons a) {
+    padding: 0.75rem 1rem;
+  }
+
+  .auth-buttons {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .auth-buttons a {
+    text-align: center;
+    width: 100%;
+  }
+
+}
+
+.guest-nav-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .guest-layout.nav-open .guest-nav-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+  }
+}

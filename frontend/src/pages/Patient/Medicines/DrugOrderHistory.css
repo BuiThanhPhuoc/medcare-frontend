@@ -1,0 +1,393 @@
+.drug-order-history-page {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 20px 0;
+}
+
+.history-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Header */
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+}
+
+.history-header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 5px 0;
+}
+
+.history-header p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    border: 2px solid #007bff;
+    color: #007bff;
+}
+
+.btn-outline-primary:hover:not(:disabled) {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Filter Section */
+.filter-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.filter-section label {
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+}
+
+.status-filter {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.status-filter:hover {
+    border-color: #007bff;
+}
+
+.status-filter:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Alert */
+.alert {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+
+/* Loading State */
+.loading-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.loading-state .spinner-border {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 20px;
+}
+
+.loading-state p {
+    color: #666;
+    font-size: 16px;
+    margin: 0;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.empty-state p {
+    color: #666;
+    font-size: 18px;
+    margin-bottom: 25px;
+}
+
+/* Orders List */
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+/* Order Card */
+.order-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+    gap: 15px;
+}
+
+.order-number {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.order-number strong {
+    font-size: 16px;
+    color: #333;
+}
+
+.order-date {
+    font-size: 13px;
+    color: #666;
+}
+
+.order-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+.status-confirmed,
+.status-shipped {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+.status-delivered {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.payment-pending {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+.payment-completed {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+.payment-failed {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Order Card Body */
+.order-card-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    gap: 20px;
+}
+
+.order-info {
+    display: flex;
+    gap: 30px;
+    flex: 1;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.info-item .label {
+    font-size: 12px;
+    color: #666;
+    font-weight: 600;
+}
+
+.info-item .value {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+}
+
+.order-total {
+    font-size: 20px;
+    font-weight: 700;
+    color: #dc3545;
+    text-align: right;
+    min-width: 120px;
+}
+
+/* Order Card Footer */
+.order-card-footer {
+    padding: 12px 15px;
+    background-color: #fafafa;
+    border-top: 1px solid #e0e0e0;
+    text-align: right;
+}
+
+.order-card-footer .btn {
+    padding: 6px 16px;
+}
+
+/* Pagination */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 40px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.page-info {
+    color: #666;
+    font-weight: 500;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .history-header h1 {
+        font-size: 22px;
+    }
+
+    .filter-section {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .filter-section label,
+    .status-filter {
+        width: 100%;
+    }
+
+    .order-card-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-badges {
+        align-self: flex-start;
+    }
+
+    .order-card-body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-info {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .order-total {
+        align-self: flex-start;
+    }
+
+    .pagination-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .page-info {
+        width: 100%;
+    }
+
+    .pagination-controls .btn {
+        width: 100%;
+    }
+}

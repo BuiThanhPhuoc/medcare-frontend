@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './CSS/Home.css';
+import './Home.css';
 
 const Home = () => {
     // Không cần check user ở đây nữa vì đã có PublicRoute bảo vệ ở ngoài App.jsx rồi

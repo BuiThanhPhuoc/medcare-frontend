@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../../lib/api';
+import ImageWithFallback from '../../../components/ImageWithFallback';
 
 // Hàm loại bỏ dấu tiếng Việt để tìm kiếm mượt mà
 const removeAccents = (str) => {
@@ -171,13 +172,15 @@ const PostList = () => {
                                             
                                             {/* XỬ LÝ HIỂN THỊ THUMBNAIL */}
                                             <td className="p-3 text-center">
-                                                {post.thumbnail ? (
-                                                    <img src={post.thumbnail} alt={post.title} className="rounded shadow-sm" style={{width: '60px', height: '40px', objectFit: 'cover'}} />
-                                                ) : (
-                                                    <div className="bg-light rounded d-inline-flex align-items-center justify-content-center border" style={{width: '60px', height: '40px'}}>
-                                                        <i className="fas fa-image text-muted opacity-50"></i>
-                                                    </div>
-                                                )}
+                                                <ImageWithFallback
+                                                    src={post.thumbnail}
+                                                    alt={post.title}
+                                                    fallback="https://via.placeholder.com/60x40?text=No+Image"
+                                                    width="60px"
+                                                    height="40px"
+                                                    className="rounded shadow-sm"
+                                                    style={{ objectFit: 'cover' }}
+                                                />
                                             </td>
 
                                             <td className="p-3 fw-bold text-dark">{post.title}</td>

@@ -7,22 +7,249 @@
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     padding: 40px 20px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #2d3748;
 }
 
-.history-container h2 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #1a202c;
-    margin-bottom: 40px;
+/* ================================================
+   HEADER SECTION
+   ================================================ */
+.history-header {
+    max-width: 1000px;
+    margin: 0 auto 30px;
     text-align: center;
 }
 
-.records-list {
-    max-width: 900px;
+.history-header h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1a202c;
+    margin: 0 0 10px 0;
+}
+
+.header-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ================================================
+   LOADING STATE
+   ================================================ */
+.loading-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #718096;
+}
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ================================================
+   QUICK STATS
+   ================================================ */
+.quick-stats {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    text-align: center;
+    border-top: 3px solid #667eea;
+}
+
+.stat-label {
+    display: block;
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #667eea;
+}
+
+/* ================================================
+   FILTER SECTION
+   ================================================ */
+.filter-section {
+    max-width: 1000px;
+    margin: 0 auto 30px;
+}
+
+.search-box {
+    margin-bottom: 15px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.filters-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-select {
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.view-mode-toggle {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.toggle-btn {
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.toggle-btn:hover {
+    border-color: #667eea;
+}
+
+.toggle-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* ================================================
+   RECORDS DISPLAY
+   ================================================ */
+.records-display {
+    max-width: 1000px;
     margin: 0 auto;
+}
+
+.records-list,
+.records-timeline,
+.list-view {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
+}
+
+/* ================================================
+   TIMELINE VIEW
+   ================================================ */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    padding-left: 100px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 15px;
+    top: 8px;
+    width: 30px;
+    height: 30px;
+    background: white;
+    border: 3px solid #667eea;
+    border-radius: 50%;
+    z-index: 2;
+}
+
+.timeline-date {
+    position: absolute;
+    left: -85px;
+    top: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #667eea;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+.timeline-content {
+    width: 100%;
+}
+
+.record-card-timeline {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 4px solid #667eea;
+}
+
+.record-card-timeline:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* ================================================
@@ -30,22 +257,21 @@
    ================================================ */
 .record-card {
     background: white;
-    border-radius: 15px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
-    border-left: 5px solid #667eea;
+    border-left: 4px solid #667eea;
 }
 
 .record-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
 }
 
 .record-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    padding: 25px;
+    padding: 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -53,27 +279,72 @@
     gap: 15px;
 }
 
+.header-left {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex: 1;
+}
+
 .record-header h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 700;
 }
 
 .doctor-badge {
     background: rgba(255, 255, 255, 0.25);
-    padding: 8px 15px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-weight: 600;
-    font-size: 0.9rem;
-    backdrop-filter: blur(10px);
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.expand-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.expand-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .record-body {
-    padding: 30px;
+    padding: 20px;
 }
 
+.record-preview {
+    margin: 10px 0 0 0;
+}
+
+.diagnosis-preview {
+    margin: 0;
+    color: #4a5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.expand-indicator {
+    text-align: center;
+    color: #667eea;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+/* ================================================
+   INFO ROWS & DETAILS
+   ================================================ */
 .info-row {
-    margin-bottom: 25px;
+    margin-bottom: 18px;
 }
 
 .info-row:last-child {
@@ -82,17 +353,16 @@
 
 .info-row strong {
     color: #2d3748;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 12px;
-    font-size: 1rem;
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
 }
 
 .highlight-text {
     color: #dc2626;
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin: 0;
     padding: 12px 15px;
     background: #fee2e2;
@@ -100,44 +370,88 @@
     border-left: 4px solid #dc2626;
 }
 
-.prescription-box {
-    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-    padding: 18px;
-    border-left: 4px solid #f59e0b;
-    border-radius: 10px;
-    color: #b45309;
-    font-size: 0.95rem;
-    line-height: 1.6;
-    font-family: 'Courier New', monospace;
-    overflow-x: auto;
+.detail-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
 }
 
-.prescription-box pre {
+.detail-section h4 {
+    margin: 0 0 10px 0;
+    color: #2d3748;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.prescription-table,
+.prescription-box {
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    padding: 15px;
+    border-left: 4px solid #f59e0b;
+    border-radius: 8px;
     margin: 0;
-    white-space: pre-wrap;
-    word-break: break-word;
+}
+
+.medicine-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.medicine-item {
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #92400e;
+    line-height: 1.4;
+}
+
+.no-medicine {
+    color: #a16207;
+    font-style: italic;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.note-text {
+    margin: 0;
+    color: #4a5568;
+    line-height: 1.6;
+    font-size: 0.95rem;
 }
 
 /* ================================================
    EMPTY STATE
    ================================================ */
-.no-data {
+.empty-state {
     text-align: center;
     padding: 80px 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.empty-text {
     color: #718096;
-}
-
-.no-data::before {
-    content: '📋';
-    display: block;
-    font-size: 4rem;
-    margin-bottom: 20px;
-    opacity: 0.5;
-}
-
-.no-data {
-    font-size: 1.1rem;
+    font-size: 1rem;
     margin: 0;
+}
+
+/* ================================================
+   RESULTS INFO
+   ================================================ */
+.results-info {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+    font-size: 0.9rem;
+    margin-top: 20px;
 }
 
 /* ================================================
@@ -147,18 +461,71 @@
     .history-container {
         padding: 20px 15px;
     }
-    .history-container h2 {
+
+    .history-header h2 {
         font-size: 1.5rem;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
+
+    .quick-stats {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .stat-item {
+        padding: 15px;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .filters-row {
+        grid-template-columns: 1fr;
+    }
+
+    .view-mode-toggle {
+        justify-content: center;
+    }
+
+    .timeline::before {
+        left: 15px;
+    }
+
+    .timeline-item {
+        padding-left: 60px;
+    }
+
+    .timeline-marker {
+        left: 3px;
+    }
+
+    .timeline-date {
+        position: static;
+        display: block;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
+    }
+
     .record-header {
         flex-direction: column;
         align-items: flex-start;
     }
-    .record-body {
-        padding: 20px;
+
+    .header-left {
+        width: 100%;
+        flex-direction: column;
     }
+
+    .expand-btn {
+        align-self: flex-end;
+    }
+
+    .record-body {
+        padding: 15px;
+    }
+
     .info-row {
-        margin-bottom: 20px;
+        margin-bottom: 15px;
     }
 }

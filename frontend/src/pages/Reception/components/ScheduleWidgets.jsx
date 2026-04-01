@@ -1,4 +1,4 @@
-import '../CSS/Reception.css';
+import '../ReceptionDashboard.css';
 
 /**
  * TodayShifts Component

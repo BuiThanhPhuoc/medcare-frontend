@@ -14,11 +14,15 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
         <div className="app-wrapper patient-theme">
             {/* SIDEBAR */}
             <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
-                <div className="sidebar-brand">
+                <Link
+                    to="/patient-dashboard"
+                    className="sidebar-brand text-decoration-none"
+                    onClick={() => setIsMobileOpen(false)}
+                >
                     <i className="fas fa-hospital-alt fs-3 mb-2"></i>
                     <h4>MedCare</h4>
                     <small>Phòng khám</small>
-                </div>
+                </Link>
                 
                 <div className="sidebar-user-info">
                     <div className="avatar-circle">{user.username?.charAt(0).toUpperCase()}</div>
@@ -30,8 +34,12 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
 
                 <nav className="sidebar-menu">
                     <Link to="/patient-dashboard" className={location.pathname === '/patient-dashboard' ? 'active' : ''}><i className="fas fa-th-large"></i> Tổng quan</Link>
+                    <Link to="/my-appointments" className={location.pathname === '/my-appointments' ? 'active' : ''}><i className="fas fa-list-check"></i> Lịch khám của tôi</Link>
                     <Link to="/book-appointment" className={location.pathname === '/book-appointment' ? 'active' : ''}><i className="fas fa-calendar-check"></i> Lịch hẹn khám</Link>
                     <Link to="/medical-history" className={location.pathname === '/medical-history' ? 'active' : ''}><i className="fas fa-file-medical"></i> Hồ sơ bệnh án</Link>
+                    <hr />
+                    <Link to="/patient/medicines" className={location.pathname === '/patient/medicines' ? 'active' : ''}><i className="fas fa-pills"></i> Mua thuốc online</Link>
+                    <Link to="/patient/orders" className={location.pathname === '/patient/orders' ? 'active' : ''}><i className="fas fa-shopping-cart"></i> Lịch sử đơn hàng</Link>
                     <hr />
                     <Link to="/patient-profile" className={location.pathname === '/patient-profile' ? 'active' : ''}><i className="fas fa-user-edit"></i> Hồ sơ cá nhân</Link>
                     <hr />

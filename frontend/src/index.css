@@ -2,10 +2,35 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background-color: #f4f7f6;
-  color: #333;
+  font-family: var(--mc-font, system-ui, sans-serif);
+  background-color: var(--mc-bg, #f1f5f9);
+  color: var(--mc-text, #0f172a);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Bootstrap: hài hòa với theme */
+.btn-primary {
+  --bs-btn-bg: var(--mc-primary);
+  --bs-btn-border-color: var(--mc-primary);
+  --bs-btn-hover-bg: var(--mc-primary-hover);
+  --bs-btn-hover-border-color: var(--mc-primary-hover);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--mc-primary);
+  box-shadow: var(--mc-focus-ring);
+}
+
+.visually-hidden-focusable:not(:focus):not(:focus-within) {
+  position: absolute !important;
 }

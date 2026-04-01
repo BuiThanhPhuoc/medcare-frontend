@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import api from '../../lib/api';
 import { useNavigate, Link } from 'react-router-dom';
-import './CSS/Login.css';
+import './Login.css';
 
 const Login = () => {
     const [identifier, setIdentifier] = useState('');
@@ -44,6 +44,8 @@ const Login = () => {
                 navigate('/reception-dashboard');
             } else if (user.role === 'admin') {
                 navigate('/admin-dashboard');
+            } else if (user.role === 'lab_technician') {
+                navigate('/lab-dashboard');
             } else {
                 navigate('/patient-dashboard');
             }
@@ -58,11 +60,13 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <form className="login-form" onSubmit={handleLogin}>
-                <h2>Đăng Nhập MedCare</h2>
+        <div className="auth-page-wrap">
+            <div className="login-container">
+            <form className="login-form" onSubmit={handleLogin} noValidate>
+                <h2>Đăng nhập</h2>
+                <p className="auth-subtitle">MedCare — vào tài khoản của bạn</p>
 
-                {errorMessage && <div className="error-message">{errorMessage}</div>}
+                {errorMessage && <div className="error-message" role="alert">{errorMessage}</div>}
 
                 <div className="form-group">
                     <label>Tài khoản / Email / SĐT</label>
@@ -82,10 +86,11 @@ const Login = () => {
 
                 <button type="submit" className="login-btn">Đăng Nhập</button>
 
-                <div style={{ textAlign: 'center', marginTop: '15px' }}>
-                    <p>Chưa có tài khoản? <Link to="/register" style={{ color: '#3498db', textDecoration: 'none', fontWeight: 'bold' }}>Đăng ký ngay</Link></p>
-                </div>
+                <p className="auth-footer-link">
+                    Chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+                </p>
             </form>
+            </div>
         </div>
     );
 };

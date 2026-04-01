@@ -17,11 +17,15 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
         <div className="app-wrapper staff-theme">
             {/* SIDEBAR */}
             <aside className={`sidebar bg-white border-end ${isMobileOpen ? 'mobile-open' : ''}`}>
-                <div className="sidebar-brand bg-success-gradient text-white p-4 text-center border-bottom">
+                <Link
+                    to="/reception-dashboard"
+                    className="sidebar-brand bg-success-gradient text-white p-4 text-center border-bottom text-decoration-none"
+                    onClick={() => setIsMobileOpen(false)}
+                >
                     <i className="fas fa-hospital fs-3 mb-2"></i>
                     <h4 className="mb-0 fw-bold">MedCare</h4>
                     <small className="opacity-75">Hệ thống Nhân viên</small>
-                </div>
+                </Link>
 
                 <nav className="sidebar-menu p-3">
                     <div className="menu-label text-muted fw-bold small text-uppercase mb-2"><i className="fas fa-th-large me-1"></i> Dashboard</div>
@@ -30,7 +34,7 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
                     </Link>
 
                     <div className="menu-label text-muted fw-bold small text-uppercase mb-2 mt-4"><i className="fas fa-id-badge me-1"></i> Tiếp tân</div>
-                    <Link to="/reception" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
+                    <Link to="/reception/checkin" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception/checkin' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
                         <i className="fas fa-user-check me-2" style={{width: '20px'}}></i> Check-in Bệnh nhân
                     </Link>
                     <Link to="/billing" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/billing' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
@@ -38,6 +42,9 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
                     </Link>
                     <Link to="/reception/my-schedule" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception/my-schedule' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
                         <i className="fas fa-calendar-alt me-2" style={{width: '20px'}}></i> Lịch của tôi
+                    </Link>
+                    <Link to="/reception/lab-fees" className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${location.pathname === '/reception/lab-fees' ? 'bg-success bg-opacity-10 text-success fw-bold border-start border-success border-4' : ''}`}>
+                        <i className="fas fa-flask me-2" style={{width: '20px'}}></i> Thu phí xét nghiệm
                     </Link>
                     
                     <hr className="my-4" />

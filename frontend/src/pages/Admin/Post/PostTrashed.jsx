@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../../../lib/api';
+import ImageWithFallback from '../../../components/ImageWithFallback';
 
 const PostTrashed = () => {
     const [trashedPosts, setTrashedPosts] = useState([]);
@@ -87,7 +88,15 @@ const PostTrashed = () => {
                                                 <strong className="text-dark">{post.title}</strong>
                                                 {post.thumbnail && (
                                                     <div>
-                                                        <img src={post.thumbnail} alt="thumbnail" style={{height: '40px', borderRadius: '4px', marginTop:'5px', objectFit: 'cover'}} />
+                                                        <ImageWithFallback
+                                                            src={post.thumbnail}
+                                                            alt="thumbnail"
+                                                            fallback="https://via.placeholder.com/200x40?text=No+Image"
+                                                            width="auto"
+                                                            height="40px"
+                                                            className="rounded"
+                                                            style={{ marginTop: '5px', objectFit: 'cover' }}
+                                                        />
                                                     </div>
                                                 )}
                                             </td>

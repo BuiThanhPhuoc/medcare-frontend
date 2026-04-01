@@ -1,25 +1,29 @@
 import { useState, useEffect } from 'react';
 import api from '../../../lib/api';
-import "../CSS/Medicine.css";
+import AddMedicineModal from './AddMedicineModal';
+import "./Medicine.css";
 
 const MedicineManager = () => {
     const [medicines, setMedicines] = useState([]);
-    const [editingId, setEditingId] = useState(null);
-    
-    // State cho Form thêm/sửa thuốc
-    const [name, setName] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [importPrice, setImportPrice] = useState('');
-    const [price, setPrice] = useState('');
-    const [expiryDate, setExpiryDate] = useState('');
+    const [editingMedicine, setEditingMedicine] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isFormLoading, setIsFormLoading] = useState(false);
 
-    // ===========================
-    // Excel import state
-    // ===========================
-    const [excelFile, setExcelFile] = useState(null);
-    const [importMode, setImportMode] = useState('merge'); // merge | replace | skip
-    const [importing, setImporting] = useState(false);
-    const [importFeedback, setImportFeedback] = useState(null); // { summary, errors }
+    const [drugs, setDrugs] = useState([]);
+    const [selectedDrugId, setSelectedDrugId] = useState('');
+    const [batches, setBatches] = useState([]);
+    const [expiringWarnings, setExpiringWarnings] = useState([]);
+    const [batchFile, setBatchFile] = useState(null);
+    const [batchImporting, setBatchImporting] = useState(false);
+    const [batchImportFeedback, setBatchImportFeedback] = useState(null);
+
+    const [newDrugName, setNewDrugName] = useState('');
+    const [newBatchNumber, setNewBatchNumber] = useState('');
+    const [newMfgDate, setNewMfgDate] = useState('');
+    const [newExpDate, setNewExpDate] = useState('');
+    const [newBatchQty, setNewBatchQty] = useState('');
+    const [newBatchImportPrice, setNewBatchImportPrice] = useState('');
+    const [newBatchSellingPrice, setNewBatchSellingPrice] = useState('');
 
     const fetchMedicines = async () => {
         try {
@@ -31,64 +35,85 @@ const MedicineManager = () => {
         }
     };
 
-    useEffect(() => {
-        fetchMedicines();
-    }, []);
-
-    const resetForm = () => {
-        setName('');
-        setQuantity('');
-        setImportPrice('');
-        setPrice('');
-        setExpiryDate('');
-        setEditingId(null);
+    const fetchDrugsWithStock = async () => {
+        try {
+            const res = await api.get('/api/medicines/drugs');
+            setDrugs(res.data.drugs || []);
+        } catch (error) {
+            console.error('Lỗi lấy danh mục drugs:', error);
+        }
     };
 
-    const handleAddMedicine = async (e) => {
-        e.preventDefault();
-        
-        if (!name || !quantity || !importPrice || !price || !expiryDate) {
-            alert('⚠️ Vui lòng nhập đầy đủ thông tin!');
+    const fetchExpiringWarnings = async () => {
+        try {
+            const res = await api.get('/api/medicines/warnings/expiring?days=90');
+            setExpiringWarnings(res.data.warnings || []);
+        } catch (error) {
+            console.error('Lỗi lấy cảnh báo hết hạn:', error);
+        }
+    };
+
+    const fetchBatchesByDrug = async (drugId) => {
+        if (!drugId) {
+            setBatches([]);
             return;
         }
-
         try {
-            if (editingId) {
+            const res = await api.get(`/api/medicines/drugs/${drugId}/batches`);
+            setBatches(res.data.batches || []);
+        } catch (error) {
+            console.error('Lỗi lấy lô thuốc:', error);
+            setBatches([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchMedicines();
+        fetchDrugsWithStock();
+        fetchExpiringWarnings();
+    }, []);
+
+    const handleOpenModal = (medicine = null) => {
+        setEditingMedicine(medicine);
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setEditingMedicine(null);
+    };
+
+    const handleAddMedicineFromModal = async (formData) => {
+        setIsFormLoading(true);
+        try {
+            if (editingMedicine) {
                 // Cập nhật thuốc
-                await api.put(`/api/medicines/${editingId}`, {
-                    name,
-                    quantity: Number(quantity),
-                    import_price: Number(importPrice),
-                    price: Number(price),
-                    expiry_date: expiryDate
+                await api.put(`/api/medicines/${editingMedicine.id}`, {
+                    name: formData.name,
+                    quantity: formData.quantity,
+                    import_price: formData.import_price,
+                    price: formData.price,
+                    expiry_date: formData.expiry_date
                 });
                 alert('✅ Cập nhật thuốc thành công!');
             } else {
                 // Thêm thuốc mới
                 await api.post('/api/medicines', {
-                    name,
-                    quantity: Number(quantity),
-                    import_price: Number(importPrice),
-                    price: Number(price),
-                    expiry_date: expiryDate
+                    name: formData.name,
+                    quantity: formData.quantity,
+                    import_price: formData.import_price,
+                    price: formData.price,
+                    expiry_date: formData.expiry_date
                 });
                 alert('✅ Thêm thuốc vào kho thành công!');
             }
-
-            resetForm();
+            handleCloseModal();
             fetchMedicines();
         } catch (error) {
             alert('❌ Lỗi: ' + (error.response?.data?.message || 'Không thể thực hiện'));
+        } finally {
+            setIsFormLoading(false);
         }
-    };
-
-    const handleEditMedicine = (medicine) => {
-        setEditingId(medicine.id);
-        setName(medicine.name);
-        setQuantity(medicine.quantity);
-        setImportPrice(medicine.import_price);
-        setPrice(medicine.price);
-        setExpiryDate(medicine.expiry_date.split('T')[0]); // Format ngày
     };
 
     const handleDeleteMedicine = async (id) => {
@@ -114,58 +139,103 @@ const MedicineManager = () => {
         return date.toLocaleDateString('vi-VN');
     };
 
-    const handleDownloadTemplate = async () => {
+    const handleDownloadBatchTemplate = async () => {
         try {
-            const res = await api.get('/api/medicines/template', { responseType: 'blob' });
+            const res = await api.get('/api/medicines/batches/template', { responseType: 'blob' });
             const blob = new Blob([res.data], {
                 type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'medicine_template.xlsx';
+            a.download = 'drug_batches_template.xlsx';
             document.body.appendChild(a);
             a.click();
             a.remove();
             window.URL.revokeObjectURL(url);
-        } catch (error) {
-            alert('❌ Không thể tải template Excel!');
+        } catch {
+            alert('❌ Không thể tải template batch!');
         }
     };
 
-    const handleImportExcel = async (e) => {
+    const handleImportBatchExcel = async (e) => {
         e.preventDefault();
-        if (!excelFile) {
-            alert('⚠️ Vui lòng chọn file Excel (.xlsx/.xls) trước khi import!');
+        if (!batchFile) {
+            alert('⚠️ Vui lòng chọn file batch Excel!');
             return;
         }
 
         try {
-            setImporting(true);
-            setImportFeedback(null);
-
+            setBatchImporting(true);
+            setBatchImportFeedback(null);
             const formData = new FormData();
-            formData.append('file', excelFile);
-            formData.append('mode', importMode);
-
-            const res = await api.post('/api/medicines/import', formData, {
+            formData.append('file', batchFile);
+            const res = await api.post('/api/medicines/batches/import', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
-
-            const { summary, errors } = res.data ?? {};
-            setImportFeedback({ summary, errors });
-            alert('✅ Import thành công!');
-            setExcelFile(null);
-            // refresh list
-            fetchMedicines();
+            setBatchImportFeedback({
+                summary: res.data?.summary,
+                errors: res.data?.errors
+            });
+            alert('✅ Import batch thành công!');
+            setBatchFile(null);
+            fetchDrugsWithStock();
+            fetchExpiringWarnings();
+            if (selectedDrugId) fetchBatchesByDrug(selectedDrugId);
         } catch (error) {
-            const msg = error?.response?.data?.message || 'Không thể import Excel.';
+            const msg = error?.response?.data?.message || 'Import batch thất bại.';
             alert('❌ ' + msg);
             const summary = error?.response?.data?.summary;
             const errorsList = error?.response?.data?.errors;
-            if (summary || errorsList) setImportFeedback({ summary, errors: errorsList });
+            if (summary || errorsList) setBatchImportFeedback({ summary, errors: errorsList });
         } finally {
-            setImporting(false);
+            setBatchImporting(false);
+        }
+    };
+
+    const handleCreateDrug = async (e) => {
+        e.preventDefault();
+        if (!newDrugName.trim()) {
+            alert('⚠️ Vui lòng nhập tên thuốc.');
+            return;
+        }
+        try {
+            await api.post('/api/medicines/drugs', { name: newDrugName.trim() });
+            setNewDrugName('');
+            fetchDrugsWithStock();
+            alert('✅ Tạo danh mục thuốc thành công.');
+        } catch (error) {
+            alert('❌ ' + (error?.response?.data?.message || 'Không thể tạo thuốc.'));
+        }
+    };
+
+    const handleAddBatch = async (e) => {
+        e.preventDefault();
+        if (!selectedDrugId) {
+            alert('⚠️ Vui lòng chọn thuốc trước khi thêm lô.');
+            return;
+        }
+        try {
+            await api.post(`/api/medicines/drugs/${selectedDrugId}/batches`, {
+                batch_number: newBatchNumber,
+                manufacture_date: newMfgDate || null,
+                expiry_date: newExpDate,
+                quantity: Number(newBatchQty || 0),
+                import_price: Number(newBatchImportPrice || 0),
+                selling_price: Number(newBatchSellingPrice || 0)
+            });
+            setNewBatchNumber('');
+            setNewMfgDate('');
+            setNewExpDate('');
+            setNewBatchQty('');
+            setNewBatchImportPrice('');
+            setNewBatchSellingPrice('');
+            fetchBatchesByDrug(selectedDrugId);
+            fetchDrugsWithStock();
+            fetchExpiringWarnings();
+            alert('✅ Thêm lô thuốc thành công.');
+        } catch (error) {
+            alert('❌ ' + (error?.response?.data?.message || 'Không thể thêm lô thuốc.'));
         }
     };
 
@@ -173,154 +243,28 @@ const MedicineManager = () => {
         <div className="admin-container">
             <h2>⚙️ Quản Trị Hệ Thống - Kho Thuốc</h2>
             
+            {/* AddMedicineModal */}
+            <AddMedicineModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onSubmit={handleAddMedicineFromModal}
+                medicineData={editingMedicine}
+                isLoading={isFormLoading}
+            />
+
             <div className="admin-layout">
-                {/* CỘT TRÁI: Form nhập thuốc mới */}
-                <div className="add-medicine-section">
-                    <h3>{editingId ? '✏️ Sửa Thuốc' : '➕ Nhập Thuốc Mới'}</h3>
-                    <form onSubmit={handleAddMedicine} className="medicine-form">
-                        <div className="form-group">
-                            <label>Tên thuốc:</label>
-                            <input 
-                                type="text" 
-                                value={name} 
-                                onChange={(e) => setName(e.target.value)} 
-                                required 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Số lượng:</label>
-                            <input 
-                                type="number" 
-                                value={quantity} 
-                                onChange={(e) => setQuantity(e.target.value)} 
-                                required 
-                                min="0" 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Giá nhập (VNĐ):</label>
-                            <input 
-                                type="number" 
-                                value={importPrice} 
-                                onChange={(e) => setImportPrice(e.target.value)} 
-                                required 
-                                min="0" 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Giá bán (VNĐ):</label>
-                            <input 
-                                type="number" 
-                                value={price} 
-                                onChange={(e) => setPrice(e.target.value)} 
-                                required 
-                                min="0" 
-                            />
-                        </div>
-                        <div className="form-group">
-                            <label>Ngày hết hạn:</label>
-                            <input 
-                                type="date" 
-                                value={expiryDate} 
-                                onChange={(e) => setExpiryDate(e.target.value)} 
-                                required 
-                            />
-                        </div>
-                        <div className="button-group">
-                            <button type="submit" className="btn-add">
-                                {editingId ? 'Cập Nhật' : 'Nhập Kho'}
-                            </button>
-                            {editingId && (
-                                <button 
-                                    type="button" 
-                                    className="btn-cancel"
-                                    onClick={resetForm}
-                                >
-                                    Hủy
-                                </button>
-                            )}
-                        </div>
-                    </form>
-
-                    <div className="excel-import-section">
-                        <hr className="divider-soft" />
-                        <h4 className="excel-import-title">
-                            <i className="fas fa-file-excel me-2 text-success" />
-                            Nhập từ Excel
-                        </h4>
-
-                        <form onSubmit={handleImportExcel} className="excel-import-form">
-                            <div className="form-group">
-                                <label>Chọn file Excel:</label>
-                                <input
-                                    type="file"
-                                    accept=".xlsx,.xls"
-                                    onChange={(e) => {
-                                        const f = e.target.files?.[0];
-                                        setExcelFile(f || null);
-                                    }}
-                                    required
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Chế độ xử lý trùng:</label>
-                                <select
-                                    className="form-select excel-import-select"
-                                    value={importMode}
-                                    onChange={(e) => setImportMode(e.target.value)}
-                                >
-                                    <option value="merge">merge (cộng số lượng)</option>
-                                    <option value="replace">replace (ghi đè)</option>
-                                    <option value="skip">skip (bỏ qua)</option>
-                                </select>
-                            </div>
-
-                            <div className="excel-import-actions">
-                                <button type="button" className="btn-template" onClick={handleDownloadTemplate} disabled={importing}>
-                                    <i className="fas fa-download me-1" /> Tải template
-                                </button>
-                                <button type="submit" className="btn-import" disabled={importing}>
-                                    {importing ? 'Đang import...' : 'Import'}
-                                </button>
-                            </div>
-                        </form>
-
-                        <div className="excel-import-note">
-                            Yêu cầu cột: <b>name</b>, <b>quantity</b>, <b>import_price</b>, <b>price</b>, <b>expiry_date</b>.
-                            <br />
-                            Khuyến nghị dùng đúng file template của hệ thống.
-                        </div>
-
-                        {importFeedback?.summary && (
-                            <div className="excel-import-result">
-                                <div className="fw-bold mb-2">Kết quả import</div>
-                                <div className="text-muted">
-                                    Inserted: <b>{importFeedback.summary.inserted ?? 0}</b> |
-                                    Updated: <b>{importFeedback.summary.updated ?? 0}</b> |
-                                    Skipped: <b>{importFeedback.summary.skipped ?? 0}</b> |
-                                    Errors: <b>{importFeedback.summary.errors ?? 0}</b>
-                                </div>
-                                {importFeedback.errors?.length > 0 && (
-                                    <div className="mt-2">
-                                        <div className="fw-bold text-danger mb-1">Một vài lỗi (tối đa 30 dòng):</div>
-                                        <div className="excel-error-list">
-                                            {importFeedback.errors.map((er, idx) => (
-                                                <div key={idx} className="excel-error-item">
-                                                    Dòng {er.row}: {er.message}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                {/* Main: Bảng danh sách thuốc - giờ chiếm toàn màn hình */}
+                <div className="medicine-list-section full-width">
+                    <div className="list-header">
+                        <h3>📦 Danh Sách Thuốc Trong Kho ({medicines.length})</h3>
+                        <button 
+                            className="btn-add-medicine"
+                            onClick={() => handleOpenModal()}
+                        >
+                            <i className="fas fa-plus me-2"></i> Thêm thuốc mới
+                        </button>
                     </div>
-                </div>
 
-                {/* CỘT PHẢI: Bảng danh sách thuốc */}
-                <div className="medicine-list-section">
-                    <h3>📦 Danh Sách Thuốc Trong Kho ({medicines.length})</h3>
                     <div className="table-responsive">
                         <table className="medicine-table">
                             <thead>
@@ -357,7 +301,7 @@ const MedicineManager = () => {
                                             <td className="action-buttons">
                                                 <button 
                                                     className="btn-edit"
-                                                    onClick={() => handleEditMedicine(med)}
+                                                    onClick={() => handleOpenModal(med)}
                                                     title="Sửa"
                                                 >
                                                     ✏️
@@ -375,6 +319,150 @@ const MedicineManager = () => {
                                 )}
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <div className="medicine-list-section mt-4">
+                <h3>🧪 Stage 1 - Danh mục thuốc & quản lý theo lô</h3>
+
+                <div className="row g-4">
+                    <div className="col-lg-4">
+                        <h5>Tạo thuốc gốc</h5>
+                        <form onSubmit={handleCreateDrug}>
+                            <div className="form-group">
+                                <label>Tên thuốc (drug.name)</label>
+                                <input value={newDrugName} onChange={(e) => setNewDrugName(e.target.value)} />
+                            </div>
+                            <button className="btn-add" type="submit">Tạo thuốc</button>
+                        </form>
+
+                        <hr className="divider-soft" />
+                        <h5>Import lô từ Excel</h5>
+                        <form onSubmit={handleImportBatchExcel}>
+                            <div className="form-group">
+                                <label>File batch</label>
+                                <input type="file" accept=".xlsx,.xls" onChange={(e) => setBatchFile(e.target.files?.[0] || null)} required />
+                            </div>
+                            <div className="excel-import-actions">
+                                <button type="button" className="btn-template" onClick={handleDownloadBatchTemplate} disabled={batchImporting}>
+                                    Tải template batch
+                                </button>
+                                <button type="submit" className="btn-import" disabled={batchImporting}>
+                                    {batchImporting ? 'Đang import...' : 'Import batch'}
+                                </button>
+                            </div>
+                        </form>
+                        {batchImportFeedback?.summary && (
+                            <div className="excel-import-result mt-3">
+                                Inserted drugs: <b>{batchImportFeedback.summary.inserted_drugs ?? 0}</b> | Inserted batches: <b>{batchImportFeedback.summary.inserted_batches ?? 0}</b> | Updated batches: <b>{batchImportFeedback.summary.updated_batches ?? 0}</b>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="col-lg-8">
+                        <div className="row g-3">
+                            <div className="col-md-6">
+                                <h5>Danh mục drugs ({drugs.length})</h5>
+                                <div className="table-responsive">
+                                    <table className="medicine-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Tên thuốc</th>
+                                                <th>Tồn</th>
+                                                <th>Hạn gần nhất</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {drugs.map((d) => (
+                                                <tr
+                                                    key={d.id}
+                                                    onClick={() => {
+                                                        setSelectedDrugId(d.id);
+                                                        fetchBatchesByDrug(d.id);
+                                                    }}
+                                                    style={{ cursor: 'pointer', background: String(selectedDrugId) === String(d.id) ? '#f3e8ff' : 'transparent' }}
+                                                >
+                                                    <td>{d.name}</td>
+                                                    <td>{d.total_quantity}</td>
+                                                    <td>{d.nearest_expiry ? formatDate(d.nearest_expiry) : '-'}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div className="col-md-6">
+                                <h5>Thêm lô cho thuốc đã chọn</h5>
+                                <form onSubmit={handleAddBatch}>
+                                    <div className="form-group"><label>Số lô</label><input value={newBatchNumber} onChange={(e) => setNewBatchNumber(e.target.value)} required /></div>
+                                    <div className="form-group"><label>NSX</label><input type="date" value={newMfgDate} onChange={(e) => setNewMfgDate(e.target.value)} /></div>
+                                    <div className="form-group"><label>HSD</label><input type="date" value={newExpDate} onChange={(e) => setNewExpDate(e.target.value)} required /></div>
+                                    <div className="form-group"><label>Số lượng</label><input type="number" min="0" value={newBatchQty} onChange={(e) => setNewBatchQty(e.target.value)} required /></div>
+                                    <div className="form-group"><label>Giá nhập</label><input type="number" min="0" value={newBatchImportPrice} onChange={(e) => setNewBatchImportPrice(e.target.value)} required /></div>
+                                    <div className="form-group"><label>Giá bán</label><input type="number" min="0" value={newBatchSellingPrice} onChange={(e) => setNewBatchSellingPrice(e.target.value)} required /></div>
+                                    <button className="btn-add" type="submit">Thêm lô</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <hr className="divider-soft" />
+                        <h5>Danh sách lô của thuốc đã chọn ({batches.length})</h5>
+                        <div className="table-responsive">
+                            <table className="medicine-table">
+                                <thead>
+                                    <tr>
+                                        <th>Số lô</th>
+                                        <th>NSX</th>
+                                        <th>HSD</th>
+                                        <th>Tồn</th>
+                                        <th>Giá nhập</th>
+                                        <th>Giá bán</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {batches.length === 0 ? (
+                                        <tr><td colSpan="6" className="text-center">Chưa có lô.</td></tr>
+                                    ) : batches.map((b) => (
+                                        <tr key={b.id}>
+                                            <td>{b.batch_number}</td>
+                                            <td>{b.manufacture_date ? formatDate(b.manufacture_date) : '-'}</td>
+                                            <td>{formatDate(b.expiry_date)}</td>
+                                            <td>{b.quantity}</td>
+                                            <td>{formatCurrency(b.import_price)}</td>
+                                            <td>{formatCurrency(b.selling_price)}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr className="divider-soft" />
+                        <h5>⚠️ Cảnh báo sắp hết hạn (&lt;= 90 ngày) ({expiringWarnings.length})</h5>
+                        <div className="table-responsive">
+                            <table className="medicine-table">
+                                <thead>
+                                    <tr>
+                                        <th>Thuốc</th>
+                                        <th>Số lô</th>
+                                        <th>HSD</th>
+                                        <th>Tồn</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {expiringWarnings.length === 0 ? (
+                                        <tr><td colSpan="4" className="text-center">Không có lô sắp hết hạn.</td></tr>
+                                    ) : expiringWarnings.map((w) => (
+                                        <tr key={w.id}>
+                                            <td>{w.drug_name}</td>
+                                            <td>{w.batch_number}</td>
+                                            <td>{formatDate(w.expiry_date)}</td>
+                                            <td>{w.quantity}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

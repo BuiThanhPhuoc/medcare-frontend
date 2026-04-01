@@ -1,0 +1,540 @@
+/**
+ * Admin Appointment Calendar Styles
+ */
+
+.admin-calendar-container {
+    padding: 20px 0;
+}
+
+.calendar-header-section {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.export-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.calendar-filter-bar {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Bulk Actions Bar */
+.bulk-actions-bar {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.1) 0%, rgba(0, 123, 255, 0.05) 100%);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bulk-info {
+    color: #0c5460;
+    white-space: nowrap;
+}
+
+.bulk-buttons {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.calendar-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.calendar-month-year {
+    min-width: 200px;
+}
+
+.calendar-body {
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+/* Calendar Grid */
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day-headers {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.calendar-day-header {
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    color: #495057;
+    background-color: #e9ecef;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.calendar-cells {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.calendar-cell {
+    min-height: 120px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+}
+
+.calendar-cell:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    background-color: #f9fbfd;
+}
+
+.calendar-cell.other-month {
+    background-color: #f8f9fa;
+    opacity: 0.5;
+}
+
+.calendar-cell.today {
+    border: 2px solid #007bff;
+    background-color: #e7f3ff;
+}
+
+.calendar-date-number {
+    font-weight: bold;
+    font-size: 14px;
+    color: #212529;
+    margin-bottom: 6px;
+    min-height: 20px;
+}
+
+.calendar-appointments {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: calc(100% - 25px);
+}
+
+/* Appointment Badge Container with Checkbox */
+.appointment-badge-container {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 2px;
+    border-radius: 3px;
+}
+
+.appointment-badge-container:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.appointment-badge-container.selected {
+    background-color: rgba(40, 167, 69, 0.15);
+    border-left: 2px solid #28a745;
+    padding-left: 4px;
+}
+
+.appointment-checkbox {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+    accent-color: #28a745;
+}
+
+.appointment-badge {
+    font-size: 11px;
+    padding: 3px 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+.appointment-badge:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Status Badge Styling */
+.badge-warning {
+    background-color: #ffc107 !important;
+    color: #000 !important;
+}
+
+.badge-info {
+    background-color: #17a2b8 !important;
+    color: white !important;
+}
+
+.badge-success {
+    background-color: #28a745 !important;
+    color: white !important;
+}
+
+.badge-danger {
+    background-color: #dc3545 !important;
+    color: white !important;
+}
+
+.badge-secondary {
+    background-color: #6c757d !important;
+    color: white !important;
+}
+
+/* Calendar Legend */
+.calendar-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.calendar-legend .badge {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+/* Modal Styles */
+.modal {
+    z-index: 1050;
+}
+
+.appointment-details {
+    padding: 15px 0;
+}
+
+.detail-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px solid #e9ecef;
+    align-items: center;
+    gap: 15px;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: bold;
+    color: #495057;
+    min-width: 100px;
+    font-size: 14px;
+}
+
+.detail-row span {
+    flex: 1;
+    color: #212529;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .calendar-cell {
+        min-height: 100px;
+    }
+
+    .calendar-date-number {
+        font-size: 12px;
+    }
+
+    .appointment-badge {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        padding: 8px;
+    }
+
+    .calendar-cell {
+        min-height: 80px;
+        padding: 4px;
+    }
+
+    .calendar-day-header {
+        padding: 6px;
+        font-size: 11px;
+    }
+
+    .calendar-date-number {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .appointment-badge {
+        font-size: 9px;
+        padding: 2px 4px;
+    }
+
+    .calendar-nav-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .calendar-nav-bar button {
+        width: 100%;
+    }
+
+    .calendar-month-year {
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .calendar-legend {
+        gap: 10px;
+    }
+
+    .bulk-buttons {
+        width: 100%;
+    }
+
+    .bulk-buttons button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    .calendar-grid {
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .calendar-cell {
+        min-height: 60px;
+        font-size: 11px;
+    }
+
+    .calendar-day-header {
+        padding: 4px;
+        font-size: 9px;
+    }
+
+    .calendar-date-number {
+        font-size: 10px;
+    }
+
+    .appointment-badge {
+        font-size: 8px;
+        padding: 1px 3px;
+    }
+
+    .detail-label {
+        min-width: 80px;
+        font-size: 12px;
+    }
+
+    .detail-row span {
+        font-size: 12px;
+    }
+
+    .bulk-info {
+        font-size: 12px;
+    }
+
+    .bulk-buttons {
+        width: 100%;
+    }
+
+    .bulk-buttons button {
+        flex: 1;
+        font-size: 11px;
+    }
+}
+
+/* Scrollbar styling for appointments container */
+.calendar-appointments::-webkit-scrollbar {
+    width: 4px;
+}
+
+.calendar-appointments::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.calendar-appointments::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 2px;
+}
+
+.calendar-appointments::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Enhanced Animations */
+
+/* Button hover animation */
+.btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+}
+
+.btn:not(:disabled):active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Alert/Toast animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+}
+
+/* Spin animation for loading */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner-border {
+    animation: spin 1s linear infinite;
+}
+
+/* Pulse animation for selections */
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+.appointment-badge-container.selected {
+    animation: pulse 0.5s ease-in-out;
+}
+
+/* Bounce animation for status changes */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+/* Modal fade animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Appointment badge entrance animation */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.appointment-badge {
+    animation: slideInUp 0.3s ease-out;
+}
+
+/* Calendar cell hover effect with ripple */
+@keyframes ripple {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+    }
+}
+
+.calendar-cell.today::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 6px;
+    animation: ripple 1s ease-out;
+}

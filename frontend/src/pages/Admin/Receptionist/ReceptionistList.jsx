@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../../lib/api';
-import '../CSS/Admin.css';
+import '../AdminDashboard.css';
 
 const ReceptionistList = () => {
     const navigate = useNavigate();
@@ -67,7 +67,7 @@ const ReceptionistList = () => {
     };
 
     const handleView = (receptionist) => {
-        navigate(`/admin/receptionists/${receptionist.id}/detail`, { state: { receptionist } });
+        navigate(`/admin/receptionists/${receptionist.id}`, { state: { receptionist } });
     };
 
     return (
@@ -150,13 +150,32 @@ const ReceptionistList = () => {
                                     <tr key={receptionist.id}>
                                         <td>{index + 1}</td>
                                         <td>
-                                            <img
-                                                src={receptionist.avatar || 'https://via.placeholder.com/40x40?text=No+Avatar'}
-                                                alt="Avatar"
-                                                width="40"
-                                                height="40"
-                                                className="rounded-circle"
-                                            />
+                                            <div
+                                                style={{
+                                                    width: '40px',
+                                                    height: '40px',
+                                                    borderRadius: '50%',
+                                                    backgroundColor: '#e5e7eb',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    color: '#6b7280',
+                                                    overflow: 'hidden'
+                                                }}
+                                            >
+                                                {receptionist.avatar ? (
+                                                    <img
+                                                        src={receptionist.avatar}
+                                                        alt="Avatar"
+                                                        width="40"
+                                                        height="40"
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                ) : (
+                                                    <span>N/A</span>
+                                                )}
+                                            </div>
                                         </td>
                                         <td className="fw-500">{receptionist.full_name}</td>
                                         <td>{receptionist.email}</td>
