@@ -122,7 +122,7 @@ const MedicineCatalogPage = () => {
                                             <div className="drug-name">#{drug.id} - {drug.name}</div>
                                             <div className="drug-info">
                                                 <span className="badge badge-success">
-                                                    Tồn: {drug.total_quantity}
+                                                    Tồn bán: {drug.total_available ?? 0}
                                                 </span>
                                                 {drug.nearest_expiry && (
                                                     <span className="badge badge-warning">

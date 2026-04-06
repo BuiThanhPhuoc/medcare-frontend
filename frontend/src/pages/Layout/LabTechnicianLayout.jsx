@@ -18,12 +18,15 @@ const LabTechnicianLayout = ({ children, pageTitle = 'Xét nghiệm' }) => {
             <aside className={`sidebar bg-white border-end ${isMobileOpen ? 'mobile-open' : ''}`}>
                 <Link
                     to="/lab-dashboard"
-                    className="sidebar-brand bg-success-gradient text-white p-4 text-center border-bottom text-decoration-none"
+                    className="sidebar-brand text-decoration-none"
                     onClick={() => setIsMobileOpen(false)}
                 >
-                    <i className="fas fa-flask fs-3 mb-2"></i>
-                    <h4 className="mb-0 fw-bold">MedCare Lab</h4>
-                    <small className="opacity-75">Kỹ thuật viên XN</small>
+                    <div className="sidebar-brand-header">
+                        <i className="fas fa-flask fs-3"></i>
+                        <small>XÉT NGHIỆM</small>
+                    </div>
+                    <h4>MedCare Lab</h4>
+                    <small className="sidebar-brand-desc">Phòng khám</small>
                 </Link>
                 <nav className="sidebar-menu p-3">
                     <Link
@@ -35,6 +38,16 @@ const LabTechnicianLayout = ({ children, pageTitle = 'Xét nghiệm' }) => {
                         }`}
                     >
                         <i className="fas fa-list me-2" style={{ width: '20px' }}></i> Hàng chờ xét nghiệm
+                    </Link>
+                    <Link
+                        to="/lab/all-results"
+                        className={`menu-item text-dark rounded mb-2 p-2 text-decoration-none d-flex align-items-center ${
+                            location.pathname === '/lab/all-results'
+                                ? 'bg-primary bg-opacity-10 text-primary fw-bold border-start border-primary border-4'
+                                : ''
+                        }`}
+                    >
+                        <i className="fas fa-vials me-2" style={{ width: '20px' }}></i> Danh sách xét nghiệm
                     </Link>
                     <hr className="my-4" />
                     <button onClick={handleLogout} className="btn btn-light text-danger w-100 text-start fw-bold">
@@ -54,7 +67,9 @@ const LabTechnicianLayout = ({ children, pageTitle = 'Xét nghiệm' }) => {
                         <strong>{user.username}</strong>
                     </div>
                 </header>
-                <div className="content-wrapper">{children}</div>
+                <div className="content-wrapper">
+                    <div className="mc-view-root">{children}</div>
+                </div>
             </div>
             {isMobileOpen && <div className="sidebar-overlay" onClick={() => setIsMobileOpen(false)} />}
         </div>

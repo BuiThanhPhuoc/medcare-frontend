@@ -1,0 +1,151 @@
+/* MedCare — shell chung cho patient / doctor / staff (không ghi đè .admin-theme) */
+
+.app-wrapper.patient-theme .sidebar,
+.app-wrapper.doctor-theme .sidebar,
+.app-wrapper.staff-theme .sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 4px 0 32px rgba(15, 23, 42, 0.2);
+}
+
+.app-wrapper.patient-theme .sidebar-brand,
+.app-wrapper.doctor-theme .sidebar-brand,
+.app-wrapper.staff-theme .sidebar-brand {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+}
+
+.app-wrapper.patient-theme .sidebar-brand h4,
+.app-wrapper.doctor-theme .sidebar-brand h4 {
+    color: #f8fafc;
+}
+
+.app-wrapper.patient-theme .sidebar-brand small,
+.app-wrapper.doctor-theme .sidebar-brand small {
+    color: rgba(248, 250, 252, 0.65);
+}
+
+.app-wrapper.patient-theme .sidebar-brand i,
+.app-wrapper.doctor-theme .sidebar-brand i {
+    color: #2dd4bf;
+}
+
+.app-wrapper.patient-theme .sidebar-user-info,
+.app-wrapper.doctor-theme .sidebar-user-info {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.app-wrapper.patient-theme .sidebar-user-info strong,
+.app-wrapper.doctor-theme .sidebar-user-info strong {
+    color: #f1f5f9;
+}
+
+.app-wrapper.patient-theme .sidebar-user-info small,
+.app-wrapper.doctor-theme .sidebar-user-info small {
+    color: #94a3b8;
+}
+
+.app-wrapper.patient-theme .sidebar-menu a,
+.app-wrapper.patient-theme .sidebar-menu button,
+.app-wrapper.doctor-theme .sidebar-menu a,
+.app-wrapper.doctor-theme .sidebar-menu button {
+    color: #e2e8f0;
+    border-radius: 10px;
+}
+
+.app-wrapper.patient-theme .sidebar-menu a:hover,
+.app-wrapper.patient-theme .sidebar-menu button:hover,
+.app-wrapper.doctor-theme .sidebar-menu a:hover,
+.app-wrapper.doctor-theme .sidebar-menu button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+}
+
+.app-wrapper.patient-theme .sidebar-menu a.active,
+.app-wrapper.doctor-theme .sidebar-menu a.active {
+    background: rgba(45, 212, 191, 0.15);
+    color: #5eead4;
+    border-left: 3px solid #2dd4bf;
+    padding-left: calc(1.5rem - 3px);
+    font-weight: 600;
+}
+
+.app-wrapper.patient-theme .avatar-circle,
+.app-wrapper.doctor-theme .avatar-circle {
+    background: linear-gradient(135deg, #0d9488, #6366f1);
+}
+
+.app-wrapper.patient-theme .main-content .topbar,
+.app-wrapper.doctor-theme .main-content .topbar {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.app-wrapper.patient-theme .content-wrapper,
+.app-wrapper.doctor-theme .content-wrapper {
+    background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 45%);
+}
+
+.mc-dash-hero {
+    border-radius: 18px;
+    padding: 32px 28px;
+    margin-bottom: 24px;
+    background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1e40af 100%);
+    color: #ffffff;
+    box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mc-dash-hero h1,
+.mc-dash-hero h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+    color: #ffffff;
+}
+
+.mc-dash-hero p {
+    margin: 0;
+    opacity: 0.92;
+    font-size: 0.9rem;
+    max-width: 36rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.mc-inventory-page-title {
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+}
+
+/* Lễ tân + KTV: sidebar tối, bỏ nền trắng mặc định */
+.app-wrapper.staff-theme .sidebar {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.app-wrapper.staff-theme .sidebar .sidebar-brand,
+.app-wrapper.staff-theme .sidebar a.sidebar-brand {
+    background: transparent !important;
+    color: #f8fafc !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.app-wrapper.staff-theme .sidebar .menu-item {
+    color: #e2e8f0 !important;
+}
+
+.app-wrapper.staff-theme .sidebar .menu-item.bg-primary,
+.app-wrapper.staff-theme .sidebar .menu-item.text-primary {
+    background: rgba(45, 212, 191, 0.12) !important;
+    color: #5eead4 !important;
+    border-left: 3px solid #2dd4bf !important;
+}
+
+.app-wrapper.staff-theme .main-content .content-wrapper.bg-light {
+    background: linear-gradient(180deg, #f1f5f9 0%, #f8fafc 50%) !important;
+}

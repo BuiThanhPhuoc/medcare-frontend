@@ -131,6 +131,10 @@ const PatientDashboard = () => {
                         <i className="fas fa-shopping-cart"></i>
                         <span>Lịch sử đơn hàng</span>
                     </Link>
+                    <Link to="/patient/lab-results" className="action-card history-action">
+                        <i className="fas fa-vials"></i>
+                        <span>Xét nghiệm của tôi</span>
+                    </Link>
                     <Link to="/patient-profile" className="action-card medical-action">
                         <i className="fas fa-user-circle"></i>
                         <span>Hồ sơ cá nhân</span>

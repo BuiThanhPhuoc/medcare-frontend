@@ -6,6 +6,7 @@ import './CSS/AdminLayout.css';
 const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const [medicineMenuOpen, setMedicineMenuOpen] = useState(false);
+    const [drugOrdersMenuOpen, setDrugOrdersMenuOpen] = useState(false);
     const [labTestsMenuOpen, setLabTestsMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -15,7 +16,8 @@ const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
 
     useEffect(() => {
         if (path.startsWith('/admin/medicines')) setMedicineMenuOpen(true);
-        if (path.startsWith('/admin/lab-test')) setLabTestsMenuOpen(true);
+        if (path.startsWith('/admin/drug-orders')) setDrugOrdersMenuOpen(true);
+        if (path.startsWith('/admin/lab-test') || path.startsWith('/admin/lab-results')) setLabTestsMenuOpen(true);
     }, [path]);
 
     const handleLogout = () => {
@@ -27,24 +29,24 @@ const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
         `admin-nav-link ${active ? 'admin-nav-link--active' : ''}`;
 
     const medicineSectionActive = path.startsWith('/admin/medicines');
-    const labSectionActive = path.startsWith('/admin/lab-test');
+    const drugOrdersSectionActive = path.startsWith('/admin/drug-orders');
+    const labSectionActive = path.startsWith('/admin/lab-test') || path.startsWith('/admin/lab-results');
 
     return (
         <div className="app-wrapper admin-theme">
             <aside
-                className={`sidebar bg-white admin-sidebar ${isMobileOpen ? 'mobile-open' : ''}`}
+                className={`sidebar admin-sidebar ${isMobileOpen ? 'mobile-open' : ''}`}
                 aria-label="Menu quản trị"
             >
                 <div className="admin-sidebar-inner">
-                    <div className="admin-sidebar-brand">
-                        <Link to="/admin-dashboard" onClick={() => setIsMobileOpen(false)}>
-                            <h1 className="admin-sidebar-brand-title">
-                                <i className="fas fa-clinic-medical" aria-hidden />
-                                Quản trị
-                            </h1>
-                            <div className="admin-sidebar-brand-sub">Phòng khám</div>
-                        </Link>
-                    </div>
+                    <Link to="/admin-dashboard" className="sidebar-brand text-decoration-none" onClick={() => setIsMobileOpen(false)}>
+                        <div className="sidebar-brand-header">
+                            <i className="fas fa-clinic-medical"></i>
+                            <small>QUẢN TRỊ</small>
+                        </div>
+                        <h4>MedCare</h4>
+                        <small className="sidebar-brand-desc">Phòng khám</small>
+                    </Link>
 
                     <nav className="admin-sidebar-scroll" aria-label="Điều hướng chính">
                         <ul className="list-unstyled mb-0">
@@ -121,6 +123,34 @@ const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
                             <li>
                                 <button
                                     type="button"
+                                    className={`admin-nav-link admin-nav-toggle ${drugOrdersSectionActive ? 'admin-nav-link--active' : ''}`}
+                                    onClick={() => setDrugOrdersMenuOpen((o) => !o)}
+                                    aria-expanded={drugOrdersMenuOpen}
+                                >
+                                    <span className="d-flex align-items-center gap-2">
+                                        <i className="fas fa-shopping-cart text-primary" aria-hidden />
+                                        Đơn thuốc
+                                    </span>
+                                    <i className="fas fa-chevron-right admin-nav-chevron" aria-hidden />
+                                </button>
+                                {drugOrdersMenuOpen && (
+                                    <ul className="admin-nav-submenu">
+                                        <li>
+                                            <Link
+                                                to="/admin/drug-orders"
+                                                className={linkClass(path === '/admin/drug-orders')}
+                                                onClick={() => setIsMobileOpen(false)}
+                                            >
+                                                <i className="fas fa-list" aria-hidden />
+                                                Danh sách đơn hàng
+                                            </Link>
+                                        </li>
+                                    </ul>
+                                )}
+                            </li>
+                            <li>
+                                <button
+                                    type="button"
                                     className={`admin-nav-link admin-nav-toggle ${labSectionActive ? 'admin-nav-link--active' : ''}`}
                                     onClick={() => setLabTestsMenuOpen((o) => !o)}
                                     aria-expanded={labTestsMenuOpen}
@@ -151,6 +181,16 @@ const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
                                             >
                                                 <i className="fas fa-folder" aria-hidden />
                                                 Danh mục
+                                            </Link>
+                                        </li>
+                                        <li>
+                                            <Link
+                                                to="/admin/lab-results"
+                                                className={linkClass(path === '/admin/lab-results')}
+                                                onClick={() => setIsMobileOpen(false)}
+                                            >
+                                                <i className="fas fa-vials" aria-hidden />
+                                                Danh sách XN (xem)
                                             </Link>
                                         </li>
                                     </ul>
@@ -290,7 +330,9 @@ const AdminLayout = ({ children, pageTitle = 'Quản trị Phòng khám' }) => {
                     </div>
                 </header>
 
-                <div className="content-wrapper">{children}</div>
+                <div className="content-wrapper">
+                    <div className="mc-view-root">{children}</div>
+                </div>
             </div>
 
             {isMobileOpen && (

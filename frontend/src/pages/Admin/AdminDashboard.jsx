@@ -72,7 +72,9 @@ const useChartResize = () => {
 };
 
 const paymentMeta = {
-    cash: { label: 'Tiền mặt', color: '#8b5cf6' },
+    vnpay: { label: 'VNPay', color: '#1F3FBF' },    // Xanh dương - Logo VNPay
+    cod: { label: 'COD', color: '#10B981' },         // Xanh lá - Tiền mặt/Thành công
+    cash: { label: 'Tiền mặt', color: '#8b5cf6' },   // Tím
     transfer: { label: 'Chuyển khoản', color: '#3b82f6' },
     card: { label: 'Thẻ', color: '#f59e0b' }
 };
@@ -85,6 +87,7 @@ const AdminDashboard = () => {
     const [revenueStats, setRevenueStats] = useState({ total_revenue: 0, revenue_by_method: [] });
     const [revenueTimeline, setRevenueTimeline] = useState([]);
     const [pendingSchedules, setPendingSchedules] = useState([]);
+    const [pendingDrugOrders, setPendingDrugOrders] = useState(0);
     const chartKey = useChartResize();
 
     useEffect(() => {
@@ -105,6 +108,15 @@ const AdminDashboard = () => {
                 setRevenueStats(revRes.data?.data ?? { total_revenue: 0, revenue_by_method: [] });
                 setRevenueTimeline(timelineRes.data?.data?.timeline ?? []);
                 setPendingSchedules(pendingRes.data?.schedules ?? []);
+
+                // Fetch pending drug orders (status = pending_cod hoặc unpaid)
+                try {
+                    const drugOrdersRes = await api.get('/api/admin/drug-orders?shipping_status=pending');
+                    setPendingDrugOrders(drugOrdersRes.data?.pagination?.total ?? 0);
+                } catch (e) {
+                    console.error('Error fetching pending drug orders:', e);
+                    setPendingDrugOrders(0);
+                }
             } catch (e) {
                 if (cancelled) return;
                 setError(e?.response?.data?.message || e?.message || 'Không thể tải dữ liệu dashboard.');
@@ -212,13 +224,23 @@ const AdminDashboard = () => {
 
     return (
         <div className="admin-dashboard-modern">
+            <div className="admin-dash-hero">
+                <div className="admin-dash-hero-text">
+                    <p className="admin-dash-eyebrow">Bảng điều khiển</p>
+                    <h1 className="admin-dash-heading">Tổng quan vận hành</h1>
+                    <p className="admin-dash-lead">
+                        Theo dõi doanh thu, thanh toán và các tác vụ cần xử lý trong một giao diện gọn gàng.
+                    </p>
+                </div>
+            </div>
+
             <div className="revenue-toolbar">
                 <div>
                     <h3 className="chart-title mb-1">
-                        <i className="fas fa-chart-pie me-2 text-primary" />
-                        Dashboard Admin
+                        <i className="fas fa-chart-line me-2 text-primary" aria-hidden />
+                        Phân tích doanh thu
                     </h3>
-                    <div className="chart-subtitle">Doanh thu, phương thức thanh toán và lịch chờ duyệt</div>
+                    <div className="chart-subtitle">Biểu đồ theo số ngày bạn chọn; dữ liệu từ thanh toán hệ thống</div>
                 </div>
 
                 <div className="days-selector btn-group" role="group" aria-label="Chọn khoảng thời gian">
@@ -250,58 +272,63 @@ const AdminDashboard = () => {
                 </div>
             ) : (
                 <>
-                    <div className="row g-3 mb-3">
-                        <div className="col-xl-3 col-md-6">
-                            <div className="kpi-card">
-                                <div className="kpi-title">Tổng doanh thu</div>
-                                <div className="d-flex align-items-end justify-content-between gap-2">
-                                    <div className="kpi-value">{formatVND(kpis.totalRevenue)}</div>
-                                    <div className="text-primary" style={{ fontSize: 22 }}>
-                                        <i className="fas fa-money-bill-wave" />
-                                    </div>
+                    <div className="admin-kpi-grid mb-4">
+                        <div className="kpi-card kpi-card--accent">
+                            <div className="kpi-title">Tổng doanh thu</div>
+                            <div className="d-flex align-items-end justify-content-between gap-2">
+                                <div className="kpi-value">{formatVND(kpis.totalRevenue)}</div>
+                                <div className="kpi-icon-wrap kpi-icon-wrap--teal">
+                                    <i className="fas fa-money-bill-wave" aria-hidden />
                                 </div>
-                                <div className="kpi-meta">Tổng doanh thu từ bảng payments</div>
                             </div>
+                            <div className="kpi-meta">Từ bảng thanh toán</div>
                         </div>
 
-                        <div className="col-xl-3 col-md-6">
-                            <div className="kpi-card">
-                                <div className="kpi-title">Số giao dịch</div>
-                                <div className="d-flex align-items-end justify-content-between gap-2">
-                                    <div className="kpi-value">{kpis.totalTransactions}</div>
-                                    <div className="text-primary" style={{ fontSize: 22 }}>
-                                        <i className="fas fa-receipt" />
-                                    </div>
+                        <div className="kpi-card">
+                            <div className="kpi-title">Số giao dịch</div>
+                            <div className="d-flex align-items-end justify-content-between gap-2">
+                                <div className="kpi-value">{kpis.totalTransactions}</div>
+                                <div className="kpi-icon-wrap">
+                                    <i className="fas fa-receipt" aria-hidden />
                                 </div>
-                                <div className="kpi-meta">Gộp theo các payment_method</div>
                             </div>
+                            <div className="kpi-meta">Theo phương thức thanh toán</div>
                         </div>
 
-                        <div className="col-xl-3 col-md-6">
-                            <div className="kpi-card">
-                                <div className="kpi-title">Trung bình mỗi giao dịch</div>
-                                <div className="d-flex align-items-end justify-content-between gap-2">
-                                    <div className="kpi-value">{formatVND(kpis.avgTicket)}</div>
-                                    <div className="text-primary" style={{ fontSize: 22 }}>
-                                        <i className="fas fa-scale-balanced" />
-                                    </div>
+                        <div className="kpi-card">
+                            <div className="kpi-title">TB / giao dịch</div>
+                            <div className="d-flex align-items-end justify-content-between gap-2">
+                                <div className="kpi-value">{formatVND(kpis.avgTicket)}</div>
+                                <div className="kpi-icon-wrap">
+                                    <i className="fas fa-scale-balanced" aria-hidden />
                                 </div>
-                                <div className="kpi-meta">Trung bình = tổng / count</div>
                             </div>
+                            <div className="kpi-meta">Doanh thu ÷ số giao dịch</div>
                         </div>
 
-                        <div className="col-xl-3 col-md-6">
-                            <div className="kpi-card">
-                                <div className="kpi-title">Lịch chờ duyệt</div>
+                        <div className="kpi-card kpi-card--warn">
+                            <div className="kpi-title">Lịch chờ duyệt</div>
+                            <div className="d-flex align-items-end justify-content-between gap-2">
+                                <div className="kpi-value kpi-value--warn">{kpis.pendingSchedulesCount}</div>
+                                <div className="kpi-icon-wrap kpi-icon-wrap--amber">
+                                    <i className="fas fa-clock" aria-hidden />
+                                </div>
+                            </div>
+                            <div className="kpi-meta">Ca làm việc pending</div>
+                        </div>
+
+                        <Link to="/admin/drug-orders" className="kpi-card-link">
+                            <div className="kpi-card kpi-card--orders">
+                                <div className="kpi-title">Đơn thuốc cần xử lý</div>
                                 <div className="d-flex align-items-end justify-content-between gap-2">
-                                    <div className="kpi-value text-warning">{kpis.pendingSchedulesCount}</div>
-                                    <div className="text-warning" style={{ fontSize: 22 }}>
-                                        <i className="fas fa-clock" />
+                                    <div className="kpi-value kpi-value--orders">{pendingDrugOrders}</div>
+                                    <div className="kpi-icon-wrap kpi-icon-wrap--violet">
+                                        <i className="fas fa-truck-medical" aria-hidden />
                                     </div>
                                 </div>
-                                <div className="kpi-meta">Tổng số ca đang pending</div>
+                                <div className="kpi-meta">Lọc trạng thái giao hàng pending — bấm để mở</div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
 
                     {/* Quick Shortcuts - Moved to top */}
@@ -315,6 +342,10 @@ const AdminDashboard = () => {
                                     <Link to="/admin/medicines" className="shortcut-btn">
                                         <i className="fas fa-pills"></i>
                                         <span>Quản lý Thuốc</span>
+                                    </Link>
+                                    <Link to="/admin/drug-orders" className="shortcut-btn">
+                                        <i className="fas fa-shopping-cart"></i>
+                                        <span>Quản lý Đơn Thuốc</span>
                                     </Link>
                                     <Link to="/admin/doctors" className="shortcut-btn">
                                         <i className="fas fa-user-md"></i>
@@ -381,7 +412,7 @@ const AdminDashboard = () => {
                                                     }}
                                                 />
                                                 <Tooltip formatter={(value) => formatVND(value)} labelFormatter={(label) => `Ngày ${label}`} />
-                                                <Line type="monotone" dataKey="total_revenue" stroke="#8b5cf6" strokeWidth={3} dot={false} />
+                                                <Line type="monotone" dataKey="total_revenue" stroke="#0d9488" strokeWidth={3} dot={false} />
                                             </LineChart>
                                         </ResponsiveContainer>
                                     )}
@@ -519,7 +550,7 @@ const AdminDashboard = () => {
                                                 <Tooltip formatter={(value) => [`${value} ca`]} labelFormatter={(label) => `Ca: ${label}`} />
                                                 <Bar dataKey="count" radius={[10, 10, 0, 0]}>
                                                     {pendingByShiftData.map((entry, idx) => (
-                                                        <Cell key={`shift-cell-${idx}`} fill="#8b5cf6" />
+                                                        <Cell key={`shift-cell-${idx}`} fill="#6366f1" />
                                                     ))}
                                                 </Bar>
                                             </BarChart>
@@ -556,7 +587,7 @@ const AdminDashboard = () => {
                                                 <XAxis dataKey="doctor" interval={0} tick={{ fontSize: 12 }} />
                                                 <YAxis allowDecimals={false} />
                                                 <Tooltip formatter={(value) => [`${value} ca`]} labelFormatter={(label) => `Bác sĩ: ${label}`} />
-                                                <Bar dataKey="count" fill="#3b82f6" radius={[10, 10, 0, 0]} />
+                                                <Bar dataKey="count" fill="#0d9488" radius={[10, 10, 0, 0]} />
                                             </BarChart>
                                         </ResponsiveContainer>
                                     )}

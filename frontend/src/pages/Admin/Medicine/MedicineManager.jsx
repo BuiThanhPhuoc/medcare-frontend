@@ -240,10 +240,13 @@ const MedicineManager = () => {
     };
 
     return (
-        <div className="admin-container">
-            <h2>⚙️ Quản Trị Hệ Thống - Kho Thuốc</h2>
-            
-            {/* AddMedicineModal */}
+        <div className="admin-container mc-inventory">
+            <h2 className="mc-inventory-page-title">Kho thuốc — theo danh mục &amp; lô</h2>
+            <p className="text-muted small mb-3">
+                <strong>Tồn bán</strong> = tổng <code>available_quantity</code> các lô (đồng bộ với trang mua thuốc của bệnh nhân).
+                Bảng <em>medicines</em> cũ chỉ còn để tương thích — dùng mục cuối trang nếu cần.
+            </p>
+
             <AddMedicineModal
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
@@ -253,15 +256,11 @@ const MedicineManager = () => {
             />
 
             <div className="admin-layout">
-                {/* Main: Bảng danh sách thuốc - giờ chiếm toàn màn hình */}
                 <div className="medicine-list-section full-width">
                     <div className="list-header">
-                        <h3>📦 Danh Sách Thuốc Trong Kho ({medicines.length})</h3>
-                        <button 
-                            className="btn-add-medicine"
-                            onClick={() => handleOpenModal()}
-                        >
-                            <i className="fas fa-plus me-2"></i> Thêm thuốc mới
+                        <h3>Danh mục thuốc &amp; tồn thực tế ({drugs.length})</h3>
+                        <button type="button" className="btn-add-medicine" onClick={() => fetchDrugsWithStock()}>
+                            <i className="fas fa-rotate me-2"></i> Làm mới
                         </button>
                     </div>
 
@@ -271,51 +270,61 @@ const MedicineManager = () => {
                                 <tr>
                                     <th>ID</th>
                                     <th>Tên thuốc</th>
-                                    <th>Số lượng</th>
-                                    <th>Giá nhập</th>
-                                    <th>Giá bán</th>
-                                    <th>Hạn sử dụng</th>
+                                    <th>Tồn bán</th>
+                                    <th>Đã nhập kho</th>
+                                    <th>HSD gần nhất</th>
+                                    <th>Giá bán tham khảo</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {medicines.length === 0 ? (
+                                {drugs.length === 0 ? (
                                     <tr>
                                         <td colSpan="7" className="text-center">
-                                            Kho chưa có thuốc nào.
+                                            Chưa có danh mục thuốc. Tạo thuốc và thêm lô ở mục bên dưới.
                                         </td>
                                     </tr>
                                 ) : (
-                                    medicines.map(med => (
-                                        <tr key={med.id}>
-                                            <td>#{med.id}</td>
-                                            <td><strong>{med.name}</strong></td>
-                                            <td>
-                                                <span className={`qty-badge ${med.quantity < 50 ? 'low-stock' : 'in-stock'}`}>
-                                                    {med.quantity}
-                                                </span>
-                                            </td>
-                                            <td>{formatCurrency(med.import_price)}</td>
-                                            <td>{formatCurrency(med.price)}</td>
-                                            <td>{formatDate(med.expiry_date)}</td>
-                                            <td className="action-buttons">
-                                                <button 
-                                                    className="btn-edit"
-                                                    onClick={() => handleOpenModal(med)}
-                                                    title="Sửa"
-                                                >
-                                                    ✏️
-                                                </button>
-                                                <button 
-                                                    className="btn-delete"
-                                                    onClick={() => handleDeleteMedicine(med.id)}
-                                                    title="Xóa"
-                                                >
-                                                    🗑️
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
+                                    drugs.map((d) => {
+                                        const avail = Number(d.total_available ?? 0);
+                                        const imported = Number(d.total_imported ?? 0);
+                                        return (
+                                            <tr
+                                                key={d.id}
+                                                className={String(selectedDrugId) === String(d.id) ? 'table-active' : ''}
+                                            >
+                                                <td>#{d.id}</td>
+                                                <td>
+                                                    <strong>{d.name}</strong>
+                                                </td>
+                                                <td>
+                                                    <span className={`qty-badge ${avail < 50 ? 'low-stock' : 'in-stock'}`}>
+                                                        {avail}
+                                                    </span>
+                                                </td>
+                                                <td>{imported}</td>
+                                                <td>{d.nearest_expiry ? formatDate(d.nearest_expiry) : '—'}</td>
+                                                <td>
+                                                    {d.ref_selling_price != null
+                                                        ? formatCurrency(d.ref_selling_price)
+                                                        : '—'}
+                                                </td>
+                                                <td className="action-buttons">
+                                                    <button
+                                                        type="button"
+                                                        className="btn-edit"
+                                                        title="Chọn để thêm / xem lô"
+                                                        onClick={() => {
+                                                            setSelectedDrugId(d.id);
+                                                            fetchBatchesByDrug(d.id);
+                                                        }}
+                                                    >
+                                                        Lô
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -324,7 +333,7 @@ const MedicineManager = () => {
             </div>
 
             <div className="medicine-list-section mt-4">
-                <h3>🧪 Stage 1 - Danh mục thuốc & quản lý theo lô</h3>
+                <h3>Thao tác nhanh — tạo thuốc, import lô, xem lô đã chọn</h3>
 
                 <div className="row g-4">
                     <div className="col-lg-4">
@@ -362,46 +371,23 @@ const MedicineManager = () => {
 
                     <div className="col-lg-8">
                         <div className="row g-3">
-                            <div className="col-md-6">
-                                <h5>Danh mục drugs ({drugs.length})</h5>
-                                <div className="table-responsive">
-                                    <table className="medicine-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Tên thuốc</th>
-                                                <th>Tồn</th>
-                                                <th>Hạn gần nhất</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {drugs.map((d) => (
-                                                <tr
-                                                    key={d.id}
-                                                    onClick={() => {
-                                                        setSelectedDrugId(d.id);
-                                                        fetchBatchesByDrug(d.id);
-                                                    }}
-                                                    style={{ cursor: 'pointer', background: String(selectedDrugId) === String(d.id) ? '#f3e8ff' : 'transparent' }}
-                                                >
-                                                    <td>{d.name}</td>
-                                                    <td>{d.total_quantity}</td>
-                                                    <td>{d.nearest_expiry ? formatDate(d.nearest_expiry) : '-'}</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div className="col-md-6">
-                                <h5>Thêm lô cho thuốc đã chọn</h5>
+                            <div className="col-12">
+                                <h5>
+                                    Thêm lô cho thuốc đã chọn
+                                    {selectedDrugId ? (
+                                        <span className="text-muted fw-normal ms-2">(ID #{selectedDrugId})</span>
+                                    ) : (
+                                        <span className="text-muted fw-normal ms-2">— bấm &quot;Lô&quot; trên bảng trên</span>
+                                    )}
+                                </h5>
                                 <form onSubmit={handleAddBatch}>
-                                    <div className="form-group"><label>Số lô</label><input value={newBatchNumber} onChange={(e) => setNewBatchNumber(e.target.value)} required /></div>
-                                    <div className="form-group"><label>NSX</label><input type="date" value={newMfgDate} onChange={(e) => setNewMfgDate(e.target.value)} /></div>
-                                    <div className="form-group"><label>HSD</label><input type="date" value={newExpDate} onChange={(e) => setNewExpDate(e.target.value)} required /></div>
-                                    <div className="form-group"><label>Số lượng</label><input type="number" min="0" value={newBatchQty} onChange={(e) => setNewBatchQty(e.target.value)} required /></div>
-                                    <div className="form-group"><label>Giá nhập</label><input type="number" min="0" value={newBatchImportPrice} onChange={(e) => setNewBatchImportPrice(e.target.value)} required /></div>
-                                    <div className="form-group"><label>Giá bán</label><input type="number" min="0" value={newBatchSellingPrice} onChange={(e) => setNewBatchSellingPrice(e.target.value)} required /></div>
-                                    <button className="btn-add" type="submit">Thêm lô</button>
+                                    <div className="form-group"><label>Số lô</label><input value={newBatchNumber} onChange={(e) => setNewBatchNumber(e.target.value)} required disabled={!selectedDrugId} /></div>
+                                    <div className="form-group"><label>NSX</label><input type="date" value={newMfgDate} onChange={(e) => setNewMfgDate(e.target.value)} disabled={!selectedDrugId} /></div>
+                                    <div className="form-group"><label>HSD</label><input type="date" value={newExpDate} onChange={(e) => setNewExpDate(e.target.value)} required disabled={!selectedDrugId} /></div>
+                                    <div className="form-group"><label>Số lượng nhập</label><input type="number" min="0" value={newBatchQty} onChange={(e) => setNewBatchQty(e.target.value)} required disabled={!selectedDrugId} /></div>
+                                    <div className="form-group"><label>Giá nhập</label><input type="number" min="0" value={newBatchImportPrice} onChange={(e) => setNewBatchImportPrice(e.target.value)} required disabled={!selectedDrugId} /></div>
+                                    <div className="form-group"><label>Giá bán</label><input type="number" min="0" value={newBatchSellingPrice} onChange={(e) => setNewBatchSellingPrice(e.target.value)} required disabled={!selectedDrugId} /></div>
+                                    <button className="btn-add" type="submit" disabled={!selectedDrugId}>Thêm lô</button>
                                 </form>
                             </div>
                         </div>
@@ -415,19 +401,21 @@ const MedicineManager = () => {
                                         <th>Số lô</th>
                                         <th>NSX</th>
                                         <th>HSD</th>
-                                        <th>Tồn</th>
+                                        <th>Tồn bán</th>
+                                        <th>SL nhập</th>
                                         <th>Giá nhập</th>
                                         <th>Giá bán</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {batches.length === 0 ? (
-                                        <tr><td colSpan="6" className="text-center">Chưa có lô.</td></tr>
+                                        <tr><td colSpan="7" className="text-center">Chưa có lô.</td></tr>
                                     ) : batches.map((b) => (
                                         <tr key={b.id}>
                                             <td>{b.batch_number}</td>
                                             <td>{b.manufacture_date ? formatDate(b.manufacture_date) : '-'}</td>
                                             <td>{formatDate(b.expiry_date)}</td>
+                                            <td>{b.available_quantity ?? b.quantity}</td>
                                             <td>{b.quantity}</td>
                                             <td>{formatCurrency(b.import_price)}</td>
                                             <td>{formatCurrency(b.selling_price)}</td>
@@ -446,7 +434,7 @@ const MedicineManager = () => {
                                         <th>Thuốc</th>
                                         <th>Số lô</th>
                                         <th>HSD</th>
-                                        <th>Tồn</th>
+                                        <th>Tồn bán</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -466,6 +454,59 @@ const MedicineManager = () => {
                     </div>
                 </div>
             </div>
+
+            <details className="medicine-list-section mt-4">
+                <summary className="fw-bold">Bảng medicines cũ (tương thích — không dùng cho tồn thực tế)</summary>
+                <div className="list-header mt-3">
+                    <span>{medicines.length} dòng</span>
+                    <button type="button" className="btn-add-medicine" onClick={() => handleOpenModal()}>
+                        <i className="fas fa-plus me-2"></i> Thêm / sửa (legacy)
+                    </button>
+                </div>
+                <div className="table-responsive">
+                    <table className="medicine-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên</th>
+                                <th>SL (cũ)</th>
+                                <th>Giá nhập</th>
+                                <th>Giá bán</th>
+                                <th>HSD</th>
+                                <th />
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {medicines.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="text-center">
+                                        Không có bản ghi legacy.
+                                    </td>
+                                </tr>
+                            ) : (
+                                medicines.map((med) => (
+                                    <tr key={med.id}>
+                                        <td>#{med.id}</td>
+                                        <td>{med.name}</td>
+                                        <td>{med.quantity}</td>
+                                        <td>{formatCurrency(med.import_price)}</td>
+                                        <td>{formatCurrency(med.price)}</td>
+                                        <td>{formatDate(med.expiry_date)}</td>
+                                        <td className="action-buttons">
+                                            <button type="button" className="btn-edit" onClick={() => handleOpenModal(med)}>
+                                                Sửa
+                                            </button>
+                                            <button type="button" className="btn-delete" onClick={() => handleDeleteMedicine(med.id)}>
+                                                Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </details>
         </div>
     );
 };

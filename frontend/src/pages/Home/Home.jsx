@@ -1,11 +1,29 @@
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import api from '../../lib/api';
 import './Home.css';
 
 const Home = () => {
-    // Không cần check user ở đây nữa vì đã có PublicRoute bảo vệ ở ngoài App.jsx rồi
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchPublishedPosts = async () => {
+            try {
+                const response = await api.get('/api/health/posts/published?limit=6');
+                setPosts(response.data.posts || []);
+            } catch (error) {
+                console.error('Lỗi fetch bài viết:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchPublishedPosts();
+    }, []);
+
     return (
         <div className="landing-page">
-            {/* HERO SECTION (Đã xóa Navbar đi vì GuestLayout đã lo việc đó) */}
+            {/* HERO SECTION */}
             <section className="hero-section">
                 <div className="hero-container">
                     <div className="hero-content">
@@ -73,8 +91,42 @@ const Home = () => {
                     </div>
                 </div>
             </section>
-            
-            {/* Đã xóa Footer đi vì GuestLayout đã lo việc đó */}
+
+            {/* BLOG SECTION */}
+            {posts.length > 0 && (
+                <section className="blog-section">
+                    <div className="section-header">
+                        <h2>Bài Viết Sức Khỏe Hữu Ích</h2>
+                        <p>Cập nhật kiến thức y tế, chăm sóc sức khỏe và lối sống lành mạnh</p>
+                    </div>
+
+                    <div className="blog-grid">
+                        {posts.map((post) => (
+                            <Link key={post.id} to={`/post/${post.id}`} className="blog-card-link">
+                                <div className="blog-card">
+                                    {post.thumbnail && (
+                                        <div className="blog-image">
+                                            <img src={post.thumbnail} alt={post.title} />
+                                        </div>
+                                    )}
+                                    <div className="blog-content">
+                                        {post.category_name && (
+                                            <span className="blog-category">{post.category_name}</span>
+                                        )}
+                                        <h3>{post.title}</h3>
+                                        <p>{post.excerpt || 'Bài viết sức khỏe'}</p>
+                                        <div className="blog-meta">
+                                            <small>
+                                                {new Date(post.created_at).toLocaleDateString('vi-VN')}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </section>
+            )}
         </div>
     );
 };

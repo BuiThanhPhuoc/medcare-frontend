@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useCart } from '../../contexts/CartContext';
 import './CSS/Layout.css'; // Dùng chung 1 file CSS cho Layout nếu muốn, hoặc tách riêng
 
 const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
     const [isMobileOpen, setIsMobileOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
+    const { totalQuantity } = useCart();
     const user = JSON.parse(localStorage.getItem('user')) || {};
 
     const handleLogout = () => { localStorage.clear(); navigate('/login'); };
@@ -19,9 +21,11 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
                     className="sidebar-brand text-decoration-none"
                     onClick={() => setIsMobileOpen(false)}
                 >
-                    <i className="fas fa-hospital-alt fs-3 mb-2"></i>
+                    <div className="sidebar-brand-header">
+                        <i className="fas fa-hospital-alt fs-3"></i>
+                        <small>PHÒNG KHÁM</small>
+                    </div>
                     <h4>MedCare</h4>
-                    <small>Phòng khám</small>
                 </Link>
                 
                 <div className="sidebar-user-info">
@@ -37,6 +41,7 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
                     <Link to="/my-appointments" className={location.pathname === '/my-appointments' ? 'active' : ''}><i className="fas fa-list-check"></i> Lịch khám của tôi</Link>
                     <Link to="/book-appointment" className={location.pathname === '/book-appointment' ? 'active' : ''}><i className="fas fa-calendar-check"></i> Lịch hẹn khám</Link>
                     <Link to="/medical-history" className={location.pathname === '/medical-history' ? 'active' : ''}><i className="fas fa-file-medical"></i> Hồ sơ bệnh án</Link>
+                    <Link to="/patient/lab-results" className={location.pathname === '/patient/lab-results' ? 'active' : ''}><i className="fas fa-vials"></i> Xét nghiệm của tôi</Link>
                     <hr />
                     <Link to="/patient/medicines" className={location.pathname === '/patient/medicines' ? 'active' : ''}><i className="fas fa-pills"></i> Mua thuốc online</Link>
                     <Link to="/patient/orders" className={location.pathname === '/patient/orders' ? 'active' : ''}><i className="fas fa-shopping-cart"></i> Lịch sử đơn hàng</Link>
@@ -59,13 +64,35 @@ const PatientLayout = ({ children, pageTitle = "Dashboard" }) => {
                     </div>
                     <div className="topbar-actions">
                         <button className="btn-notification"><i className="fas fa-bell"></i></button>
+                        <Link to="/patient/cart" className="btn-cart" style={{ position: 'relative', textDecoration: 'none' }}>
+                            <i className="fas fa-shopping-cart"></i>
+                            {totalQuantity > 0 && (
+                                <span className="cart-badge" style={{
+                                    position: 'absolute',
+                                    top: '-8px',
+                                    right: '-8px',
+                                    background: '#dc3545',
+                                    color: 'white',
+                                    fontSize: '12px',
+                                    fontWeight: 'bold',
+                                    borderRadius: '50%',
+                                    width: '24px',
+                                    height: '24px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    {totalQuantity}
+                                </span>
+                            )}
+                        </Link>
                         <div className="avatar-small">{user.username?.charAt(0).toUpperCase()}</div>
                     </div>
                 </header>
 
                 {/* VỊ TRÍ NHÉT RUỘT (DASHBOARD) */}
                 <div className="content-wrapper">
-                    {children}
+                    <div className="mc-view-root">{children}</div>
                 </div>
             </div>
             {isMobileOpen && <div className="sidebar-overlay" onClick={() => setIsMobileOpen(false)}></div>}

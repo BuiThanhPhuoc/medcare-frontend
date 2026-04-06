@@ -20,6 +20,10 @@ const LabDashboard = () => {
 
     return (
         <div className="lab-dash">
+            <div className="mc-dash-hero mb-3">
+                <h2>Khu vực xét nghiệm</h2>
+                <p>Xử lý chỉ định đã thanh toán và xem nhanh toàn bộ lịch sử XN.</p>
+            </div>
             <div className="lab-header">
                 <div>
                     <h1>Hàng chờ làm xét nghiệm</h1>
@@ -27,6 +31,9 @@ const LabDashboard = () => {
                 </div>
                 <div className="lab-header-meta">
                     <span className="lab-count-badge">{queue.length} ca</span>
+                    <Link to="/lab/all-results" className="btn btn-sm btn-outline-primary ms-2">
+                        Danh sách tất cả XN
+                    </Link>
                 </div>
             </div>
 

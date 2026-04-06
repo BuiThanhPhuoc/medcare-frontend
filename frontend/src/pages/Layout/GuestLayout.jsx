@@ -66,7 +66,7 @@ const GuestLayout = ({ children }) => {
                 onKeyDown={(e) => e.key === 'Enter' && setNavOpen(false)}
             />
 
-            <main className="guest-main">{children}</main>
+            <main className="guest-main mc-view-root mc-view-root--guest">{children}</main>
 
             <footer className="guest-footer">
                 <div className="footer-content">

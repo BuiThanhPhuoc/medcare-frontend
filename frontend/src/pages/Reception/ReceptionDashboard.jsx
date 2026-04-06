@@ -129,6 +129,10 @@ const ReceptionDashboard = () => {
 
     return (
         <div className="reception-layout">
+            <div className="mc-dash-hero mb-3">
+                <h2>Quầy lễ tân &amp; thu ngân</h2>
+                <p>Đón tiếp bệnh nhân, check-in và thu phí — giao diện đã được đồng bộ với MedCare.</p>
+            </div>
             {/* Header: Welcome + Time + Logout */}
             <ReceptionHeader 
                 user={user} 

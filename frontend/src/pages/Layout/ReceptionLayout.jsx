@@ -19,12 +19,15 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
             <aside className={`sidebar bg-white border-end ${isMobileOpen ? 'mobile-open' : ''}`}>
                 <Link
                     to="/reception-dashboard"
-                    className="sidebar-brand bg-success-gradient text-white p-4 text-center border-bottom text-decoration-none"
+                    className="sidebar-brand text-decoration-none"
                     onClick={() => setIsMobileOpen(false)}
                 >
-                    <i className="fas fa-hospital fs-3 mb-2"></i>
-                    <h4 className="mb-0 fw-bold">MedCare</h4>
-                    <small className="opacity-75">Hệ thống Nhân viên</small>
+                    <div className="sidebar-brand-header">
+                        <i className="fas fa-hospital fs-3"></i>
+                        <small>LỄ TÂN</small>
+                    </div>
+                    <h4>MedCare</h4>
+                    <small className="sidebar-brand-desc">Phòng khám</small>
                 </Link>
 
                 <nav className="sidebar-menu p-3">
@@ -75,8 +78,8 @@ const ReceptionLayout = ({ children, pageTitle = "Dashboard" }) => {
                     </div>
                 </header>
 
-                <div className="content-wrapper p-4 bg-light min-vh-100">
-                    {children}
+                <div className="content-wrapper">
+                    <div className="mc-view-root">{children}</div>
                 </div>
             </div>
             {isMobileOpen && <div className="sidebar-overlay position-fixed top-0 bottom-0 start-0 end-0 bg-dark bg-opacity-50 z-3" onClick={() => setIsMobileOpen(false)}></div>}

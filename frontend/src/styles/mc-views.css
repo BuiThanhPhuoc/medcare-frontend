@@ -1,0 +1,421 @@
+/**
+ * MedCare — giao diện thống nhất cho mọi view trong app
+ * Phạm vi: bọc bởi .mc-view-root (xem Layout)
+ */
+
+/* -------------------------------------------------------------------------- */
+/* Khung trang                                                                 */
+/* -------------------------------------------------------------------------- */
+.mc-view-root {
+    width: 100%;
+    max-width: 1380px;
+    margin-inline: auto;
+    padding: clamp(1rem, 2vw, 1.35rem);
+    padding-bottom: 2.5rem;
+    box-sizing: border-box;
+    flex: 1;
+    min-height: 0;
+}
+
+.admin-theme .mc-view-root {
+    max-width: 1440px;
+}
+
+.mc-view-root--guest {
+    max-width: none;
+    margin-inline: 0;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Tiêu đề trang (Bootstrap hoặc plain)                                        */
+/* -------------------------------------------------------------------------- */
+.mc-view-root h1,
+.mc-view-root .h1 {
+    font-size: clamp(1.35rem, 2.2vw, 1.65rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--mc-text);
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+}
+
+.mc-view-root h2,
+.mc-view-root .h2,
+.mc-view-root .page-header h1 {
+    font-size: clamp(1.2rem, 1.8vw, 1.45rem);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--mc-text);
+    margin-bottom: 0.35rem;
+}
+
+.mc-view-root h3,
+.mc-view-root .h3,
+.mc-view-root .section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--mc-text);
+    margin-bottom: 0.75rem;
+}
+
+.mc-view-root .text-muted,
+.mc-view-root small.text-muted {
+    color: var(--mc-text-muted) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Thẻ nội dung / panel                                                         */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .card {
+    border-radius: var(--mc-radius-lg);
+    border: 1px solid var(--mc-border);
+    box-shadow: var(--mc-shadow);
+    overflow: hidden;
+    background: var(--mc-surface);
+}
+
+.mc-view-root .card-header {
+    font-weight: 700;
+    background: rgba(13, 148, 136, 0.06);
+    border-bottom: 1px solid var(--mc-border);
+    padding: 0.85rem 1.1rem;
+}
+
+.mc-view-root .card-body {
+    padding: 1.1rem 1.2rem;
+}
+
+.mc-view-root .list-group-item {
+    border-color: var(--mc-border);
+    padding: 0.75rem 1rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Bảng Bootstrap                                                               */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .table-responsive {
+    border-radius: var(--mc-radius);
+    border: 1px solid var(--mc-border);
+    overflow: hidden;
+    background: var(--mc-surface);
+    box-shadow: var(--mc-shadow);
+}
+
+.mc-view-root .table {
+    margin-bottom: 0;
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.mc-view-root .table thead th {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--mc-text-muted);
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid var(--mc-border);
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+}
+
+.mc-view-root .table tbody td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.mc-view-root .table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.mc-view-root .table tbody tr:hover td {
+    background: rgba(13, 148, 136, 0.04);
+}
+
+.mc-view-root .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: rgba(241, 245, 249, 0.5);
+}
+
+.mc-view-root .table-striped > tbody > tr:hover > * {
+    background-color: rgba(13, 148, 136, 0.06);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Bảng admin thuốc / legacy .medicine-table                                   */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .medicine-list-section,
+.mc-view-root .medicine-page .page-header + *,
+.mc-view-root .admin-container .medicine-list-section {
+    border-radius: var(--mc-radius-lg);
+}
+
+.mc-view-root .medicine-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: var(--mc-radius);
+    overflow: hidden;
+    box-shadow: var(--mc-shadow);
+    border: 1px solid var(--mc-border);
+}
+
+.mc-view-root .medicine-table thead th {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    color: #f1f5f9;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    padding: 0.85rem 1rem;
+    border: none;
+}
+
+.mc-view-root .medicine-table tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--mc-border);
+    background: var(--mc-surface);
+}
+
+.mc-view-root .medicine-table tbody tr:hover td {
+    background: rgba(13, 148, 136, 0.05);
+}
+
+.mc-view-root .medicine-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.mc-view-root .qty-badge.in-stock {
+    background: rgba(5, 150, 105, 0.12) !important;
+    color: var(--mc-success) !important;
+}
+
+.mc-view-root .qty-badge.low-stock {
+    background: rgba(220, 38, 38, 0.1) !important;
+    color: var(--mc-danger) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Nút & nhóm                                                                  */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .btn {
+    border-radius: 10px;
+    font-weight: 600;
+    padding: 0.45rem 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mc-view-root .btn-sm {
+    border-radius: 8px;
+    padding: 0.3rem 0.65rem;
+}
+
+.mc-view-root .btn-lg {
+    border-radius: 12px;
+    padding: 0.65rem 1.25rem;
+}
+
+.mc-view-root .btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(13, 148, 136, 0.25);
+}
+
+.mc-view-root .btn-outline-primary,
+.mc-view-root .btn-outline-secondary {
+    border-width: 1.5px;
+}
+
+.mc-view-root .btn-group .btn {
+    border-radius: 0;
+}
+
+.mc-view-root .btn-group .btn:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.mc-view-root .btn-group .btn:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Form                                                                        */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .form-control,
+.mc-view-root .form-select {
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    padding: 0.55rem 0.85rem;
+}
+
+.mc-view-root .form-label,
+.mc-view-root label:not(.btn):not(.form-check-label) {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--mc-text);
+    margin-bottom: 0.35rem;
+}
+
+.mc-view-root .input-group .form-control {
+    border-radius: 0;
+}
+
+.mc-view-root .input-group .form-control:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+.mc-view-root .input-group .form-control:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+.mc-view-root textarea.form-control {
+    min-height: 88px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Alert / badge                                                                */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .alert {
+    border-radius: 12px;
+    border: 1px solid transparent;
+    padding: 0.85rem 1.1rem;
+}
+
+.mc-view-root .alert-danger {
+    background: rgba(220, 38, 38, 0.08);
+    border-color: rgba(220, 38, 38, 0.2);
+    color: #991b1b;
+}
+
+.mc-view-root .alert-success {
+    background: rgba(5, 150, 105, 0.1);
+    border-color: rgba(5, 150, 105, 0.2);
+    color: #065f46;
+}
+
+.mc-view-root .alert-warning {
+    background: rgba(217, 119, 6, 0.1);
+    border-color: rgba(217, 119, 6, 0.25);
+    color: #92400e;
+}
+
+.mc-view-root .alert-info {
+    background: rgba(99, 102, 241, 0.08);
+    border-color: rgba(99, 102, 241, 0.2);
+    color: #3730a3;
+}
+
+.mc-view-root .badge {
+    font-weight: 600;
+    padding: 0.35em 0.55em;
+    border-radius: 8px;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Modal (Bootstrap)                                                            */
+/* -------------------------------------------------------------------------- */
+body .modal .modal-content {
+    border-radius: var(--mc-radius-lg);
+    border: 1px solid var(--mc-border);
+    box-shadow: var(--mc-shadow-lg);
+}
+
+body .modal .modal-header {
+    border-bottom-color: var(--mc-border);
+    padding: 1rem 1.25rem;
+}
+
+body .modal .modal-footer {
+    border-top-color: var(--mc-border);
+    padding: 0.85rem 1.25rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Pagination                                                                   */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .pagination .page-link {
+    border-radius: 8px;
+    margin: 0 2px;
+    border: 1px solid var(--mc-border);
+    color: var(--mc-text);
+    font-weight: 600;
+}
+
+.mc-view-root .pagination .page-item.active .page-link {
+    background: var(--mc-primary);
+    border-color: var(--mc-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* Admin container / trang catalog                                              */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .admin-container {
+    padding: 0 !important;
+    background: transparent !important;
+    min-height: auto !important;
+}
+
+.mc-view-root .admin-container > h2:first-child {
+    margin-top: 0;
+}
+
+.mc-view-root .medicine-page {
+    min-height: auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.mc-view-root .medicine-page .page-header h1 {
+    font-size: clamp(1.35rem, 2vw, 1.75rem);
+}
+
+.mc-view-root .list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.mc-view-root .list-header h3,
+.mc-view-root .list-header h5 {
+    margin: 0;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Utility: khoảng cách section                                                  */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .row {
+    --bs-gutter-x: 1.25rem;
+    --bs-gutter-y: 1.25rem;
+}
+
+.mc-view-root .mb-4 {
+    margin-bottom: 1.35rem !important;
+}
+
+.mc-view-root .py-4 {
+    padding-top: 1.25rem !important;
+    padding-bottom: 1.25rem !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Empty / loading                                                              */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .text-center.py-5,
+.mc-view-root .profile-loading {
+    border-radius: var(--mc-radius-lg);
+    background: var(--mc-surface);
+    border: 1px dashed var(--mc-border);
+    padding: 2.5rem 1.5rem !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* Reception layout nền — tránh lặp với staff-theme                             */
+/* -------------------------------------------------------------------------- */
+.mc-view-root .reception-layout {
+    max-width: none;
+    margin: 0;
+}

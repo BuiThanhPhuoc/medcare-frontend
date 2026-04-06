@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../../../lib/api';
+import './MySchedule.css';
 
 /**
  * Reception - My Schedule Page
@@ -40,80 +41,74 @@ const ReceptionMySchedule = () => {
     });
 
     return (
-        <div className="container-fluid py-4">
+        <div className="reception-schedule-container container-fluid py-4">
             <h2 className="mb-4 fw-bold">
-                <i className="fas fa-calendar-check text-info me-2"></i> Lịch Làm Việc Của Tôi
+                <i className="fas fa-calendar-check"></i> Lịch Làm Việc Của Tôi
             </h2>
 
-            <div className="card shadow-sm border-0" style={{ borderRadius: '12px' }}>
-                <div className="card-body p-4">
+            <div className="reception-schedule-wrapper">
+                <div className="card-body">
                     {loading ? (
-                        <div className="text-center py-5">
-                            <div className="spinner-border text-primary"></div>
+                        <div className="reception-schedule-loading">
+                            <div className="spinner-border"></div>
                         </div>
                     ) : scheduleDates.length === 0 ? (
-                        <div className="text-center py-5 bg-light rounded border border-dashed">
-                            <i className="fas fa-calendar-times fs-1 text-muted opacity-50 mb-3 d-block"></i>
-                            <h5 className="text-secondary fw-bold">Chưa có lịch làm việc nào!</h5>
-                            <p className="text-muted">Admin sẽ gán lịch cho bạn. Vui lòng chờ.</p>
+                        <div className="reception-schedule-empty">
+                            <i className="fas fa-calendar-times"></i>
+                            <h5>Chưa có lịch làm việc nào!</h5>
+                            <p>Admin sẽ gán lịch cho bạn. Vui lòng chờ.</p>
                         </div>
                     ) : (
                         <>
-                            <div className="alert alert-success border-0 shadow-sm d-flex align-items-center mb-4">
-                                <i className="fas fa-info-circle fs-4 me-3"></i>
+                            <div className="reception-schedule-alert">
+                                <i className="fas fa-info-circle"></i>
                                 <div>
-                                    <strong className="d-block">Đây là lịch làm việc chính thức của bạn.</strong>
+                                    <strong>Đây là lịch làm việc chính thức của bạn.</strong>
                                     <span>Bạn cần làm việc vào những ca được liệt kê dưới đây.</span>
                                 </div>
                             </div>
 
-                            <div className="row g-3">
+                            <div className="reception-schedule-grid">
                                 {scheduleDates.map((dateStr, idx) => {
                                     const schedData = scheduleByDate[dateStr];
                                     const dateObj = new Date(schedData.date);
                                     const dayName = dateObj.toLocaleDateString('vi-VN', { weekday: 'long' });
 
                                     return (
-                                        <div className="col-lg-4 col-md-6" key={idx}>
-                                            <div className="card h-100 border border-success border-opacity-25 shadow-sm rounded-3">
-                                                {/* Card Header */}
-                                                <div className="card-header bg-success bg-opacity-10 text-success fw-bold py-3 border-bottom-0 text-center rounded-top-3">
-                                                    <i className="far fa-calendar-alt me-2"></i> {dayName}
-                                                    <div className="small mt-1 opacity-75">{dateStr}</div>
-                                                </div>
+                                        <div className="reception-day-card" key={idx}>
+                                            {/* Card Header */}
+                                            <div className="reception-card-header">
+                                                <i className="far fa-calendar-alt"></i> <span className="date-label">{dayName}</span>
+                                                <div className="date-small">{dateStr}</div>
+                                            </div>
 
-                                                {/* Card Body */}
-                                                <div className="card-body p-4">
-                                                    <div className="d-flex flex-column gap-3">
-                                                        {/* Morning Shift */}
-                                                        {schedData.morning ? (
-                                                            <div className="bg-warning bg-opacity-15 border border-warning border-opacity-50 rounded-2 p-3 text-center">
-                                                                <div className="text-dark fw-bold mb-2">
-                                                                    <i className="fas fa-sun text-warning me-2" style={{ fontSize: '20px' }}></i> Ca Sáng
-                                                                </div>
-                                                                <div className="text-muted small">08:00 - 12:00</div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="bg-light border border-dashed rounded-2 p-3 text-center text-muted">
-                                                                <i className="fas fa-times-circle me-2"></i> Nghỉ Sáng
-                                                            </div>
-                                                        )}
-
-                                                        {/* Afternoon Shift */}
-                                                        {schedData.afternoon ? (
-                                                            <div className="bg-info bg-opacity-15 border border-info border-opacity-50 rounded-2 p-3 text-center">
-                                                                <div className="text-dark fw-bold mb-2">
-                                                                    <i className="fas fa-cloud-sun text-info me-2" style={{ fontSize: '20px' }}></i> Ca Chiều
-                                                                </div>
-                                                                <div className="text-muted small">13:00 - 17:00</div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="bg-light border border-dashed rounded-2 p-3 text-center text-muted">
-                                                                <i className="fas fa-times-circle me-2"></i> Nghỉ Chiều
-                                                            </div>
-                                                        )}
+                                            {/* Card Body */}
+                                            <div className="reception-card-body">
+                                                {/* Morning Shift */}
+                                                {schedData.morning ? (
+                                                    <div className="reception-shift-container reception-shift-morning">
+                                                        <i className="fas fa-sun shift-icon"></i>
+                                                        <div className="shift-title">Ca Sáng</div>
+                                                        <div className="shift-time">08:00 - 12:00</div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div className="reception-shift-off">
+                                                        <i className="fas fa-times-circle"></i> Nghỉ Sáng
+                                                    </div>
+                                                )}
+
+                                                {/* Afternoon Shift */}
+                                                {schedData.afternoon ? (
+                                                    <div className="reception-shift-container reception-shift-afternoon">
+                                                        <i className="fas fa-cloud-sun shift-icon"></i>
+                                                        <div className="shift-title">Ca Chiều</div>
+                                                        <div className="shift-time">13:00 - 17:00</div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="reception-shift-off">
+                                                        <i className="fas fa-times-circle"></i> Nghỉ Chiều
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     );
@@ -121,12 +116,12 @@ const ReceptionMySchedule = () => {
                             </div>
 
                             {/* Summary */}
-                            <div className="mt-4 p-3 border border-info border-opacity-25 rounded-2 bg-info bg-opacity-5">
-                                <h6 className="fw-bold text-info mb-2">
-                                    <i className="fas fa-chart-bar me-2"></i> Tổng Cộng
+                            <div className="reception-schedule-summary">
+                                <h6>
+                                    <i className="fas fa-chart-bar"></i> Tổng Cộng
                                 </h6>
-                                <p className="mb-0 text-muted">
-                                    Bạn có <strong className="text-dark">{scheduleDates.length}</strong> ngày làm việc, tổng cộng <strong className="text-dark">{schedules.length}</strong> ca làm việc.
+                                <p>
+                                    Bạn có <strong>{scheduleDates.length}</strong> ngày làm việc, tổng cộng <strong>{schedules.length}</strong> ca làm việc.
                                 </p>
                             </div>
                         </>

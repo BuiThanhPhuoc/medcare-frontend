@@ -10,7 +10,6 @@ import '../AdminDashboard.css';
  */
 const UserList = () => {
     const [users, setUsers] = useState([]);
-    const [filteredUsers, setFilteredUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterRole, setFilterRole] = useState('all');
     const [filterStatus, setFilterStatus] = useState('all');
@@ -18,60 +17,77 @@ const UserList = () => {
     const [error, setError] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+    const [totalUsers, setTotalUsers] = useState(0);
+    const [totalPages, setTotalPages] = useState(1);
 
-    useEffect(() => {
-        fetchUsers();
-    }, []);
-
-    useEffect(() => {
-        filterUsers();
-    }, [searchTerm, filterRole, filterStatus, users]);
-
-    const fetchUsers = async () => {
+    // Fetch users from API with pagination and filters
+    const fetchUsers = async (page = 1) => {
         try {
             setLoading(true);
-            const response = await api.get('/api/admin/users');
-            setUsers(response.data.users || []);
             setError('');
+            
+            // Build query params
+            const params = {
+                page,
+                limit: itemsPerPage
+            };
+            
+            if (searchTerm) {
+                params.search = searchTerm;
+            }
+            
+            if (filterRole !== 'all') {
+                params.role = filterRole;
+            }
+            
+            if (filterStatus !== 'all') {
+                params.status = filterStatus;
+            }
+
+            const response = await api.get('/api/admin/users', { params });
+            
+            if (response.data.success) {
+                setUsers(response.data.users || []);
+                setTotalUsers(response.data.pagination.total || 0);
+                setTotalPages(Math.ceil(response.data.pagination.total / itemsPerPage) || 1);
+                setCurrentPage(page);
+            } else {
+                setError('Không thể tải danh sách người dùng');
+                setUsers([]);
+                setTotalUsers(0);
+                setTotalPages(1);
+            }
         } catch (err) {
             console.error('Lỗi tải danh sách user:', err);
-            setError('Không thể tải danh sách người dùng');
+            setError(err.response?.data?.message || 'Không thể tải danh sách người dùng');
+            setUsers([]);
+            setTotalUsers(0);
+            setTotalPages(1);
         } finally {
             setLoading(false);
         }
     };
 
-    const filterUsers = () => {
-        let filtered = users;
+    // Load users on component mount
+    useEffect(() => {
+        fetchUsers(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-        // Search by name or email
-        if (searchTerm) {
-            filtered = filtered.filter(u =>
-                (u.username?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (u.email?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                (u.phone?.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-        }
-
-        // Filter by role
-        if (filterRole !== 'all') {
-            filtered = filtered.filter(u => u.role === filterRole);
-        }
-
-        // Filter by status
-        if (filterStatus !== 'all') {
-            filtered = filtered.filter(u => u.status === filterStatus);
-        }
-
-        setFilteredUsers(filtered);
-        setCurrentPage(1); // Reset to page 1 when filter changes
-    };
+    // Handle search, filter change - reload from page 1
+    useEffect(() => {
+        fetchUsers(1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [searchTerm, filterRole, filterStatus]);
 
     const handleToggleLock = async (id, currentStatus) => {
         try {
             await api.put(`/api/admin/users/${id}/lock`, { status: currentStatus === 'active' ? 'inactive' : 'active' });
-            alert(currentStatus === 'active' ? 'Đã khóa tài khoản!' : 'Đã mở khóa tài khoản!');
-            fetchUsers();
+            // Show success message
+            const message = currentStatus === 'active' ? 'Đã khóa tài khoản!' : 'Đã mở khóa tài khoản!';
+            alert(message);
+            // Reload users from current page
+            fetchUsers(currentPage);
         } catch (err) {
             alert('Lỗi: ' + (err.response?.data?.message || err.message));
         }
@@ -143,7 +159,7 @@ const UserList = () => {
             <div className="card shadow-sm border-0">
                 <div className="card-header bg-white pb-3">
                     <span className="text-muted">
-                        Trang {currentPage}/{Math.ceil(filteredUsers.length / itemsPerPage) || 1} | Hiển thị {((currentPage - 1) * itemsPerPage) + 1} - {Math.min(currentPage * itemsPerPage, filteredUsers.length)} trên {filteredUsers.length}
+                        Trang {currentPage}/{totalPages || 1} | Hiển thị {users.length > 0 ? ((currentPage - 1) * itemsPerPage) + 1 : 0} - {Math.min(currentPage * itemsPerPage, totalUsers)} trên {totalUsers}
                     </span>
                 </div>
                 <div className="table-responsive">
@@ -168,51 +184,48 @@ const UserList = () => {
                                         </div>
                                     </td>
                                 </tr>
-                            ) : filteredUsers.length === 0 ? (
+                            ) : users.length === 0 ? (
                                 <tr>
                                     <td colSpan="7" className="text-center py-4 text-muted">
                                         Không có người dùng nào
                                     </td>
                                 </tr>
                             ) : (
-                                (() => {
-                                    const startIndex = (currentPage - 1) * itemsPerPage;
-                                    const paginatedUsers = filteredUsers.slice(startIndex, startIndex + itemsPerPage);
-                                    
-                                    return paginatedUsers.map((user, index) => (
-                                        <tr key={user.id}>
-                                            <td>{startIndex + index + 1}</td>
-                                            <td className="fw-500">{user.username}</td>
-                                            <td>{user.email}</td>
-                                            <td>{user.phone}</td>
-                                            <td>{getRoleBadge(user.role)}</td>
-                                            <td>
-                                                <span className={`badge ${user.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
-                                                    {user.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <button
-                                                    className={`btn btn-sm ${user.status === 'active' ? 'btn-warning' : 'btn-success'} me-2`}
-                                                    onClick={() => handleToggleLock(user.id, user.status)}
-                                                    title={user.status === 'active' ? 'Khóa' : 'Mở khóa'}
-                                                >
-                                                    <i className={`fas ${user.status === 'active' ? 'fa-lock' : 'fa-unlock'}`}></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ));
-                                })()
+                                users.map((user, index) => (
+                                    <tr key={user.id}>
+                                        <td>{((currentPage - 1) * itemsPerPage) + index + 1}</td>
+                                        <td className="fw-500">{user.username}</td>
+                                        <td>{user.email}</td>
+                                        <td>{user.phone}</td>
+                                        <td>{getRoleBadge(user.role)}</td>
+                                        <td>
+                                            <span className={`badge ${user.status === 'active' ? 'bg-success' : 'bg-secondary'}`}>
+                                                {user.status === 'active' ? 'Hoạt động' : 'Tạm dừng'}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                className={`btn btn-sm ${user.status === 'active' ? 'btn-warning' : 'btn-success'} me-2`}
+                                                onClick={() => handleToggleLock(user.id, user.status)}
+                                                title={user.status === 'active' ? 'Khóa' : 'Mở khóa'}
+                                            >
+                                                <i className={`fas ${user.status === 'active' ? 'fa-lock' : 'fa-unlock'}`}></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
                             )}
                         </tbody>
                     </table>
                 </div>
-                {filteredUsers.length > 0 && Math.ceil(filteredUsers.length / itemsPerPage) > 1 && (
+                {users.length > 0 && totalPages > 1 && (
                     <div className="card-footer bg-white">
                         <PaginationControls 
                             currentPage={currentPage}
-                            totalPages={Math.ceil(filteredUsers.length / itemsPerPage)}
-                            onPageChange={setCurrentPage}
+                            totalPages={totalPages}
+                            onPageChange={(page) => fetchUsers(page)}
+                            pageSize={itemsPerPage}
+                            totalItems={totalUsers}
                         />
                     </div>
                 )}
@@ -224,7 +237,7 @@ const UserList = () => {
                     <div className="card bg-light border-0">
                         <div className="card-body text-center">
                             <h6 className="text-muted mb-2">Tổng Người Dùng</h6>
-                            <h3 className="text-primary fw-bold">{users.length}</h3>
+                            <h3 className="text-primary fw-bold">{totalUsers}</h3>
                         </div>
                     </div>
                 </div>
@@ -233,6 +246,7 @@ const UserList = () => {
                         <div className="card-body text-center">
                             <h6 className="text-muted mb-2">Đang Hoạt Động</h6>
                             <h3 className="text-success fw-bold">{users.filter(u => u.status === 'active').length}</h3>
+                            <small className="text-muted">trên trang này</small>
                         </div>
                     </div>
                 </div>
@@ -241,14 +255,15 @@ const UserList = () => {
                         <div className="card-body text-center">
                             <h6 className="text-muted mb-2">Đã Khóa</h6>
                             <h3 className="text-danger fw-bold">{users.filter(u => u.status === 'inactive').length}</h3>
+                            <small className="text-muted">trên trang này</small>
                         </div>
                     </div>
                 </div>
                 <div className="col-md-3">
                     <div className="card bg-light border-0">
                         <div className="card-body text-center">
-                            <h6 className="text-muted mb-2">Kết Quả Tìm Kiếm</h6>
-                            <h3 className="text-info fw-bold">{filteredUsers.length}</h3>
+                            <h6 className="text-muted mb-2">Hiển Thị Trên Trang</h6>
+                            <h3 className="text-info fw-bold">{users.length}</h3>
                         </div>
                     </div>
                 </div>

@@ -1,11 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+// ==========================================
+// IMPORT CONTEXT & PROVIDERS
+// ==========================================
+import { CartProvider } from './contexts/CartContext';
 
 // ==========================================
 // 1. IMPORT PAGES
 // ==========================================
 import Home from './pages/Home/Home';
+import PostDetail from './pages/Home/PostDetail';
 import Login from './pages/Auth/Login';
 import Register from './pages/Auth/Register';
 import ForceChangePassword from './pages/Auth/ForceChangePassword';
@@ -16,6 +23,7 @@ import MedicalHistory from './pages/Patient/History/MedicalHistory';
 import PatientProfile from './pages/Patient/Profile/PatientProfile';
 import MyAppointments from './pages/Patient/Appointments/MyAppointments';
 import MedicineOrdering from './pages/Patient/Medicines/MedicineOrdering';
+import CartPage from './pages/Patient/Medicines/CartPage';
 import DrugOrderDetail from './pages/Patient/Medicines/DrugOrderDetail';
 import DrugOrderHistory from './pages/Patient/Medicines/DrugOrderHistory';
 
@@ -42,6 +50,7 @@ import MedicineManager from './pages/Admin/Medicine/MedicineManager';
 import MedicineInventoryPage from './pages/Admin/Medicine/MedicineInventoryPage';
 import MedicineCatalogPage from './pages/Admin/Medicine/MedicineCatalogPage';
 import MedicineBatchPage from './pages/Admin/Medicine/MedicineBatchPage';
+import AdminDrugOrders from './pages/Admin/Orders/AdminDrugOrders';
 import LabTestsManager from './pages/Admin/LabTests/LabTestsManager';
 import LabTestCategoriesManager from './pages/Admin/LabTests/LabTestCategoriesManager';
 
@@ -88,6 +97,9 @@ import ReceptionistScheduleList from './pages/Admin/Schedule/Receptionist/Recept
 import ReceptionistSchedule from './pages/Admin/Schedule/Receptionist/ReceptionistSchedule';
 import UserList from './pages/Admin/User/UserList';
 import AdminAppointmentCalendar from './pages/Admin/Appointment/AdminAppointmentCalendar';
+
+import LabResultsPortal from './pages/Shared/LabResultsPortal';
+import DoctorExaminedRecords from './pages/Doctor/DoctorExaminedRecords';
 
 
 // ==========================================
@@ -159,13 +171,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
 function App() {
   return (
-    <Router>
-      <div className="app-container">
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <CartProvider>
+        <Router>
+        <div className="app-container">
         <Routes>
           {/* ========================================== */}
           {/* PUBLIC ROUTES (Chỉ ai CHƯA đăng nhập mới vào được) */}
           {/* ========================================== */}
           <Route path="/" element={<PublicRoute><GuestLayout><Home /></GuestLayout></PublicRoute>} />
+          <Route path="/post/:id" element={<GuestLayout><PostDetail /></GuestLayout>} />
           <Route path="/login" element={<PublicRoute><GuestLayout><Login /></GuestLayout></PublicRoute>} />
           <Route path="/register" element={<PublicRoute><GuestLayout><Register /></GuestLayout></PublicRoute>} />
           <Route path="/force-change-password" element={<PublicRoute><GuestLayout><ForceChangePassword /></GuestLayout></PublicRoute>} />
@@ -179,8 +194,10 @@ function App() {
           <Route path="/medical-history" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ bệnh án"><MedicalHistory /></PatientLayout></ProtectedRoute>} />
           <Route path="/patient-profile" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Hồ sơ cá nhân"><PatientProfile /></PatientLayout></ProtectedRoute>} />
           <Route path="/patient/medicines" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Mua Thuốc Online"><MedicineOrdering /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient/cart" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Giỏ hàng"><CartPage /></PatientLayout></ProtectedRoute>} />
           <Route path="/patient/orders" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Lịch sử đơn hàng"><DrugOrderHistory /></PatientLayout></ProtectedRoute>} />
           <Route path="/patient/orders/:orderId" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Chi tiết đơn hàng"><DrugOrderDetail /></PatientLayout></ProtectedRoute>} />
+          <Route path="/patient/lab-results" element={<ProtectedRoute allowedRoles={['patient']}><PatientLayout pageTitle="Xét nghiệm của tôi"><LabResultsPortal subtitle="Các chỉ định xét nghiệm gắn với lịch khám của bạn." /></PatientLayout></ProtectedRoute>} />
 
           {/* ========================================== */}
           {/* PRIVATE ROUTES BÁC SĨ */}
@@ -190,9 +207,12 @@ function App() {
           <Route path="/doctor/examine/:appointmentId/write" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Viết bệnh án"><DoctorMedicalRecord /></DoctorLayout></ProtectedRoute>} />
           <Route path="/doctor/examine/:appointmentId/vitals" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Khám sức khỏe"><DoctorVitalSignsPage /></DoctorLayout></ProtectedRoute>} />
           <Route path="/doctor/examine/:appointmentId/lab" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Chỉ định xét nghiệm"><DoctorLabIndicationPage /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/medical-records" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Bệnh án đã khám"><DoctorExaminedRecords /></DoctorLayout></ProtectedRoute>} />
+          <Route path="/doctor/lab-results" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Xét nghiệm"><LabResultsPortal subtitle="Chỉ định xét nghiệm trên các ca bạn phụ trách." /></DoctorLayout></ProtectedRoute>} />
 
           <Route path="/lab-dashboard" element={<ProtectedRoute allowedRoles={['lab_technician', 'admin']}><LabTechnicianLayout pageTitle="Hàng chờ xét nghiệm"><LabDashboard /></LabTechnicianLayout></ProtectedRoute>} />
           <Route path="/lab/order/:orderId" element={<ProtectedRoute allowedRoles={['lab_technician', 'admin']}><LabTechnicianLayout pageTitle="Nhập kết quả"><LabOrderDetail /></LabTechnicianLayout></ProtectedRoute>} />
+          <Route path="/lab/all-results" element={<ProtectedRoute allowedRoles={['lab_technician', 'admin']}><LabTechnicianLayout pageTitle="Danh sách xét nghiệm"><LabResultsPortal subtitle="Toàn bộ chỉ định trong hệ thống." /></LabTechnicianLayout></ProtectedRoute>} />
           <Route path="/doctor/schedules/register" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Đăng ký lịch làm việc"><ScheduleRegister /></DoctorLayout></ProtectedRoute>} />
           <Route path="/doctor/schedule" element={<ProtectedRoute allowedRoles={['doctor']}><DoctorLayout pageTitle="Lịch làm việc của tôi"><MySchedule /></DoctorLayout></ProtectedRoute>} />
 
@@ -250,10 +270,14 @@ function App() {
           <Route path="/admin/medicines/inventory" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý kho thuốc"><MedicineInventoryPage /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/medicines/catalog" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Danh mục thuốc"><MedicineCatalogPage /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/medicines/batches" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý lô thuốc"><MedicineBatchPage /></AdminLayout></ProtectedRoute>} />
+          
+          {/* QUẢN LÝ ĐƠN THUỐC */}
+          <Route path="/admin/drug-orders" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản Lý Đơn Thuốc"><AdminDrugOrders /></AdminLayout></ProtectedRoute>} />
 
           {/* CRUD XÉT NGHIỆM */}
           <Route path="/admin/lab-tests" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Quản lý xét nghiệm"><LabTestsManager /></AdminLayout></ProtectedRoute>} />
           <Route path="/admin/lab-test-categories" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Danh mục xét nghiệm"><LabTestCategoriesManager /></AdminLayout></ProtectedRoute>} />
+          <Route path="/admin/lab-results" element={<ProtectedRoute allowedRoles={['admin']}><AdminLayout pageTitle="Danh sách xét nghiệm"><LabResultsPortal subtitle="Tổng quan chỉ định xét nghiệm trên toàn phòng khám." /></AdminLayout></ProtectedRoute>} />
         </Routes>
         <ToastContainer 
           position="top-right" 
@@ -269,6 +293,8 @@ function App() {
         />
       </div>
     </Router>
+      </CartProvider>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -1,22 +1,31 @@
 .lab-tests-manager {
-  padding: 24px;
+  padding: 28px;
   max-width: 1400px;
   margin: 0 auto;
+  background: linear-gradient(180deg, #f1f5f9 0%, #e8ecf2 100%);
+  min-height: 100vh;
 }
 
 .lab-tests-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(13, 148, 136, 0.08) 100%);
+  padding: 24px 28px;
+  border-radius: 16px;
+  border: 1px solid rgba(226, 232, 240, 0.6);
+  animation: slideDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .lab-tests-header h1 {
   margin: 0;
-  color: #333;
-  font-size: 28px;
+  color: #0f172a;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -1px;
 }
 
 .lab-tests-controls {
@@ -27,95 +36,135 @@
 }
 
 .search-input {
-  padding: 10px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 11px 18px;
+  border: 2px solid var(--mc-border-light, #e2e8f0);
+  border-radius: 10px;
   font-size: 14px;
-  width: 250px;
-  transition: border-color 0.3s;
+  width: 260px;
+  background: white;
+  transition: all var(--mc-transition);
+  font-weight: 500;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: rgba(59, 130, 246, 0.02);
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
 }
 
 .category-filter {
-  padding: 10px 16px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  padding: 11px 18px;
+  border: 2px solid var(--mc-border-light, #e2e8f0);
+  border-radius: 10px;
   font-size: 14px;
   background: white;
   cursor: pointer;
-  transition: border-color 0.3s;
+  transition: all var(--mc-transition);
+  font-weight: 500;
 }
 
 .category-filter:focus {
   outline: none;
-  border-color: #0066cc;
-  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  background: rgba(59, 130, 246, 0.02);
 }
 
 .btn-add-test {
-  padding: 10px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 11px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: 600;
-  transition: transform 0.2s, box-shadow 0.2s;
+  font-weight: 700;
+  transition: all var(--mc-transition);
   font-size: 14px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .btn-add-test:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.35);
+}
+
+.btn-add-test:active {
+  transform: translateY(1px);
 }
 
 .lab-tests-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
-  border-radius: 8px;
+  border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(226, 232, 240, 0.6);
 }
 
 .lab-tests-table thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
   color: white;
 }
 
 .lab-tests-table th {
-  padding: 16px;
+  padding: 18px 20px;
   text-align: left;
-  font-weight: 600;
-  font-size: 14px;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .lab-tests-table tbody tr {
-  border-bottom: 1px solid #eee;
-  transition: background-color 0.2s;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  transition: all var(--mc-transition);
 }
 
 .lab-tests-table tbody tr:hover {
-  background-color: #f9f9f9;
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), transparent);
+}
+
+.lab-tests-table tbody tr:last-child {
+  border-bottom: none;
 }
 
 .lab-tests-table td {
-  padding: 16px;
+  padding: 18px 20px;
   font-size: 14px;
+  color: #334155;
+  font-weight: 500;
 }
 
 .test-code {
-  background-color: #f0f0f0;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-family: monospace;
-  font-weight: 600;
-  color: #333;
+  background: linear-gradient(135deg, #f0f4fa, rgba(59, 130, 246, 0.08));
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  color: #1e40af;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  font-size: 12px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .test-price {

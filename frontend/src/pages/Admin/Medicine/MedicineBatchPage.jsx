@@ -322,7 +322,7 @@ const MedicineBatchPage = () => {
                                                 >
                                                     <div className="drug-name">{drug.name}</div>
                                                     <div className="drug-info">
-                                                        <span className="badge badge-success">Tồn: {drug.total_quantity}</span>
+                                                        <span className="badge badge-success">Tồn bán: {drug.total_available ?? 0}</span>
                                                         {drug.nearest_expiry && (
                                                             <span className="badge badge-warning">
                                                                 HH: {formatDate(drug.nearest_expiry)}

@@ -1,0 +1,412 @@
+/* ================================================
+   RECEPTION MY SCHEDULE PAGE STYLES
+   ================================================ */
+
+.reception-schedule-container {
+    background: var(--mc-bg-secondary);
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+/* Header Styling */
+.reception-schedule-container h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--mc-text);
+    margin-bottom: 35px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reception-schedule-container h2 i {
+    color: var(--mc-info);
+    font-size: 2.2rem;
+}
+
+/* Main Card Container */
+.reception-schedule-wrapper {
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--mc-shadow-md);
+    overflow: hidden;
+    transition: all var(--mc-transition);
+}
+
+.reception-schedule-wrapper:hover {
+    box-shadow: var(--mc-shadow-lg);
+}
+
+.reception-schedule-wrapper .card-body {
+    padding: 35px !important;
+}
+
+/* Loading State */
+.reception-schedule-loading {
+    text-align: center;
+    padding: 60px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.reception-schedule-loading .spinner-border {
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
+    color: var(--mc-primary);
+}
+
+/* Empty State */
+.reception-schedule-empty {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, var(--mc-bg) 0%, var(--mc-bg-secondary) 100%);
+    border-radius: 16px;
+    border: 2px dashed var(--mc-border-light);
+}
+
+.reception-schedule-empty i {
+    font-size: 4rem;
+    color: var(--mc-text-light);
+    opacity: 0.5;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.reception-schedule-empty h5 {
+    color: var(--mc-text-secondary);
+    font-weight: 700;
+    margin: 15px 0;
+}
+
+.reception-schedule-empty p {
+    color: var(--mc-text-muted);
+    margin: 10px 0;
+}
+
+/* Info Alert */
+.reception-schedule-alert {
+    background: var(--mc-success-light);
+    border: 2px solid var(--mc-success);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    animation: slideDown 0.4s ease-out;
+}
+
+.reception-schedule-alert i {
+    font-size: 1.5rem;
+    color: var(--mc-success);
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+
+.reception-schedule-alert strong {
+    color: var(--mc-text);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.reception-schedule-alert span {
+    color: var(--mc-text-secondary);
+    font-size: 0.95rem;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Schedule Grid */
+.reception-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+}
+
+/* Schedule Card */
+.reception-day-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--mc-shadow-sm);
+    transition: all var(--mc-transition);
+    border: 2px solid var(--mc-border-light);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.reception-day-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--mc-shadow-lg);
+    border-color: var(--mc-success);
+}
+
+/* Card Header */
+.reception-card-header {
+    background: linear-gradient(135deg, var(--mc-success) 0%, #14b8a6 100%);
+    color: white;
+    padding: 20px;
+    text-align: center;
+    font-weight: 700;
+    border-bottom: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.reception-card-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(15px); }
+}
+
+.reception-card-header i {
+    margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.reception-card-header .date-label {
+    font-size: 1.1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.reception-card-header .date-small {
+    font-size: 0.85rem;
+    opacity: 0.9;
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+/* Card Body */
+.reception-card-body {
+    padding: 24px !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Shift Container */
+.reception-shift-container {
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all var(--mc-transition);
+}
+
+/* Morning Shift */
+.reception-shift-morning {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 146, 60, 0.1) 100%);
+    border: 2px solid rgba(245, 158, 11, 0.3);
+}
+
+.reception-shift-morning:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(251, 146, 60, 0.2) 100%);
+    border-color: rgba(245, 158, 11, 0.5);
+    transform: translateY(-2px);
+}
+
+.reception-shift-morning .shift-icon {
+    color: var(--mc-warning);
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.reception-shift-morning .shift-title {
+    color: var(--mc-text);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.reception-shift-morning .shift-time {
+    color: var(--mc-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Afternoon Shift */
+.reception-shift-afternoon {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(79, 70, 229, 0.1) 100%);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+}
+
+.reception-shift-afternoon:hover {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(79, 70, 229, 0.2) 100%);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+}
+
+.reception-shift-afternoon .shift-icon {
+    color: var(--mc-info);
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+}
+
+.reception-shift-afternoon .shift-title {
+    color: var(--mc-text);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.reception-shift-afternoon .shift-time {
+    color: var(--mc-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Off/Rest */
+.reception-shift-off {
+    background: var(--mc-bg);
+    border: 2px dashed var(--mc-border-light);
+    color: var(--mc-text-muted);
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.reception-shift-off i {
+    margin-right: 6px;
+    color: var(--mc-text-light);
+}
+
+/* Summary Container */
+.reception-schedule-summary {
+    background: linear-gradient(135deg, var(--mc-info-light) 0%, rgba(79, 70, 229, 0.05) 100%);
+    border: 2px solid var(--mc-info);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+}
+
+.reception-schedule-summary h6 {
+    color: var(--mc-info);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+}
+
+.reception-schedule-summary i {
+    margin-right: 8px;
+    color: var(--mc-info);
+}
+
+.reception-schedule-summary p {
+    color: var(--mc-text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+.reception-schedule-summary strong {
+    color: var(--mc-text);
+    font-weight: 700;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .reception-schedule-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .reception-schedule-container {
+        padding: 25px 0;
+    }
+
+    .reception-schedule-wrapper .card-body {
+        padding: 24px !important;
+    }
+
+    .reception-schedule-container h2 {
+        font-size: 1.6rem;
+        margin-bottom: 25px;
+    }
+
+    .reception-schedule-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .reception-schedule-alert {
+        padding: 16px;
+    }
+
+    .reception-day-card {
+        border-radius: 14px;
+    }
+
+    .reception-shift-container {
+        padding: 14px;
+    }
+
+    .reception-shift-morning .shift-icon,
+    .reception-shift-afternoon .shift-icon {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .reception-schedule-container h2 {
+        font-size: 1.3rem;
+        gap: 8px;
+    }
+
+    .reception-schedule-container h2 i {
+        font-size: 1.8rem;
+    }
+
+    .reception-schedule-wrapper .card-body {
+        padding: 18px !important;
+    }
+
+    .reception-schedule-empty {
+        padding: 40px 15px;
+    }
+
+    .reception-schedule-empty i {
+        font-size: 3rem;
+    }
+
+    .reception-schedule-alert {
+        gap: 12px;
+        padding: 14px;
+    }
+
+    .reception-schedule-alert i {
+        font-size: 1.2rem;
+    }
+
+    .reception-schedule-summary {
+        padding: 16px;
+    }
+}

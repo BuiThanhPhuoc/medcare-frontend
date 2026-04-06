@@ -21,15 +21,19 @@ const DoctorLayout = ({ children, pageTitle = "Bác Sĩ" }) => {
                     className="sidebar-brand text-decoration-none"
                     onClick={() => setIsMobileOpen(false)}
                 >
-                    <i className="fas fa-heartbeat fs-3 mb-2"></i>
+                    <div className="sidebar-brand-header">
+                        <i className="fas fa-heartbeat fs-3"></i>
+                        <small>BÁC SĨ</small>
+                    </div>
                     <h4>MedCare</h4>
-                    <small>Bác Sĩ</small>
                 </Link>
                 <nav className="sidebar-menu">
                     <Link to="/doctor-dashboard" className={location.pathname === '/doctor-dashboard' ? 'active' : ''}><i className="fas fa-chart-line"></i> Tổng quan</Link>
                     <Link to="/examine" className={isExamineSection ? 'active' : ''}><i className="fas fa-users"></i> Hàng đợi khám</Link>
                     <Link to="/doctor/schedules/register" className={location.pathname === '/doctor/schedules/register' ? 'active' : ''}><i className="fas fa-calendar-plus"></i> Đăng ký lịch</Link>
                     <Link to="/doctor/schedule" className={location.pathname === '/doctor/schedule' ? 'active' : ''}><i className="fas fa-calendar-alt"></i> Lịch của tôi</Link>
+                    <Link to="/doctor/medical-records" className={location.pathname === '/doctor/medical-records' ? 'active' : ''}><i className="fas fa-file-medical-alt"></i> Bệnh án đã khám</Link>
+                    <Link to="/doctor/lab-results" className={location.pathname === '/doctor/lab-results' ? 'active' : ''}><i className="fas fa-vials"></i> Xét nghiệm</Link>
                     <hr />
                     <button onClick={handleLogout} className="btn-logout-sidebar"><i className="fas fa-sign-out-alt"></i> Đăng xuất</button>
                 </nav>
@@ -50,7 +54,7 @@ const DoctorLayout = ({ children, pageTitle = "Bác Sĩ" }) => {
                 </header>
 
                 <div className="content-wrapper">
-                    {children}
+                    <div className="mc-view-root">{children}</div>
                 </div>
             </div>
             {isMobileOpen && <div className="sidebar-overlay" onClick={() => setIsMobileOpen(false)}></div>}

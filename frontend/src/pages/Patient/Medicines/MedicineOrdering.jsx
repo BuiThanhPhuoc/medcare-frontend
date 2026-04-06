@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../../../lib/api';
+import { useCart } from '../../../contexts/CartContext';
+import { useToast } from '../../../hooks/useToast';
 import './MedicineOrdering.css';
+
+const ITEMS_PER_PAGE = 12;
+const SEARCH_DEBOUNCE_MS = 380;
 
 const formatVND = (n) => {
     const num = typeof n === 'string' ? Number(n) : n;
@@ -11,35 +16,31 @@ const formatVND = (n) => {
 
 export default function MedicineOrdering() {
     const navigate = useNavigate();
+    const { addToCart, totalQuantity } = useCart();
+    const { success: showSuccess, error: showError } = useToast();
+    const medicinesGridRef = useRef(null);
 
-    // States
     const [medicines, setMedicines] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [search, setSearch] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [page, setPage] = useState(1);
     const [pageInfo, setPageInfo] = useState({ total: 0, pages: 1 });
-    
-    const [cart, setCart] = useState([]);
-    const [showCart, setShowCart] = useState(false);
-    
-    // Checkout states
-    const [deliveryAddress, setDeliveryAddress] = useState('');
-    const [paymentMethod, setPaymentMethod] = useState('cod');
-    const [notes, setNotes] = useState('');
-    const [checkoutLoading, setCheckoutLoading] = useState(false);
-    const [checkoutError, setCheckoutError] = useState('');
 
-    // Load medicines
-    const loadMedicines = async (pageNum = 1) => {
+    const scrollToMedicines = () => {
+        medicinesGridRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    const loadMedicines = useCallback(async (pageNum = 1, searchTerm = '', scrollAfter = false) => {
         try {
             setLoading(true);
             setError('');
             const res = await api.get('/api/drug-orders/available-medicines', {
                 params: {
                     page: pageNum,
-                    limit: 10,
-                    search: search || undefined
+                    limit: ITEMS_PER_PAGE,
+                    search: searchTerm.trim() || undefined
                 }
             });
 
@@ -47,6 +48,7 @@ export default function MedicineOrdering() {
                 setMedicines(res.data.medicines || []);
                 setPageInfo(res.data.pagination || { total: 0, pages: 1 });
                 setPage(pageNum);
+                if (scrollAfter) scrollToMedicines();
             }
         } catch (err) {
             setError(err.response?.data?.message || 'Không tải được danh sách thuốc');
@@ -54,414 +56,259 @@ export default function MedicineOrdering() {
         } finally {
             setLoading(false);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        loadMedicines(1);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [search]);
+        const t = setTimeout(() => setDebouncedSearch(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+        return () => clearTimeout(t);
+    }, [searchInput]);
 
-    // Cart functions
-    const addToCart = (medicine, batch) => {
+    useEffect(() => {
+        loadMedicines(1, debouncedSearch, false);
+    }, [debouncedSearch, loadMedicines]);
+
+    // Handle add to cart
+    const handleAddToCart = (medicine, batch) => {
         if (!batch || batch.available_quantity <= 0) {
-            alert('Thuốc này hết hàng');
+            showError('Thuốc này hết hàng');
             return;
         }
-
-        const existingItem = cart.find(
-            item => item.drug_id === medicine.id && item.batch_id === batch.id
-        );
-
-        if (existingItem) {
-            if (existingItem.quantity >= batch.available_quantity) {
-                alert(`Chỉ còn ${batch.available_quantity} viên`);
-                return;
-            }
-            existingItem.quantity += 1;
-            existingItem.subtotal = existingItem.quantity * existingItem.price_at_time;
-        } else {
-            cart.push({
-                drug_id: medicine.id,
-                batch_id: batch.id,
-                drug_name: medicine.name,
-                batch_number: batch.batch_number,
-                quantity: 1,
-                price_at_time: batch.price,
-                subtotal: batch.price,
-                available_quantity: batch.available_quantity
-            });
-        }
-
-        setCart([...cart]);
-        alert('Đã thêm vào giỏ hàng');
-    };
-
-    const updateCartQuantity = (index, quantity) => {
-        const item = cart[index];
-        if (quantity <= 0) {
-            cart.splice(index, 1);
-        } else if (quantity <= item.available_quantity) {
-            item.quantity = quantity;
-            item.subtotal = quantity * item.price_at_time;
-        } else {
-            alert(`Chỉ còn ${item.available_quantity} viên`);
-            return;
-        }
-        setCart([...cart]);
-    };
-
-    const removeFromCart = (index) => {
-        if (window.confirm('Xóa thuốc này khỏi giỏ hàng?')) {
-            cart.splice(index, 1);
-            setCart([...cart]);
-        }
-    };
-
-    const cartTotal = cart.reduce((sum, item) => sum + item.subtotal, 0);
-    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-    // Checkout
-    const handleCheckout = async () => {
-        if (cart.length === 0) {
-            alert('Giỏ hàng trống');
-            return;
-        }
-
-        if (!deliveryAddress.trim()) {
-            alert('Vui lòng nhập địa chỉ giao hàng');
-            return;
-        }
-
-        setCheckoutLoading(true);
-        setCheckoutError('');
 
         try {
-            const orderData = {
-                items: cart,
-                payment_method: paymentMethod,
-                delivery_address: deliveryAddress.trim(),
-                notes: notes.trim() || null
-            };
-
-            const res = await api.post('/api/drug-orders', orderData);
-
-            if (res.data?.success) {
-                const orderId = res.data.orderId;
-
-                if (paymentMethod === 'vnpay') {
-                    // Redirect to VNPay
-                    const paymentRes = await api.post(`/api/drug-orders/${orderId}/create-vnpay-payment`, {});
-                    if (paymentRes.data?.success && paymentRes.data.paymentUrl) {
-                        window.location.href = paymentRes.data.paymentUrl;
-                        return;
-                    } else {
-                        throw new Error(paymentRes.data?.message || 'Không tạo được thanh toán VNPay');
-                    }
-                } else {
-                    // COD - just confirm
-                    await api.put(`/api/drug-orders/${orderId}/confirm-payment`, {
-                        payment_method: 'cod'
-                    });
-                    setCart([]);
-                    navigate(`/patient/orders/${orderId}?success=true`);
-                }
-            }
+            addToCart(medicine, batch, 1);
+            showSuccess(`Đã thêm "${medicine.name}" vào giỏ hàng (${batch.available_quantity} viên có sẵn)`);
         } catch (err) {
-            setCheckoutError(err.response?.data?.message || err.message || 'Lỗi đặt hàng');
-        } finally {
-            setCheckoutLoading(false);
+            showError(err.message || 'Lỗi thêm vào giỏ hàng');
         }
+    };
+
+    const priceRangeLabel = (m) => {
+        const lo = Number(m.min_price);
+        const hi = Number(m.max_price);
+        if (!Number.isFinite(lo)) return '—';
+        if (!Number.isFinite(hi) || hi === lo) return formatVND(lo);
+        return `${formatVND(lo)} – ${formatVND(hi)}`;
+    };
+
+    const availableStock = (m) => {
+        const n = Number(m.total_available ?? m.total_quantity);
+        return Number.isFinite(n) ? n : 0;
     };
 
     return (
-        <div className="medicine-ordering-page">
-            <div className="medicine-ordering-container">
-                {/* Header */}
-                <div className="ordering-header">
-                    <h1>🛒 Mua Thuốc Online</h1>
-                    <p>Duyệt và đặt mua thuốc trực tuyến, thanh toán tiện lợi</p>
-                </div>
-
-                <div className="ordering-layout">
-                    {/* Main Content */}
-                    <div className="ordering-main">
-                        {/* Search Bar */}
-                        <div className="search-section">
-                            <input
-                                type="text"
-                                placeholder="🔍 Tìm kiếm thuốc (tên, thành phần hoạt động)..."
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                                className="search-input"
-                            />
-                        </div>
-
-                        {/* Error */}
-                        {error && (
-                            <div className="alert alert-danger" role="alert">
-                                {error}
-                            </div>
-                        )}
-
-                        {/* Loading */}
-                        {loading ? (
-                            <div className="loading-state">
-                                <div className="spinner-border text-primary" role="status" />
-                                <p>Đang tải danh sách thuốc...</p>
-                            </div>
-                        ) : medicines.length === 0 ? (
-                            <div className="empty-state">
-                                <div className="empty-icon">🏥</div>
-                                <p>Không tìm thấy thuốc nào</p>
-                            </div>
-                        ) : (
-                            <>
-                                {/* Medicines Grid */}
-                                <div className="medicines-grid">
-                                    {medicines.map((medicine) => (
-                                        <div key={medicine.id} className="medicine-card">
-                                            <div className="medicine-header">
-                                                <h3>{medicine.name}</h3>
-                                                <span className="stock-badge">
-                                                    {medicine.total_available} có sẵn
-                                                </span>
-                                            </div>
-
-                                            {medicine.active_ingredient && (
-                                                <div className="medicine-ingredient">
-                                                    Hoạt chất: {medicine.active_ingredient}
-                                                </div>
-                                            )}
-
-                                            <div className="medicine-unit">
-                                                Đơn vị: {medicine.unit || 'Vỉ'}
-                                            </div>
-
-                                            {/* Batch Selection */}
-                                            <div className="batches-section">
-                                                {medicine.batches && medicine.batches.length > 0 ? (
-                                                    <select
-                                                        className="batch-select"
-                                                        defaultValue=""
-                                                        onChange={(e) => {
-                                                            if (e.target.value) {
-                                                                const batch = medicine.batches.find(
-                                                                    b => b.id === parseInt(e.target.value)
-                                                                );
-                                                                addToCart(medicine, batch);
-                                                                e.target.value = '';
-                                                            }
-                                                        }}
-                                                    >
-                                                        <option value="">
-                                                            Chọn lô hàng
-                                                        </option>
-                                                        {medicine.batches.map((batch) => (
-                                                            <option key={batch.id} value={batch.id}>
-                                                                Lô {batch.batch_number} - HSD: {new Date(batch.expiry_date).toLocaleDateString('vi-VN')} - {formatVND(batch.price)} - Còn: {batch.available_quantity}
-                                                            </option>
-                                                        ))}
-                                                    </select>
-                                                ) : (
-                                                    <div className="out-of-stock">
-                                                        Hết hàng
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                {/* Pagination */}
-                                {pageInfo.pages > 1 && (
-                                    <div className="pagination-controls">
-                                        <button
-                                            onClick={() => loadMedicines(page - 1)}
-                                            disabled={page === 1}
-                                            className="btn btn-sm btn-outline-primary"
-                                        >
-                                            ← Trang trước
-                                        </button>
-                                        <span className="page-info">
-                                            Trang {page}/{pageInfo.pages} ({pageInfo.total} thuốc)
-                                        </span>
-                                        <button
-                                            onClick={() => loadMedicines(page + 1)}
-                                            disabled={page === pageInfo.pages}
-                                            className="btn btn-sm btn-outline-primary"
-                                        >
-                                            Trang sau →
-                                        </button>
-                                    </div>
+        <div className="pharmacy-page">
+            <div className="pharmacy-wrap">
+                <section className="pharmacy-hero" aria-labelledby="pharmacy-title">
+                    <div className="pharmacy-hero-inner">
+                        <div className="pharmacy-hero-copy">
+                            <span className="pharmacy-badge">
+                                <i className="fas fa-prescription-bottle-medical" aria-hidden />
+                                Nhà thuốc trực tuyến
+                            </span>
+                            <h1 id="pharmacy-title" className="pharmacy-title">
+                                Đặt thuốc an toàn, giao tận nơi
+                            </h1>
+                            <p className="pharmacy-sub">
+                                Chọn lô còn hạn dùng, xem giá minh bạch và thanh toán COD hoặc VNPay ngay trên MedCare.
+                            </p>
+                            <div className="pharmacy-hero-actions">
+                                <button
+                                    type="button"
+                                    className="pharmacy-btn pharmacy-btn--ghost"
+                                    onClick={() => medicinesGridRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                                >
+                                    <i className="fas fa-arrow-down" aria-hidden />
+                                    Xem danh mục
+                                </button>
+                                {totalQuantity > 0 && (
+                                    <Link to="/patient/cart" className="pharmacy-btn pharmacy-btn--solid">
+                                        <i className="fas fa-bag-shopping" aria-hidden />
+                                        Giỏ hàng ({totalQuantity})
+                                    </Link>
                                 )}
-                            </>
+                            </div>
+                        </div>
+                        <div className="pharmacy-hero-card" aria-hidden>
+                            <div className="pharmacy-stat">
+                                <span className="pharmacy-stat-label">Giao hàng</span>
+                                <strong>1–2 ngày</strong>
+                                <small>Nội thành</small>
+                            </div>
+                            <div className="pharmacy-stat">
+                                <span className="pharmacy-stat-label">Thanh toán</span>
+                                <strong>COD &amp; VNPay</strong>
+                                <small>Bảo mật SSL</small>
+                            </div>
+                            <div className="pharmacy-stat">
+                                <span className="pharmacy-stat-label">Nguồn thuốc</span>
+                                <strong>Kho phòng khám</strong>
+                                <small>Lô &amp; HSD rõ ràng</small>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {totalQuantity > 0 && (
+                    <div className="pharmacy-cart-strip" role="status">
+                        <div className="pharmacy-cart-strip-inner">
+                            <span>
+                                <i className="fas fa-circle-check" aria-hidden />
+                                Bạn đang có <strong>{totalQuantity}</strong> sản phẩm trong giỏ
+                            </span>
+                            <button type="button" className="pharmacy-strip-btn" onClick={() => navigate('/patient/cart')}>
+                                Thanh toán
+                                <i className="fas fa-chevron-right" aria-hidden />
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                <div className="pharmacy-toolbar" ref={medicinesGridRef}>
+                    <div className="pharmacy-search-wrap">
+                        <i className="fas fa-magnifying-glass pharmacy-search-icon" aria-hidden />
+                        <input
+                            type="search"
+                            className="pharmacy-search"
+                            placeholder="Tìm theo tên thuốc hoặc hoạt chất..."
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            aria-label="Tìm thuốc"
+                        />
+                        {searchInput && (
+                            <button
+                                type="button"
+                                className="pharmacy-search-clear"
+                                onClick={() => setSearchInput('')}
+                                aria-label="Xóa tìm kiếm"
+                            >
+                                <i className="fas fa-xmark" />
+                            </button>
                         )}
                     </div>
+                    <p className="pharmacy-toolbar-hint">
+                        {loading ? 'Đang tìm…' : `${pageInfo.total} loại thuốc khả dụng`}
+                    </p>
+                </div>
 
-                    {/* Cart Sidebar */}
-                    <div className="ordering-sidebar">
-                        <div className={`cart-panel ${showCart ? 'expanded' : ''}`}>
-                            <div
-                                className="cart-header"
-                                onClick={() => setShowCart(!showCart)}
-                            >
-                                <h3>
-                                    🛒 Giỏ hàng
-                                    <span className="cart-count">{cartCount}</span>
-                                </h3>
-                                <span className={`expand-icon ${showCart ? 'up' : 'down'}`}>
-                                    {showCart ? '▲' : '▼'}
-                                </span>
-                            </div>
+                {error && (
+                    <div className="pharmacy-alert pharmacy-alert--error" role="alert">
+                        <i className="fas fa-triangle-exclamation" aria-hidden />
+                        {error}
+                    </div>
+                )}
 
-                            {showCart && (
-                                <>
-                                    {/* Cart Items */}
-                                    <div className="cart-items">
-                                        {cart.length === 0 ? (
-                                            <div className="empty-cart">
-                                                Giỏ hàng trống
-                                            </div>
-                                        ) : (
-                                            cart.map((item, index) => (
-                                                <div key={index} className="cart-item">
-                                                    <div className="item-info">
-                                                        <div className="item-name">
-                                                            {item.drug_name}
-                                                        </div>
-                                                        <div className="item-batch">
-                                                            Lô: {item.batch_number}
-                                                        </div>
-                                                        <div className="item-price">
-                                                            {formatVND(item.price_at_time)}/viên
-                                                        </div>
+                {loading ? (
+                    <div className="pharmacy-loading">
+                        <div className="pharmacy-spinner" role="status" aria-label="Đang tải" />
+                        <p>Đang tải danh sách thuốc…</p>
+                    </div>
+                ) : medicines.length === 0 ? (
+                    <div className="pharmacy-empty">
+                        <div className="pharmacy-empty-icon">
+                            <i className="fas fa-pills" aria-hidden />
+                        </div>
+                        <h2>Không có kết quả</h2>
+                        <p>Thử từ khóa khác hoặc xóa bộ lọc tìm kiếm.</p>
+                        {searchInput && (
+                            <button type="button" className="pharmacy-btn pharmacy-btn--outline" onClick={() => setSearchInput('')}>
+                                Xóa tìm kiếm
+                            </button>
+                        )}
+                    </div>
+                ) : (
+                    <>
+                        <div className="pharmacy-results-meta">
+                            Hiển thị{' '}
+                            <strong>
+                                {(page - 1) * ITEMS_PER_PAGE + 1}–{Math.min(page * ITEMS_PER_PAGE, pageInfo.total)}
+                            </strong>{' '}
+                            / {pageInfo.total} mặt hàng
+                        </div>
+
+                        <ul className="pharmacy-grid">
+                            {medicines.map((medicine) => (
+                                <li key={medicine.id} className="pharmacy-card">
+                                    <div className="pharmacy-card-top">
+                                        <div className="pharmacy-card-icon" aria-hidden>
+                                            <i className="fas fa-capsules" />
+                                        </div>
+                                        <div className="pharmacy-card-head">
+                                            <h3 className="pharmacy-card-title">{medicine.name}</h3>
+                                            <span className="pharmacy-pill">
+                                                Còn {availableStock(medicine)} · {medicine.unit || 'đơn vị'}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {(medicine.generic_name || medicine.active_ingredient) && (
+                                        <p className="pharmacy-generic">
+                                            Hoạt chất: <span>{medicine.generic_name || medicine.active_ingredient}</span>
+                                        </p>
+                                    )}
+
+                                    <div className="pharmacy-price-row">
+                                        <span className="pharmacy-price-label">Giá tham khảo</span>
+                                        <span className="pharmacy-price-value">{priceRangeLabel(medicine)}</span>
+                                    </div>
+
+                                    <div className="pharmacy-batches">
+                                        {medicine.batches?.length ? (
+                                            medicine.batches.map((batch) => (
+                                                <div key={batch.id} className="pharmacy-batch-row">
+                                                    <div className="pharmacy-batch-info">
+                                                        <span className="pharmacy-batch-label">Lô {batch.batch_number}</span>
+                                                        <span className="pharmacy-batch-meta">
+                                                            HSD {new Date(batch.expiry_date).toLocaleDateString('vi-VN')} · Còn{' '}
+                                                            {batch.available_quantity}
+                                                        </span>
                                                     </div>
-
-                                                    <div className="item-controls">
-                                                        <input
-                                                            type="number"
-                                                            min={1}
-                                                            max={item.available_quantity}
-                                                            value={item.quantity}
-                                                            onChange={(e) =>
-                                                                updateCartQuantity(index, parseInt(e.target.value))
-                                                            }
-                                                            className="quantity-input"
-                                                        />
-                                                        <button
-                                                            onClick={() => removeFromCart(index)}
-                                                            className="btn-remove"
-                                                            title="Xóa"
-                                                        >
-                                                            ✕
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="item-subtotal">
-                                                        {formatVND(item.subtotal)}
-                                                    </div>
+                                                    <div className="pharmacy-batch-price">{formatVND(batch.price)}</div>
+                                                    <button
+                                                        type="button"
+                                                        className="pharmacy-add-btn"
+                                                        onClick={() => handleAddToCart(medicine, batch)}
+                                                        disabled={batch.available_quantity <= 0}
+                                                    >
+                                                        <i className="fas fa-plus" aria-hidden />
+                                                        Thêm
+                                                    </button>
                                                 </div>
                                             ))
+                                        ) : (
+                                            <p className="pharmacy-oos">Tạm hết lô khả dụng</p>
                                         )}
                                     </div>
+                                </li>
+                            ))}
+                        </ul>
 
-                                    {/* Checkout Section */}
-                                    {cart.length > 0 && (
-                                        <div className="checkout-section">
-                                            {/* Total */}
-                                            <div className="cart-total">
-                                                <span>Tổng cộng:</span>
-                                                <span className="total-amount">
-                                                    {formatVND(cartTotal)}
-                                                </span>
-                                            </div>
-
-                                            {/* Error */}
-                                            {checkoutError && (
-                                                <div className="checkout-error">
-                                                    {checkoutError}
-                                                </div>
-                                            )}
-
-                                            {/* Delivery Address */}
-                                            <div className="form-group">
-                                                <label>Địa chỉ giao hàng</label>
-                                                <textarea
-                                                    value={deliveryAddress}
-                                                    onChange={(e) => setDeliveryAddress(e.target.value)}
-                                                    placeholder="VD: 123 Đường ABC, Quận 1, TP.HCM"
-                                                    className="form-control"
-                                                    rows={3}
-                                                />
-                                            </div>
-
-                                            {/* Payment Method */}
-                                            <div className="form-group">
-                                                <label>Phương thức thanh toán</label>
-                                                <div className="payment-options">
-                                                    <label className="payment-option">
-                                                        <input
-                                                            type="radio"
-                                                            name="payment"
-                                                            value="cod"
-                                                            checked={paymentMethod === 'cod'}
-                                                            onChange={(e) => setPaymentMethod(e.target.value)}
-                                                        />
-                                                        <span>💵 Tiền mặt khi nhận (COD)</span>
-                                                    </label>
-                                                    <label className="payment-option">
-                                                        <input
-                                                            type="radio"
-                                                            name="payment"
-                                                            value="vnpay"
-                                                            onChange={(e) => setPaymentMethod(e.target.value)}
-                                                        />
-                                                        <span>🏦 Thanh toán bằng VNPay</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            {/* Notes */}
-                                            <div className="form-group">
-                                                <label>Ghi chú đặt hàng (tùy chọn)</label>
-                                                <textarea
-                                                    value={notes}
-                                                    onChange={(e) => setNotes(e.target.value)}
-                                                    placeholder="VD: Giao buổi sáng, giao vào thứ 2-6..."
-                                                    className="form-control"
-                                                    rows={2}
-                                                />
-                                            </div>
-
-                                            {/* Checkout Button */}
-                                            <button
-                                                onClick={handleCheckout}
-                                                disabled={checkoutLoading || cart.length === 0}
-                                                className="btn btn-primary btn-block checkout-btn"
-                                            >
-                                                {checkoutLoading ? 'Đang xử lý...' : '✓ Đặt hàng'}
-                                            </button>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-                        </div>
-
-                        {/* Cart Summary (when collapsed) */}
-                        {!showCart && cart.length > 0 && (
-                            <div className="cart-summary">
-                                <div className="summary-item">
-                                    <span>Số lượng:</span>
-                                    <strong>{cartCount}</strong>
-                                </div>
-                                <div className="summary-item">
-                                    <span>Tổng tiền:</span>
-                                    <strong>{formatVND(cartTotal)}</strong>
-                                </div>
-                            </div>
+                        {pageInfo.pages > 1 && (
+                            <nav className="pharmacy-pager" aria-label="Phân trang">
+                                <button
+                                    type="button"
+                                    className="pharmacy-pager-btn"
+                                    onClick={() => loadMedicines(page - 1, debouncedSearch, true)}
+                                    disabled={page === 1}
+                                >
+                                    <i className="fas fa-chevron-left" aria-hidden />
+                                    Trước
+                                </button>
+                                <span className="pharmacy-pager-info">
+                                    Trang {page} / {pageInfo.pages}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="pharmacy-pager-btn"
+                                    onClick={() => loadMedicines(page + 1, debouncedSearch, true)}
+                                    disabled={page === pageInfo.pages}
+                                >
+                                    Sau
+                                    <i className="fas fa-chevron-right" aria-hidden />
+                                </button>
+                            </nav>
                         )}
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
         </div>
     );

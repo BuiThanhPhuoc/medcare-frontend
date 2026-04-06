@@ -133,20 +133,91 @@
 .admin-dashboard-modern {
     padding: 0;
     width: 100%;
-    max-width: 100%;
+    max-width: none;
+    margin: 0;
     text-align: left;
+}
+
+.admin-dash-hero {
+    border-radius: 20px;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1.35rem;
+    background: linear-gradient(125deg, #0f172a 0%, #134e4a 48%, #1e1b4b 100%);
+    color: #f8fafc;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-dash-hero::after {
+    content: "";
+    position: absolute;
+    inset: -40% 40% auto -20%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(45, 212, 191, 0.22) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+.admin-dash-hero-text {
+    position: relative;
+    z-index: 1;
+    max-width: 42rem;
+}
+
+.admin-dash-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(45, 212, 191, 0.95);
+    margin: 0 0 0.35rem;
+}
+
+.admin-dash-heading {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin: 0 0 0.4rem;
+    line-height: 1.2;
+}
+
+.admin-dash-lead {
+    margin: 0;
+    font-size: 0.9rem;
+    color: rgba(226, 232, 240, 0.88);
+    line-height: 1.55;
+}
+
+.admin-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.kpi-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    height: 100%;
+}
+
+.kpi-card-link:hover .kpi-card--orders {
+    border-color: rgba(99, 102, 241, 0.35);
+    box-shadow: 0 12px 36px rgba(99, 102, 241, 0.12);
+    transform: translateY(-2px);
 }
 
 /* KPI Cards */
 .kpi-card {
     background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
-    border: 1px solid rgba(17, 24, 39, 0.06);
-    padding: 0.85rem 1rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 1rem 1.1rem;
     position: relative;
     overflow: hidden;
     height: 100%;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .kpi-card:before {
@@ -154,9 +225,57 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 6px;
+    width: 4px;
     height: 100%;
-    background: linear-gradient(180deg, rgba(139, 92, 246, 0.95), rgba(59, 130, 246, 0.7));
+    background: linear-gradient(180deg, #0d9488, #6366f1);
+}
+
+.kpi-card--accent:before {
+    background: linear-gradient(180deg, #14b8a6, #0d9488);
+}
+
+.kpi-card--warn:before {
+    background: linear-gradient(180deg, #f59e0b, #ea580c);
+}
+
+.kpi-card--orders:before {
+    background: linear-gradient(180deg, #6366f1, #4f46e5);
+}
+
+.kpi-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #0d9488;
+    background: rgba(13, 148, 136, 0.1);
+    flex-shrink: 0;
+}
+
+.kpi-icon-wrap--teal {
+    color: #0d9488;
+    background: rgba(13, 148, 136, 0.12);
+}
+
+.kpi-icon-wrap--amber {
+    color: #d97706;
+    background: rgba(245, 158, 11, 0.15);
+}
+
+.kpi-icon-wrap--violet {
+    color: #4f46e5;
+    background: rgba(99, 102, 241, 0.14);
+}
+
+.kpi-value--warn {
+    color: #c2410c !important;
+}
+
+.kpi-value--orders {
+    color: #4338ca !important;
 }
 
 .kpi-title {
@@ -182,12 +301,21 @@
 }
 
 /* Chart Cards */
+.admin-dashboard-modern .row.g-4 {
+    --bs-gutter-y: 1.75rem;
+    --bs-gutter-x: 1.75rem;
+}
+
+.admin-dashboard-modern .chart-card {
+    margin-bottom: 0;
+}
+
 .chart-card {
     background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(17, 24, 39, 0.06);
-    border: 1px solid rgba(17, 24, 39, 0.06);
-    padding: 0.9rem 1rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    padding: 1rem 1.15rem;
     height: 100%;
 }
 
@@ -213,16 +341,18 @@
 
 .chart-block {
     width: 100%;
-    height: 280px;
-    min-height: 280px;
+    height: 300px;
+    min-height: 300px;
     position: relative;
+    padding-top: 0.35rem;
 }
 
 .chart-block-sm {
     width: 100%;
-    height: 240px;
-    min-height: 240px;
+    height: 260px;
+    min-height: 260px;
     position: relative;
+    padding-top: 0.35rem;
 }
 
 .revenue-toolbar {
@@ -231,7 +361,12 @@
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.15rem;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
 }
 
 .days-selector .btn {
@@ -247,11 +382,11 @@
 
 /* Shortcuts Card */
 .shortcuts-card {
-    background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
-    border-radius: 16px;
-    border: 1px solid rgba(139, 92, 246, 0.12);
-    padding: 1.2rem;
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08);
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 55%, #eef2ff 100%);
+    border-radius: 18px;
+    border: 1px solid rgba(13, 148, 136, 0.12);
+    padding: 1.25rem 1.35rem;
+    box-shadow: 0 8px 32px rgba(13, 148, 136, 0.08);
 }
 
 .shortcuts-title {
@@ -294,19 +429,19 @@
 }
 
 .shortcut-btn i {
-    font-size: 1.4rem;
-    color: #8b5cf6;
+    font-size: 1.35rem;
+    color: #0d9488;
 }
 
 .shortcut-btn:hover {
-    border-color: rgba(139, 92, 246, 0.45);
-    background: rgba(139, 92, 246, 0.06);
+    border-color: rgba(13, 148, 136, 0.4);
+    background: rgba(13, 148, 136, 0.06);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.12);
+    box-shadow: 0 10px 28px rgba(13, 148, 136, 0.1);
 }
 
 .shortcut-btn:hover i {
-    color: #6d28d9;
+    color: #0f766e;
 }
 
 /* Empty State */

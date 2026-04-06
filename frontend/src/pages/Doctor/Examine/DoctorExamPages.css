@@ -1,8 +1,8 @@
 .doc-exam-page,
 .doc-medical-record {
-  max-width: 920px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 1.25rem 1rem 2.5rem;
+  padding: 0 0 2rem;
 }
 
 .doc-exam-loading {
@@ -482,14 +482,16 @@
 
 /* Queue examine list */
 .examine-queue-modern {
-  max-width: 960px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
 }
 
 .examine-queue-modern h2 {
-  text-align: center;
-  color: #0f172a;
-  margin-bottom: 1.5rem;
+  text-align: left;
+  color: var(--mc-text, #0f172a);
+  margin-bottom: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
 }
 
 .ex-queue-grid {
@@ -512,16 +514,17 @@
 }
 
 .ex-card {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  padding: 1rem 1.1rem;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+  background: var(--mc-surface, #fff);
+  border: 1px solid var(--mc-border, rgba(15, 23, 42, 0.08));
+  border-radius: var(--mc-radius-lg, 16px);
+  padding: 1rem 1.15rem;
+  box-shadow: var(--mc-shadow, 0 1px 3px rgba(15, 23, 42, 0.06));
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .ex-card.active {
-  border-color: #38bdf8;
-  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
+  border-color: rgba(13, 148, 136, 0.45);
+  box-shadow: 0 8px 28px rgba(13, 148, 136, 0.12);
 }
 
 .ex-card h3 {
@@ -544,12 +547,13 @@
   padding: 0.55rem 1rem;
   border-radius: 10px;
   border: none;
-  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--mc-primary, #0d9488) 0%, var(--mc-primary-hover, #0f766e) 100%);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
   font-size: 0.95rem;
+  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
 }
 
 .ex-card .btn-open-record:disabled {

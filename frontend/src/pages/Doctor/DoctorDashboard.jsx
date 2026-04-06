@@ -3,32 +3,32 @@ import './DoctorDashboard.css';
 
 const DoctorDashboard = () => {
     const user = JSON.parse(localStorage.getItem('user')) || {};
-    const todayLabel = new Date().toLocaleDateString('vi-VN');
+    const todayLabel = new Date().toLocaleDateString('vi-VN', { 
+        weekday: 'short',
+        year: 'numeric', 
+        month: '2-digit',
+        day: '2-digit'
+    });
 
     return (
         <div className="dashboard-content">
-            <div className="dashboard-header mb-4">
-                <div className="header-left">
-                    <h2 className="mb-1">
-                        Chào mừng, BS. {user.username || 'Khách'} <i className="fas fa-hand-sparkles text-emerald" />
-                    </h2>
-                    <p className="mb-0">Đây là tổng quan hoạt động của bạn</p>
-                </div>
-
-                <div className="header-right">
-                    <div className="time-display">
-                        <div className="time-text">Hôm nay</div>
-                        <div className="date-text">{todayLabel}</div>
-                    </div>
+            {/* Hero Section */}
+            <div className="mc-dash-hero mb-4">
+                <div>
+                    <h2>👋 Chào BS. {user.username || 'bác sĩ'}</h2>
+                    <p>
+                        Tổng quan hoạt động khám chữa bệnh hôm nay · <strong>{todayLabel}</strong>
+                    </p>
                 </div>
             </div>
 
+            {/* Quick Actions Bar */}
             <div className="quick-actions-bar mb-4">
                 <strong className="action-label">
-                    <i className="fas fa-bolt me-1 text-emerald" /> Hành động nhanh:
+                    <i className="fas fa-bolt me-1" /> Hành động nhanh:
                 </strong>
 
-                <Link to="/examine" className="soft-btn btn-outline-soft">
+                <Link to="/examine" className="soft-btn btn-primary-soft">
                     <i className="fas fa-users" /> Hàng đợi khám
                 </Link>
 
@@ -46,8 +46,17 @@ const DoctorDashboard = () => {
                 <Link to="/doctor/schedule" className="soft-btn btn-outline-soft">
                     <i className="fas fa-calendar-alt" /> Lịch của tôi
                 </Link>
+
+                <Link to="/doctor/medical-records" className="soft-btn btn-outline-soft">
+                    <i className="fas fa-file-medical-alt" /> Bệnh án
+                </Link>
+
+                <Link to="/doctor/lab-results" className="soft-btn btn-outline-soft">
+                    <i className="fas fa-vials" /> Xét nghiệm
+                </Link>
             </div>
 
+            {/* Stats Grid */}
             <div className="stats-grid mb-4">
                 <div className="soft-stat-card">
                     <div className="stat-content">
@@ -55,8 +64,19 @@ const DoctorDashboard = () => {
                         <h3>12</h3>
                         <small>Ca trực đang mở</small>
                     </div>
-                    <div className="stat-icon bg-emerald-light text-emerald">
+                    <div className="stat-icon bg-blue-light text-blue">
                         <i className="fas fa-calendar-check" />
+                    </div>
+                </div>
+
+                <div className="soft-stat-card">
+                    <div className="stat-content">
+                        <p>Bệnh nhân khám</p>
+                        <h3>8</h3>
+                        <small>Hôm nay đã khám</small>
+                    </div>
+                    <div className="stat-icon bg-emerald-light text-emerald">
+                        <i className="fas fa-user-check" />
                     </div>
                 </div>
 
@@ -68,6 +88,17 @@ const DoctorDashboard = () => {
                     </div>
                     <div className="stat-icon bg-blue-light text-blue">
                         <i className="fas fa-user-injured" />
+                    </div>
+                </div>
+
+                <div className="soft-stat-card">
+                    <div className="stat-content">
+                        <p>Xét nghiệm chờ</p>
+                        <h3>5</h3>
+                        <small>Kết quả chưa có</small>
+                    </div>
+                    <div className="stat-icon bg-emerald-light text-emerald">
+                        <i className="fas fa-vials" />
                     </div>
                 </div>
             </div>
